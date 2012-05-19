@@ -1,0 +1,6 @@
+<Runs>
+  <Run>%Windows%\notepad.exe | Notepad</Run>
+  <Run>%ProgramFiles%\Internet Explorer\iexplore.exe | Internet Explorer</Run>
+  <Run>%ProgramFiles%\Notepad++\notepad++.exe | Notepad++</Run>
+  <Run>C:\Program Files (x86)\Mozilla Firefox\firefox.exe | Mozilla Firefox</Run>
+</Runs>

@@ -1,0 +1,19 @@
+<Settings>
+    <ShowToolbar>True</ShowToolbar>
+    <ShowStatusbar>True</ShowStatusbar>
+    <DocumentSwitcher>True</DocumentSwitcher>
+    <AutoHighlighting>False</AutoHighlighting>
+    <ExplorerIntegration>True</ExplorerIntegration>
+    <CustomExplorerIntegration>Open with Programmer's Pad</CustomExplorerIntegration>
+    <RememberSession>True</RememberSession>
+    <DocumentTitleBar>False</DocumentTitleBar>
+    <ShowEOL>False</ShowEOL>
+    <ShowWhiteSpace>False</ShowWhiteSpace>
+    <LineHighlighting>True</LineHighlighting>
+    <LineHighlightingColor>-8355648</LineHighlightingColor>
+    <WordWrap>False</WordWrap>
+    <FontName>Arial</FontName>
+    <FontSize>0</FontSize>
+    <ThemeInfoBar>True</ThemeInfoBar>
+    <ThemeFile>C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\bin\Debug\Themes\Carbon_Theme.dll</ThemeFile>
+</Settings>

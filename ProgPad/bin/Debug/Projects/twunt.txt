@@ -1,0 +1,3963 @@
+﻿Imports System.Windows.Forms
+Imports System.Reflection
+Imports System.ComponentModel
+Imports System.Runtime.InteropServices
+Imports System.Collections
+Imports System.Collections.Generic
+Imports System.Drawing
+Imports System.Drawing.Drawing2Dsadasd
+Imports System.Drawing.Imaging
+Imports System.Diagnostics
+Imports System.Timers
+Namespace vtExtender
+#Region "Author/About"
+    '***********************************************************************************
+    '    *  vtExtender   ToolStrip Extension Class                                           *
+    '    *                                                                                   *
+    '    *  Created:     Febuary 06, 2009                                                    *
+    '    *  Purpose:     Extends style capabilities of a ToolStrip control                   *
+    '    *  Revision:    1.1                                                                 *
+    '    *  IDE:         C# 2005 SP1                                                         *
+    '    *  Referenced:  Control Class NSP                                                   *
+    '    *  Author:      John Underhill (Steppenwolfe)                                       *
+    '    *                                                                                   *
+    '    *************************************************************************************
+    '
+    '    You can not:
+    '    Sell or redistribute this code or the binary for profit.
+    '    Use this in spyware, malware, or any generally acknowledged form of malicious software.
+    '    Remove or alter the above author accreditation, or this disclaimer.
+    '
+    '    You can:
+    '    Use this code in your applications in any way you like.
+    '    Use this in a published program, (a credit to vtdev.com would be nice)
+    '
+    '    I will not:
+    '    Except any responsibility for this code whatsoever. 
+    '    There is no guarantee of fitness, nor should you have any expectation of support. 
+    '    I further renounce any and all responsibilities for this code, in every way conceivable, 
+    '    now, and for the rest of time. (clear enough?)
+    '
+    '    Cheers,
+    '    John
+    '    steppenwolfe_2000@yahoo.com
+    '
+    '    ***Revision History***
+    '    -> 1.1
+    '    First revision released Febuary 15
+    '
+    ' 
+    '    
+
+#End Region
+
+#Region "Directives"
+#End Region
+
+#Region "Enums"
+    Public Enum ToolStripType
+        VerticalGradient = 0
+        HorizontalGradient
+        FlatColor
+        Image
+        System
+    End Enum
+
+    Public Enum MenuType
+        Vista = 0
+        Office
+        [Custom]
+        Flat
+    End Enum
+
+    Public Enum ButtonHoverType
+        Flat = 0
+        Glow
+        Raised
+        Glass
+        Bevelled
+    End Enum
+
+    Public Enum GripType
+        Dotted = 0
+        LargeDot
+        Solid
+    End Enum
+
+    Friend Enum FadeType
+        None = 0
+        FadeIn
+        FadeOut
+        FadeFast
+    End Enum
+#End Region
+
+#Region "vtExtender"
+    <System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name:="FullTrust")> _
+    Public Class vtExtender
+        Inherits ToolStripRenderer
+        Implements IDisposable
+#Region "Base Class"
+#Region "Enums"
+        Friend Enum ItemState
+            ItemHover = 0
+            OffControl
+            OffContainer
+        End Enum
+
+        Friend Enum ButtonSelectedState
+            None = 0
+            Disabled
+            Checked
+            Focused
+            Pressed
+        End Enum
+#End Region
+
+#Region "Constants"
+        Private Const WM_MOUSEMOVE As Integer = &H200
+        Private Const WM_MOUSELEAVE As Integer = &H2A3
+        Private Const WM_LBUTTONDOWN As Integer = &H201
+        Private Const WM_LBUTTONUP As Integer = &H202
+        Private Const WM_MOUSEHOVER As Integer = &H2A1
+        Private Const WM_PAINT As Integer = &HF
+#End Region
+
+#Region "API"
+        <DllImport("gdi32.dll")> _
+        Private Shared Function SetPixel(ByVal hdc As IntPtr, ByVal X As Integer, ByVal Y As Integer, ByVal crColor As Integer) As UInteger
+        End Function
+#End Region
+
+#Region "Fields"
+        Private _toolTipEnable As Boolean = False
+        Private _toolTipUseIcon As Boolean = False
+        Private _toolTipRightToLeft As Boolean = False
+        Private _toolTipMaximumLength As Integer = 200
+        Private _toolTipDelayTime As Integer = 1000
+        Private _toolTipVisibleTime As Integer = 2000
+        Private _toolTipGradientBegin As Color
+        Private _toolTipGradientEnd As Color
+        Private _toolTipForeColor As Color
+
+        Private _buttonBorderColor As Color = Color.DarkGray
+        Private _buttonGradientBegin As Color = Color.Silver
+        Private _buttonGradientEnd As Color = Color.Black
+        Private _buttonForeColor As Color = Color.Black
+        Private _buttonFocusedForeColor As Color = Color.CornflowerBlue
+
+        Private _menuSelectorBarGradientBegin As Color = Color.FromArgb(140, Color.White)
+        Private _menuSelectorBarGradientEnd As Color = Color.FromArgb(120, &HB3, &HB3, &HB3)
+        ' magenta is skip
+        Private _menuSelectorBarEdge As Color = Color.FromArgb(250, Color.DarkGray)
+        Private _menuStripBorderColor As Color = Color.DarkGray
+        Private _menuStripGradientBegin As Color = Color.Silver
+        Private _menuStripGradientEnd As Color = Color.Black
+        Private _menuDropDownBackground As Color = Color.FromArgb(255, &HF5, &HF5, &HF5)
+        Private _menuForeColor As Color = Color.White
+        Private _menuFocusedForeColor As Color = Color.LightSkyBlue
+        Private _menuItemForeColor As Color = Color.FromArgb(255, &H77, &H77, &H77)
+        Private _menuLabelForeColor As Color = Color.FromArgb(255, &H77, &H77, &H77)
+        Private _menuItemFocusedForeColor As Color = Color.Black
+        Private _menuImageMarginGradientBegin As Color = Color.Silver
+        Private _menuImageMarginGradientEnd As Color = Color.Magenta
+
+        Private _statusStripBorderColor As Color = Color.DarkGray
+        Private _statusStripGradientBegin As Color = Color.Silver
+        Private _statusStripGradientEnd As Color = Color.Black
+
+        Private _toolStripBorderColor As Color = Color.DarkGray
+        Private _toolStripGradientBegin As Color = Color.Silver
+        Private _toolStripGradientEnd As Color = Color.Black
+
+        Private _dropArrowColor As Color = Color.Silver
+        Private _seperatorInnerColor As Color = Color.DarkGray
+        Private _seperatorOuterColor As Color = Color.Black
+
+        Private _buttonHoverEffect As ButtonHoverType = ButtonHoverType.Raised
+        Private _gripStyle As GripType = GripType.Dotted
+
+        Private _menuStripStyle As ToolStripType = ToolStripType.HorizontalGradient
+        Private _menuStripGradientBlend As New Blend()
+        Private _menuStripGradientDirection As LinearGradientMode = LinearGradientMode.Vertical
+        Private _menuStyle As MenuType = MenuType.[Custom]
+
+        Private _statusStripStyle As ToolStripType = ToolStripType.HorizontalGradient
+        Private _statusStripGradientBlend As New Blend()
+        Private _statusStripGradientDirection As LinearGradientMode = LinearGradientMode.Vertical
+
+        Private _toolStripStyle As ToolStripType = ToolStripType.HorizontalGradient
+        Private _toolStripGradientBlend As New Blend()
+        Private _toolStripGradientDirection As LinearGradientMode = LinearGradientMode.Vertical
+
+        Private _comboBoxExtender As ComboBoxExtender
+        Private _toolStripExtender As ToolStripExtender
+        Private _toolTip As ToolTip
+        Private _toolTipText As New Dictionary(Of ToolStripItem, String)()
+        Private _toolTipTitle As New Dictionary(Of ToolStripItem, String)()
+#End Region
+
+#Region "Constructor"
+        Public Sub New()
+            Init()
+        End Sub
+
+        Private Sub Init()
+            _menuStripGradientBlend.Positions = New Single() {0.0F, 0.4F, 0.5F, 0.8F, 1.0F}
+            _menuStripGradientBlend.Factors = New Single() {0.0F, 0.2F, 0.5F, 1.0F, 0.6F}
+            _statusStripGradientBlend.Positions = New Single() {0.0F, 0.4F, 0.5F, 0.8F, 1.0F}
+            _statusStripGradientBlend.Factors = New Single() {0.0F, 0.2F, 0.5F, 1.0F, 0.6F}
+            _toolStripGradientBlend.Positions = New Single() {0.0F, 0.4F, 0.5F, 0.8F, 1.0F}
+            _toolStripGradientBlend.Factors = New Single() {0.0F, 0.2F, 0.5F, 1.0F, 0.6F}
+            SetGlobalStyles(ToolStripType.VerticalGradient, MenuType.[Custom], ButtonHoverType.Raised, Color.DarkGray, Color.Black, Nothing)
+        End Sub
+#End Region
+
+#Region "Event Handlers"
+        Private Sub toolStrip_BackgroundImageChanged(ByVal sender As Object, ByVal e As EventArgs)
+            Dim toolStrip As ToolStrip = DirectCast(sender, ToolStrip)
+            Try
+                If toolStrip.BackgroundImage IsNot Nothing Then
+                    If TypeOf toolStrip Is MenuStrip Then
+                        MenuStripStyle = ToolStripType.Image
+                    ElseIf TypeOf toolStrip Is StatusStrip Then
+                        StatusStripStyle = ToolStripType.Image
+                    Else
+                        ToolStripStyle = ToolStripType.Image
+                    End If
+                End If
+            Finally
+            End Try
+        End Sub
+
+        Private Sub item_MouseDown(ByVal sender As Object, ByVal e As MouseEventArgs)
+            If _toolTip IsNot Nothing Then
+                _toolTip.[Stop]()
+            End If
+        End Sub
+
+        Private Sub Item_MouseEnter(ByVal sender As Object, ByVal e As EventArgs)
+
+            If (_toolTip IsNot Nothing) AndAlso (ToolTipEnable) Then
+                Dim item As ToolStripItem = DirectCast(sender, ToolStripItem)
+                Dim bounds As New Rectangle()
+                If _toolTipText.ContainsKey(item) Then
+                    Dim caption As String = _toolTipText(item)
+                    Dim title As String = [String].Empty
+                    If _toolTipTitle.ContainsKey(item) Then
+                        title = _toolTipTitle(item)
+                    End If
+                    If item.Owner.Orientation = Orientation.Horizontal Then
+                        bounds.Y = item.Bounds.Height + 10
+                        bounds.X = item.Bounds.X + 10
+                        bounds.Width = ToolTipMaximumLength
+                        bounds.Height = 20
+                    Else
+                        bounds.Y = item.Bounds.Y + 10
+                        bounds.X = item.Bounds.Width + 10
+                        bounds.Width = ToolTipMaximumLength
+                        bounds.Height = 20
+                    End If
+                    Dim imageSize As Size = item.Owner.ImageScalingSize
+                    Dim bmp As New Bitmap(item.Image, imageSize)
+                    _toolTip.Start(title, caption, bmp, bounds)
+                End If
+            End If
+        End Sub
+
+        Private Sub Item_MouseLeave(ByVal sender As Object, ByVal e As EventArgs)
+            If _toolTip IsNot Nothing Then
+                _toolTip.[Stop]()
+            End If
+        End Sub
+#End Region
+
+#Region "Properties"
+#Region "Buttons"
+        ''' <summary>
+        ''' Get/Set the button border color.
+        ''' </summary>
+        Public Property ButtonBorderColor() As Color
+            Get
+                Return _buttonBorderColor
+            End Get
+            Set(ByVal value As Color)
+                _buttonBorderColor = value
+            End Set
+        End Property
+
+     
+
+        ''' <summary>
+        ''' Get/Set the fade over effect style.
+        ''' </summary>
+        Public Property ButtonHoverEffect() As ButtonHoverType
+            Get
+                Return _buttonHoverEffect
+            End Get
+            Set(ByVal value As ButtonHoverType)
+                _buttonHoverEffect = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the ForeColor.
+        ''' </summary>
+        Public Property ButtonForeColor() As Color
+            Get
+                Return _buttonForeColor
+            End Get
+            Set(ByVal value As Color)
+                _buttonForeColor = value
+                _buttonForeColor = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the focused ForeColor.
+        ''' </summary>
+        Public Property ButtonFocusedForeColor() As Color
+            Get
+                Return _buttonFocusedForeColor
+            End Get
+            Set(ByVal value As Color)
+                _buttonFocusedForeColor = value
+                _buttonFocusedForeColor = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the starting color of the button fade gradient.
+        ''' </summary>
+        Public Property ButtonGradientBegin() As Color
+            Get
+                Return _buttonGradientBegin
+            End Get
+            Set(ByVal value As Color)
+                _buttonGradientBegin = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the ending color of the button fade gradient.
+        ''' </summary>
+        Public Property ButtonGradientEnd() As Color
+            Get
+                Return _buttonGradientEnd
+            End Get
+            Set(ByVal value As Color)
+                _buttonGradientEnd = value
+            End Set
+        End Property
+#End Region
+
+#Region "Drop Arrow"
+        ''' <summary>
+        ''' Get/Set the drop down arrow color.
+        ''' </summary>
+        Public Property DropArrowColor() As Color
+            Get
+                Return _dropArrowColor
+            End Get
+            Set(ByVal value As Color)
+                _dropArrowColor = value
+            End Set
+        End Property
+#End Region
+
+#Region "Grip and Seperator"
+        ''' <summary>
+        ''' Get/Set The Grip display style.
+        ''' </summary>
+        Public Property GripStyle() As GripType
+            Get
+                Return _gripStyle
+            End Get
+            Set(ByVal value As GripType)
+                _gripStyle = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the seperator inner color.
+        ''' </summary>
+        Public Property SeperatorInnerColor() As Color
+            Get
+                Return _seperatorInnerColor
+            End Get
+            Set(ByVal value As Color)
+                _seperatorInnerColor = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the seperator outer color.
+        ''' </summary>
+        Public Property SeperatorOuterColor() As Color
+            Get
+                Return _seperatorOuterColor
+            End Get
+            Set(ByVal value As Color)
+                _seperatorOuterColor = value
+            End Set
+        End Property
+#End Region
+
+#Region "Menu"
+        ''' <summary>
+        ''' Get/Set the backcolor of drop down menus.
+        ''' </summary>
+        Public Property MenuBackGroundColor() As Color
+            Get
+                Return _menuDropDownBackground
+            End Get
+            Set(ByVal value As Color)
+                _menuDropDownBackground = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the drawing style for drop down menus.
+        ''' </summary>
+        Public Property MenuStyle() As MenuType
+            Get
+                Return _menuStyle
+            End Get
+            Set(ByVal value As MenuType)
+                _menuStyle = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the forecolor of drop down menus.
+        ''' </summary>
+        Public Property MenuForeColor() As Color
+            Get
+                Return _menuForeColor
+            End Get
+            Set(ByVal value As Color)
+                _menuForeColor = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the focused forecolor of drop down menus.
+        ''' </summary>
+        Public Property MenuFocusedForeColor() As Color
+            Get
+                Return _menuFocusedForeColor
+            End Get
+            Set(ByVal value As Color)
+                _menuFocusedForeColor = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the forecolor of drop down menu items.
+        ''' </summary>
+        Public Property MenuItemForeColor() As Color
+            Get
+                Return _menuItemForeColor
+            End Get
+            Set(ByVal value As Color)
+                _menuItemForeColor = value
+            End Set
+        End Property
+
+
+        Public Property MenuLabelForeColor() As Color
+            Get
+                Return _menuLabelForeColor
+            End Get
+            Set(ByVal value As Color)
+                _menuLabelForeColor = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the focused forecolor of drop down menu items.
+        ''' </summary>
+        Public Property MenuItemFocusedForeColor() As Color
+            Get
+                Return _menuItemFocusedForeColor
+            End Get
+            Set(ByVal value As Color)
+                _menuItemFocusedForeColor = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the gradient start color of the drop down menu side bar.
+        ''' </summary>
+        Public Property MenuImageMarginGradientBegin() As Color
+            Get
+                Return _menuImageMarginGradientBegin
+            End Get
+            Set(ByVal value As Color)
+                _menuImageMarginGradientBegin = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the gradient end color of the drop down menu side bar.
+        ''' </summary>
+        Public Property MenuImageMarginGradientEnd() As Color
+            Get
+                Return _menuImageMarginGradientEnd
+            End Get
+            Set(ByVal value As Color)
+                _menuImageMarginGradientEnd = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the gradient start color of the menu selector bar.
+        ''' </summary>
+        Public Property MenuSelectorBarGradientBegin() As Color
+            Get
+                Return _menuSelectorBarGradientBegin
+            End Get
+            Set(ByVal value As Color)
+                _menuSelectorBarGradientBegin = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the gradient end color of the menu selector bar.
+        ''' </summary>
+        Public Property MenuSelectorBarGradientEnd() As Color
+            Get
+                Return _menuSelectorBarGradientEnd
+            End Get
+            Set(ByVal value As Color)
+                _menuSelectorBarGradientEnd = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the gradient edge color of the menu selector bar.
+        ''' </summary>
+        Public Property MenuSelectorBarEdge() As Color
+            Get
+                Return _menuSelectorBarEdge
+            End Get
+            Set(ByVal value As Color)
+                _menuSelectorBarEdge = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the MenuStrip border color.
+        ''' </summary>
+        Public Property MenuStripBorderColor() As Color
+            Get
+                Return _menuStripBorderColor
+            End Get
+            Set(ByVal value As Color)
+                _menuStripBorderColor = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the direction of the gradient.
+        ''' </summary>
+        Public Property MenuStripGradientDirection() As LinearGradientMode
+            Get
+                Return _menuStripGradientDirection
+            End Get
+            Set(ByVal value As LinearGradientMode)
+                _menuStripGradientDirection = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the blend factor of the gradient.
+        ''' </summary>
+        Public Property MenuStripGradientBlend() As Blend
+            Get
+                Return _menuStripGradientBlend
+            End Get
+            Set(ByVal value As Blend)
+                _menuStripGradientBlend = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the starting color of the gradient.
+        ''' </summary>
+        Public Property MenuStripGradientBegin() As Color
+            Get
+                Return _menuStripGradientBegin
+            End Get
+            Set(ByVal value As Color)
+                _menuStripGradientBegin = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the ending color of the gradient.
+        ''' </summary>
+        Public Property MenuStripGradientEnd() As Color
+            Get
+                Return _menuStripGradientEnd
+            End Get
+            Set(ByVal value As Color)
+                _menuStripGradientEnd = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the drawing style for the menu strip.
+        ''' </summary>
+        Private Property MenuStripStyle() As ToolStripType
+            Get
+                Return _menuStripStyle
+            End Get
+            Set(ByVal value As ToolStripType)
+                _menuStripStyle = value
+            End Set
+        End Property
+
+#End Region
+
+#Region "StatusStrip"
+        ''' <summary>
+        ''' Get/Set the StatusStrip border color.
+        ''' </summary>
+        Public Property StatusStripBorderColor() As Color
+            Get
+                Return _statusStripBorderColor
+            End Get
+            Set(ByVal value As Color)
+                _statusStripBorderColor = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the blend factor of the gradient.
+        ''' </summary>
+        Public Property StatusStripGradientBlend() As Blend
+            Get
+                Return _statusStripGradientBlend
+            End Get
+            Set(ByVal value As Blend)
+                _statusStripGradientBlend = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the direction of the gradient.
+        ''' </summary>
+        Public Property StatusStripGradientDirection() As LinearGradientMode
+            Get
+                Return _statusStripGradientDirection
+            End Get
+            Set(ByVal value As LinearGradientMode)
+                _statusStripGradientDirection = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the starting color of the gradient.
+        ''' </summary>
+        Public Property StatusStripGradientBegin() As Color
+            Get
+                Return _statusStripGradientBegin
+            End Get
+            Set(ByVal value As Color)
+                _statusStripGradientBegin = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the ending color of the gradient.
+        ''' </summary>
+        Public Property StatusStripGradientEnd() As Color
+            Get
+                Return _statusStripGradientEnd
+            End Get
+            Set(ByVal value As Color)
+                _statusStripGradientEnd = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the drawing style for the status strip.
+        ''' </summary>
+        Private Property StatusStripStyle() As ToolStripType
+            Get
+                Return _statusStripStyle
+            End Get
+            Set(ByVal value As ToolStripType)
+                _statusStripStyle = value
+            End Set
+        End Property
+#End Region
+
+#Region "ToolStrip"
+        ''' <summary>
+        ''' Get/Set the ToolStrip border color.
+        ''' </summary>
+        Public Property ToolStripBorderColor() As Color
+            Get
+                Return _toolStripBorderColor
+            End Get
+            Set(ByVal value As Color)
+                _toolStripBorderColor = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the blend factor of the gradient.
+        ''' </summary>
+        Public Property ToolStripGradientBlend() As Blend
+            Get
+                Return _toolStripGradientBlend
+            End Get
+            Set(ByVal value As Blend)
+                _toolStripGradientBlend = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the direction of the gradient.
+        ''' </summary>
+        Public Property ToolStripGradientDirection() As LinearGradientMode
+            Get
+                Return _toolStripGradientDirection
+            End Get
+            Set(ByVal value As LinearGradientMode)
+                _toolStripGradientDirection = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the starting color of the gradient.
+        ''' </summary>
+        Public Property ToolStripGradientBegin() As Color
+            Get
+                Return _toolStripGradientBegin
+            End Get
+            Set(ByVal value As Color)
+                _toolStripGradientBegin = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the ending color of the gradient.
+        ''' </summary>
+        Public Property ToolStripGradientEnd() As Color
+            Get
+                Return _toolStripGradientEnd
+            End Get
+            Set(ByVal value As Color)
+                _toolStripGradientEnd = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the drawing style for the tool strip.
+        ''' </summary>
+        Private Property ToolStripStyle() As ToolStripType
+            Get
+                Return _toolStripStyle
+            End Get
+            Set(ByVal value As ToolStripType)
+                _toolStripStyle = value
+            End Set
+        End Property
+#End Region
+
+#Region "ToolTip"
+        ''' <summary>
+        ''' The amount of time in milliseconds before the ToolTip appears.
+        ''' </summary>
+        Public Property ToolTipDelayTime() As Integer
+            Get
+                Return _toolTipDelayTime
+            End Get
+            Set(ByVal value As Integer)
+                _toolTipDelayTime = value
+                If _toolTip IsNot Nothing Then
+                    _toolTip.DelayTime = value
+                End If
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the ToolStrip enabled property.
+        ''' </summary>
+        Public Property ToolTipEnable() As Boolean
+            Get
+                Return _toolTipEnable
+            End Get
+            Set(ByVal value As Boolean)
+                _toolTipEnable = value
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the forecolor of drop down menu items.
+        ''' </summary>
+        Public Property ToolTipForeColor() As Color
+            Get
+                Return _toolTipForeColor
+            End Get
+            Set(ByVal value As Color)
+                _toolTipForeColor = value
+                If _toolTip IsNot Nothing Then
+                    _toolTip.ForeColor = value
+                End If
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the starting color of the gradient.
+        ''' </summary>
+        Public Property ToolTipGradientBegin() As Color
+            Get
+                Return _toolTipGradientBegin
+            End Get
+            Set(ByVal value As Color)
+                _toolTipGradientBegin = value
+                If _toolTip IsNot Nothing Then
+                    _toolTip.GradientBegin = value
+                End If
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Get/Set the ending color of the gradient.
+        ''' </summary>
+        Public Property ToolTipGradientEnd() As Color
+            Get
+                Return _toolTipGradientEnd
+            End Get
+            Set(ByVal value As Color)
+                _toolTipGradientEnd = value
+                If _toolTip IsNot Nothing Then
+                    _toolTip.GradientEnd = value
+                End If
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' The maximum length of the ToolTip in pixels.
+        ''' </summary>
+        Public Property ToolTipMaximumLength() As Integer
+            Get
+                Return _toolTipMaximumLength
+            End Get
+            Set(ByVal value As Integer)
+                _toolTipMaximumLength = value
+                If _toolTip IsNot Nothing Then
+                    _toolTip.MaximumLength = value
+                End If
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Position the ToolTip text right to left.
+        ''' </summary>
+        Public Property ToolTipRightToLeft() As Boolean
+            Get
+                Return _toolTipRightToLeft
+            End Get
+            Set(ByVal value As Boolean)
+                _toolTipRightToLeft = value
+                If _toolTip IsNot Nothing Then
+                    _toolTip.TextRightToLeft = value
+                End If
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' Display the buttons icon in the ToolTip.
+        ''' </summary>
+        Public Property ToolTipUseIcon() As Boolean
+            Get
+                Return _toolTipUseIcon
+            End Get
+            Set(ByVal value As Boolean)
+                _toolTipUseIcon = value
+                If _toolTip IsNot Nothing Then
+                    _toolTip.UseIcon = value
+                End If
+            End Set
+        End Property
+
+        ''' <summary>
+        ''' The length of time in milliseconds that the ToolTip remains visible.
+        ''' </summary>
+        Public Property ToolTipVisibleTime() As Integer
+            Get
+                Return _toolTipVisibleTime
+            End Get
+            Set(ByVal value As Integer)
+                _toolTipVisibleTime = value
+                If _toolTip IsNot Nothing Then
+                    _toolTip.VisibleTime = value
+                End If
+            End Set
+        End Property
+
+
+        Public Sub ToolTipTitle(ByVal item As ToolStripItem, ByVal title As String)
+            If Not [String].IsNullOrEmpty(title) Then
+                _toolTipTitle.Add(item, title)
+            End If
+        End Sub
+
+        Public Sub UseCustomToolTips(ByVal toolStrip As ToolStrip)
+            For Each item As ToolStripItem In toolStrip.Items
+                If Not [String].IsNullOrEmpty(item.ToolTipText) Then
+                    _toolTipText.Add(item, item.ToolTipText)
+                    item.ToolTipText = ""
+                    item.AutoToolTip = False
+                    AddHandler item.MouseEnter, New EventHandler(AddressOf Item_MouseEnter)
+                    AddHandler item.MouseLeave, New EventHandler(AddressOf Item_MouseLeave)
+                    AddHandler item.MouseDown, New MouseEventHandler(AddressOf item_MouseDown)
+                End If
+            Next
+            If _toolTipText.Count > 0 Then
+                _toolTip = New ToolTip(toolStrip.Handle)
+                _toolTip.TextRightToLeft = ToolTipRightToLeft
+                ToolTipEnable = True
+            End If
+        End Sub
+#End Region
+#End Region
+
+#Region "Methods"
+#Region "Public Methods"
+        ''' <summary>
+        ''' Adds a ToolStrip control to the class. 
+        ''' </summary>
+        ''' <param name="control">The ToolStrip control to be stylized.</param>
+        Public Sub Add(ByVal control As Control)
+            If TypeOf control Is ToolStrip Then
+                _toolStripExtender = New ToolStripExtender(Me, DirectCast(control, ToolStrip))
+            Else
+                Throw New Exception("The control type is not supported.")
+            End If
+        End Sub
+
+        ''' <summary>
+        ''' Sets styles for all added ToolStrip controls. 
+        ''' </summary>
+        ''' <param name="toolstyle">The ToolStrip control to be stylized.</param>
+        ''' <param name="menustyle">The Menu display style.</param>
+        ''' <param name="buttonstyle">The button hover effect style.</param>
+        ''' <param name="begin">The gradient start color, or flat color used to paint the control.</param>
+        ''' <param name="end">The gradient end color.</param>
+        ''' <param name="blend">The gradient blend used to control the gradient aspect. Pass null for default blend.</param>
+        Public Sub SetGlobalStyles(ByVal toolstyle As ToolStripType, ByVal menuStyle As MenuType, ByVal buttonStyle As ButtonHoverType, ByVal begin As Color, ByVal [end] As Color, ByVal blend As Blend)
+            SetToolStripStyle(toolstyle, begin, [end], blend)
+            SetMenuStripStyle(toolstyle, menuStyle, begin, [end], blend)
+            SetButtonHoverStyle(buttonStyle)
+            SetStatusStripStyle(toolstyle, begin, [end], blend)
+        End Sub
+
+        ''' <summary>
+        ''' Sets ToolStrip style elements. 
+        ''' </summary>
+        ''' <param name="style">The ToolStrip control to be stylized.</param>
+        ''' <param name="begin">The gradient start color, or flat color used to paint the control.</param>
+        ''' <param name="end">The gradient end color.</param>
+        ''' <param name="blend">The gradient blend used to control the gradient aspect.</param>
+        Public Sub SetToolStripStyle(ByVal style As ToolStripType, ByVal begin As Color, ByVal [end] As Color, ByVal blend As Blend)
+            ToolStripStyle = style
+            If ToolStripStyle = ToolStripType.HorizontalGradient Then
+                ToolStripGradientDirection = LinearGradientMode.Horizontal
+                ToolStripGradientBegin = begin
+                ToolStripGradientEnd = [end]
+                If blend IsNot Nothing Then
+                    ToolStripGradientBlend = blend
+                End If
+            ElseIf ToolStripStyle = ToolStripType.VerticalGradient Then
+                ToolStripGradientDirection = LinearGradientMode.Vertical
+                ToolStripGradientBegin = begin
+                ToolStripGradientEnd = [end]
+                If blend IsNot Nothing Then
+                    ToolStripGradientBlend = blend
+                End If
+            Else
+                ToolStripGradientBegin = begin
+                ToolStripGradientEnd = [end]
+            End If
+        End Sub
+
+    Public Sub SetMenuStripStyle(ByVal stripStyle As ToolStripType, ByVal menuStyle__1 As MenuType, ByVal begin As Color, ByVal [end] As Color, ByVal blend As Blend)
+            MenuStripStyle = stripStyle
+            If MenuStripStyle = ToolStripType.HorizontalGradient Then
+                MenuStripGradientDirection = LinearGradientMode.Horizontal
+                MenuStripGradientBegin = begin
+                MenuStripGradientEnd = [end]
+                If blend IsNot Nothing Then
+                    MenuStripGradientBlend = blend
+                End If
+            ElseIf MenuStripStyle = ToolStripType.VerticalGradient Then
+                MenuStripGradientDirection = LinearGradientMode.Vertical
+                MenuStripGradientBegin = begin
+                MenuStripGradientEnd = [end]
+                If blend IsNot Nothing Then
+                    MenuStripGradientBlend = blend
+                End If
+            Else
+                MenuStripGradientBegin = begin
+                MenuStripGradientEnd = [end]
+            End If
+
+            MenuStyle = menuStyle__1
+            If (MenuStyle = MenuType.[Custom]) OrElse (MenuStyle = MenuType.Flat) Then
+                MenuSelectorBarEdge = Color.FromArgb(250, Color.DarkGray)
+                MenuSelectorBarGradientBegin = Color.FromArgb(140, Color.White)
+                MenuSelectorBarGradientEnd = Color.FromArgb(120, &HB3, &HB3, &HB3)
+                ButtonGradientBegin = Color.White
+            ElseIf MenuStyle = MenuType.Office Then
+                MenuSelectorBarEdge = Color.FromArgb(250, &HA9, &HC8, &HF5)
+                MenuSelectorBarGradientBegin = Color.FromArgb(140, &HE1, &HF5, &HFB)
+                MenuSelectorBarGradientEnd = Color.FromArgb(120, &HA5, &HC4, &HF1)
+                ButtonBorderColor = Color.LightGray
+                ButtonGradientBegin = Color.FromArgb(200, &H33, &H99, &HFF)
+
+                ButtonGradientEnd = Color.FromArgb(150, &HC0, &HDD, &HFC)
+            ElseIf MenuStyle = MenuType.Vista Then
+                MenuSelectorBarEdge = Color.FromArgb(150, &HA9, &HC8, &HF5)
+                MenuSelectorBarGradientBegin = Color.FromArgb(140, Color.White)
+                MenuSelectorBarGradientEnd = Color.FromArgb(200, Color.PowderBlue)
+                MenuBackGroundColor = Color.FromArgb(255, &HF5, &HF5, &HF5)
+                MenuImageMarginGradientBegin = Color.FromArgb(255, &HEC, &HEC, &HEC)
+                ButtonGradientBegin = Color.DodgerBlue
+            End If
+        End Sub
+
+        ''' <summary>
+        ''' Sets StatusStrip style elements. 
+        ''' </summary>
+        ''' <param name="style">The StatusStrip control to be stylized.</param>
+        ''' <param name="begin">The gradient start color, or flat color used to paint the control.</param>
+        ''' <param name="end">The gradient end color.</param>
+        ''' <param name="blend">The gradient blend used to control the gradient aspect. Pass null for default blend.</param>
+        Public Sub SetStatusStripStyle(ByVal style As ToolStripType, ByVal begin As Color, ByVal [end] As Color, ByVal blend As Blend)
+            StatusStripStyle = style
+            If StatusStripStyle = ToolStripType.HorizontalGradient Then
+                StatusStripGradientDirection = LinearGradientMode.Horizontal
+                StatusStripGradientBegin = begin
+                StatusStripGradientEnd = [end]
+                If blend IsNot Nothing Then
+                    StatusStripGradientBlend = blend
+                End If
+            ElseIf StatusStripStyle = ToolStripType.VerticalGradient Then
+                StatusStripGradientDirection = LinearGradientMode.Vertical
+                StatusStripGradientBegin = begin
+                StatusStripGradientEnd = [end]
+                If blend IsNot Nothing Then
+                    StatusStripGradientBlend = blend
+                End If
+            Else
+                StatusStripGradientBegin = begin
+                StatusStripGradientEnd = [end]
+            End If
+        End Sub
+
+        ''' <summary>
+        ''' Sets the Button hover style effect. 
+        ''' </summary>
+        ''' <param name="style">The button hover style effect.</param>
+        Public Sub SetButtonHoverStyle(ByVal style As ButtonHoverType)
+            ButtonHoverEffect = style
+        End Sub
+#End Region
+
+#Region "Overridden Methods"
+        Protected Overrides Sub Initialize(ByVal toolStrip As ToolStrip)
+            If TypeOf toolStrip Is MenuStrip Then
+                If toolStrip.BackgroundImage IsNot Nothing Then
+                    MenuStripStyle = ToolStripType.Image
+                End If
+                AddHandler toolStrip.BackgroundImageChanged, New EventHandler(AddressOf toolStrip_BackgroundImageChanged)
+            ElseIf TypeOf toolStrip Is StatusStrip Then
+                If toolStrip.BackgroundImage IsNot Nothing Then
+                    StatusStripStyle = ToolStripType.Image
+                End If
+                AddHandler toolStrip.BackgroundImageChanged, New EventHandler(AddressOf toolStrip_BackgroundImageChanged)
+            Else
+                If toolStrip.BackgroundImage IsNot Nothing Then
+                    ToolStripStyle = ToolStripType.Image
+                End If
+                AddHandler toolStrip.BackgroundImageChanged, New EventHandler(AddressOf toolStrip_BackgroundImageChanged)
+            End If
+            MyBase.Initialize(toolStrip)
+        End Sub
+
+        Protected Overrides Sub InitializeContentPanel(ByVal contentPanel As ToolStripContentPanel)
+            MyBase.InitializeContentPanel(contentPanel)
+        End Sub
+
+        Protected Overrides Sub InitializeItem(ByVal item As ToolStripItem)
+            MyBase.InitializeItem(item)
+            If TypeOf item Is ToolStripComboBox Then
+                Dim combo As ToolStripComboBox = DirectCast(item, ToolStripComboBox)
+                _comboBoxExtender = New ComboBoxExtender(Me, item.Owner, combo)
+            End If
+        End Sub
+
+        Protected Overrides Sub InitializePanel(ByVal toolStripPanel As ToolStripPanel)
+            MyBase.InitializePanel(toolStripPanel)
+        End Sub
+
+        Protected Overrides Sub OnRenderArrow(ByVal e As ToolStripArrowRenderEventArgs)
+            ' draw the arrow
+            drawArrow(e.Graphics, e.ArrowRectangle)
+        End Sub
+
+        Protected Overrides Sub OnRenderButtonBackground(ByVal e As ToolStripItemRenderEventArgs)
+            Dim button As ToolStripButton = DirectCast(e.Item, ToolStripButton)
+            Dim bounds As New Rectangle(Point.Empty, button.Bounds.Size)
+            ' only draw if pressed
+            If button.Pressed OrElse button.Checked Then
+                drawPressedButton(e.Graphics, bounds)
+            Else
+                MyBase.OnRenderButtonBackground(e)
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderDropDownButtonBackground(ByVal e As ToolStripItemRenderEventArgs)
+
+            Dim button As ToolStripDropDownButton = DirectCast(e.Item, ToolStripDropDownButton)
+            Dim bounds As New Rectangle(Point.Empty, button.Bounds.Size)
+
+            ' only draw if pressed
+            If button.Pressed Then
+                drawPressedButton(e.Graphics, bounds)
+            Else
+                MyBase.OnRenderDropDownButtonBackground(e)
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderGrip(ByVal e As ToolStripGripRenderEventArgs)
+            Dim vert As Boolean = (e.GripDisplayStyle = ToolStripGripDisplayStyle.Vertical)
+
+            If e.GripStyle = ToolStripGripStyle.Visible Then
+                Dim bounds As Rectangle = e.GripBounds
+                ' grip direction
+                If vert Then
+                    bounds.X = e.AffectedBounds.X
+                    bounds.Width = e.AffectedBounds.Width
+                    If TypeOf e.ToolStrip Is MenuStrip Then
+                        ' always returns vertical on menustrip: bug in GripDisplayStyle property?
+                        If e.AffectedBounds.Height > e.AffectedBounds.Width Then
+                            vert = False
+                            bounds.Y = e.AffectedBounds.Y
+                        Else
+                            ' adjust to even margins tool-menu
+                            e.ToolStrip.GripMargin = New Padding(0, 2, 0, 2)
+                            bounds.Y = e.AffectedBounds.Y
+                            bounds.Height = e.AffectedBounds.Height
+                        End If
+                    Else
+                        e.ToolStrip.GripMargin = New Padding(2, 2, 4, 2)
+                        bounds.X += 1
+                        bounds.Width += 1
+                    End If
+                Else
+                    bounds.Y = e.AffectedBounds.Y
+                    bounds.Height = e.AffectedBounds.Height
+                End If
+                ' draw the selected style
+                If (GripStyle = GripType.Dotted) OrElse (GripStyle = GripType.LargeDot) Then
+                    drawDottedGrip(e.Graphics, bounds, vert)
+                Else
+                    drawSolidGrip(e.Graphics, bounds, vert)
+                End If
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderImageMargin(ByVal e As ToolStripRenderEventArgs)
+            ' draw the margin area on a menu
+            If (TypeOf e.ToolStrip Is ContextMenuStrip) OrElse (TypeOf e.ToolStrip Is ToolStripDropDownMenu) Then
+                drawImageMargin(e.Graphics, e.AffectedBounds)
+            Else
+                MyBase.OnRenderImageMargin(e)
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderItemBackground(ByVal e As ToolStripItemRenderEventArgs)
+
+            MyBase.OnRenderItemBackground(e)
+        End Sub
+
+        Protected Overrides Sub OnRenderItemCheck(ByVal e As ToolStripItemImageRenderEventArgs)
+            ' test for menu
+            If TypeOf e.Item Is ToolStripMenuItem Then
+                ' draw the checkbox
+                Dim toolItem As ToolStripMenuItem = DirectCast(e.Item, ToolStripMenuItem)
+                drawItemCheck(e.Graphics, e.ImageRectangle, e.Image, toolItem.CheckState)
+            Else
+                MyBase.OnRenderItemCheck(e)
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderItemImage(ByVal e As ToolStripItemImageRenderEventArgs)
+            ' image rendering
+            If (TypeOf e.ToolStrip Is ContextMenuStrip) OrElse (TypeOf e.ToolStrip Is ToolStripDropDownMenu) Then
+                If e.Image IsNot Nothing Then
+                    If e.Item.Enabled Then
+                        e.Graphics.DrawImage(e.Image, e.ImageRectangle)
+                    Else
+                        ControlPaint.DrawImageDisabled(e.Graphics, e.Image, e.ImageRectangle.X, e.ImageRectangle.Y, Color.Transparent)
+                    End If
+                End If
+            ElseIf TypeOf e.ToolStrip Is ToolStrip Then
+                ' brighten button image
+                If (e.Item.Image IsNot Nothing) AndAlso (e.Item.Selected) Then
+                    Try
+                        Using buttonImage As New Bitmap(e.Item.Image)
+                            Using imageAttr As New ImageAttributes()
+                                imageAttr.SetGamma(0.8F)
+                                e.Graphics.DrawImage(buttonImage, e.ImageRectangle, 0, 0, buttonImage.Width, buttonImage.Height, _
+                                 GraphicsUnit.Pixel, imageAttr)
+                            End Using
+                        End Using
+                    Catch
+                        MyBase.OnRenderItemImage(e)
+                    End Try
+                Else
+                    MyBase.OnRenderItemImage(e)
+                End If
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderItemText(ByVal e As ToolStripItemTextRenderEventArgs)
+            If (TypeOf e.ToolStrip Is MenuStrip) OrElse (TypeOf e.ToolStrip Is ToolStrip) OrElse (TypeOf e.ToolStrip Is ContextMenuStrip) OrElse (TypeOf e.ToolStrip Is ToolStripDropDownMenu) Then
+                If Not e.Item.Enabled Then
+                    ' draw disabled
+                    e.TextColor = Color.FromKnownColor(KnownColor.InactiveCaptionText)
+                Else
+                    If TypeOf e.ToolStrip Is MenuStrip Then
+                        ' menu text
+                        If e.Item.Pressed OrElse e.Item.Selected Then
+                            e.TextColor = MenuFocusedForeColor
+                        Else
+                            e.TextColor = MenuForeColor
+                        End If
+                    ElseIf (TypeOf e.ToolStrip Is ContextMenuStrip) OrElse (TypeOf e.ToolStrip Is ToolStripDropDownMenu) Then
+                        If MenuStyle = MenuType.Vista Then
+                            If e.Item.Pressed OrElse e.Item.Selected Then
+                                e.TextColor = Color.Black
+                            Else
+                                e.TextColor = Color.FromArgb(255, &H77, &H77, &H77)
+                            End If
+                        Else
+                            If e.Item.Pressed OrElse e.Item.Selected Then
+                                e.TextColor = MenuItemFocusedForeColor
+                            Else
+                                e.TextColor = MenuItemForeColor
+                            End If
+                        End If
+                    Else
+                        If e.Item.Pressed OrElse e.Item.Selected Then
+                            e.TextColor = ButtonFocusedForeColor
+                        Else
+                            e.TextColor = ButtonForeColor
+                        End If
+                    End If
+                End If
+                e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit
+                MyBase.OnRenderItemText(e)
+            Else
+                MyBase.OnRenderItemText(e)
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderLabelBackground(ByVal e As ToolStripItemRenderEventArgs)
+            MyBase.OnRenderLabelBackground(e)
+        End Sub
+
+        Protected Overrides Sub OnRenderMenuItemBackground(ByVal e As ToolStripItemRenderEventArgs)
+            Dim bounds As New Rectangle(Point.Empty, e.Item.Bounds.Size)
+
+            If TypeOf e.ToolStrip Is MenuStrip Then
+                ' draw menu item panel segment
+                drawMenuItemBackground(e.Graphics, bounds, getButtonState(e.ToolStrip, e.Item))
+            Else
+                ' menu item focus bar
+                If getButtonState(e.ToolStrip, e.Item) = ButtonSelectedState.Focused Then
+                    drawSelectorBar(e.Graphics, bounds, (e.ToolStrip.RightToLeft = RightToLeft.Yes))
+                Else
+                    e.Item.ForeColor = MenuForeColor
+                End If
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderOverflowButtonBackground(ByVal e As ToolStripItemRenderEventArgs)
+            Dim button As ToolStripOverflowButton = DirectCast(e.Item, ToolStripOverflowButton)
+            Dim bounds As New Rectangle(Point.Empty, button.Bounds.Size)
+            bounds.Height -= 1
+
+            If ToolStripStyle <> ToolStripType.System Then
+                If button.Pressed OrElse button.Selected Then
+                    drawPressedButton(e.Graphics, bounds)
+                End If
+            End If
+            drawOverflowArrow(e.Graphics, bounds)
+        End Sub
+
+        Protected Overrides Sub OnRenderSeparator(ByVal e As ToolStripSeparatorRenderEventArgs)
+            Dim bounds As New Rectangle(Point.Empty, e.Item.Bounds.Size)
+            Dim inner As Color = Color.FromArgb(140, SeperatorInnerColor)
+            Dim outer As Color = SeperatorOuterColor
+
+            If (TypeOf e.ToolStrip Is ContextMenuStrip) OrElse (TypeOf e.ToolStrip Is ToolStripDropDownMenu) Then
+                If MenuStyle = MenuType.Vista Then
+                    inner = Color.FromArgb(220, 245, 245, 245)
+                    outer = Color.FromArgb(220, 197, 197, 197)
+                End If
+                If e.ToolStrip.RightToLeft = RightToLeft.Yes Then
+                    bounds.Width -= 22
+                    bounds.X = 2
+                    drawSeperator(e.Graphics, bounds, inner, outer, e.Vertical)
+                Else
+                    bounds.X += 22
+                    drawSeperator(e.Graphics, bounds, inner, outer, e.Vertical)
+                End If
+            Else
+                drawSeperator(e.Graphics, bounds, inner, outer, e.Vertical)
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderSplitButtonBackground(ByVal e As ToolStripItemRenderEventArgs)
+            Dim button As ToolStripSplitButton = DirectCast(e.Item, ToolStripSplitButton)
+            Dim bounds As Rectangle = button.DropDownButtonBounds
+            bounds.X += (bounds.Width - 4) \ 2
+
+            If button.DropDownButtonPressed Then
+                drawPressedButton(e.Graphics, button.DropDownButtonBounds)
+                drawArrow(e.Graphics, bounds)
+            ElseIf button.ButtonPressed Then
+                drawPressedButton(e.Graphics, button.ButtonBounds)
+            ElseIf button.IsOnDropDown Then
+                drawPressedButton(e.Graphics, button.DropDownButtonBounds)
+                drawArrow(e.Graphics, bounds)
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderStatusStripSizingGrip(ByVal e As ToolStripRenderEventArgs)
+            Dim bounds As Rectangle = e.AffectedBounds
+
+            ' draw the selected style
+            If GripStyle = GripType.Dotted Then
+                drawDottedStatusGrip(e.Graphics, e.AffectedBounds)
+            Else
+                drawSolidStatusGrip(e.Graphics, e.AffectedBounds)
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderToolStripBackground(ByVal e As ToolStripRenderEventArgs)
+            If TypeOf e.ToolStrip Is MenuStrip Then
+                ' if image or system style skip drawing
+                If (MenuStripStyle = ToolStripType.Image) OrElse (ToolStripStyle = ToolStripType.System) Then
+                    MyBase.OnRenderToolStripBackground(e)
+                Else
+                    drawToolStripBackground(e.Graphics, e.ConnectedArea, e.ToolStrip)
+                End If
+            ElseIf (TypeOf e.ToolStrip Is ContextMenuStrip) OrElse (TypeOf e.ToolStrip Is ToolStripDropDownMenu) Then
+                drawToolStripBackground(e.Graphics, e.ConnectedArea, e.ToolStrip)
+            ElseIf TypeOf e.ToolStrip Is StatusStrip Then
+                If (StatusStripStyle = ToolStripType.Image) OrElse (ToolStripStyle = ToolStripType.System) Then
+                    MyBase.OnRenderToolStripBackground(e)
+                Else
+                    drawToolStripBackground(e.Graphics, e.ConnectedArea, e.ToolStrip)
+                End If
+            Else
+                If (ToolStripStyle = ToolStripType.Image) OrElse (ToolStripStyle = ToolStripType.System) Then
+                    MyBase.OnRenderToolStripBackground(e)
+                Else
+                    drawToolStripBackground(e.Graphics, e.ConnectedArea, e.ToolStrip)
+                End If
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderToolStripBorder(ByVal e As ToolStripRenderEventArgs)
+            Dim bounds As Rectangle = e.AffectedBounds
+            bounds.Width -= 1
+            bounds.Height -= 1
+
+            If TypeOf e.ToolStrip Is MenuStrip Then
+                If e.ConnectedArea.IsEmpty Then
+                    drawToolStripBorder(e.Graphics, bounds, MenuStripBorderColor)
+                Else
+                    drawToolStripBorder(e.Graphics, e.AffectedBounds, MenuStripBorderColor)
+                End If
+            ElseIf TypeOf e.ToolStrip Is StatusStrip Then
+                drawToolStripBorder(e.Graphics, bounds, StatusStripBorderColor)
+            ElseIf TypeOf e.ToolStrip Is ToolStrip Then
+                If e.ConnectedArea.IsEmpty Then
+                    drawToolStripBorder(e.Graphics, bounds, ToolStripBorderColor)
+                End If
+            End If
+        End Sub
+
+        Protected Overrides Sub OnRenderToolStripContentPanelBackground(ByVal e As ToolStripContentPanelRenderEventArgs)
+            MyBase.OnRenderToolStripContentPanelBackground(e)
+        End Sub
+
+        Protected Overrides Sub OnRenderToolStripPanelBackground(ByVal e As ToolStripPanelRenderEventArgs)
+            MyBase.OnRenderToolStripPanelBackground(e)
+        End Sub
+
+        Protected Overrides Sub OnRenderToolStripStatusLabelBackground(ByVal e As ToolStripItemRenderEventArgs)
+            MyBase.OnRenderToolStripStatusLabelBackground(e)
+        End Sub
+#End Region
+
+#Region "Drawing Methods"
+        Private Overloads Sub drawArrow(ByVal g As Graphics, ByVal bounds As Rectangle)
+            ' get the center
+            Dim top As Integer = ((bounds.Height - 8) \ 2) + 2
+            Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                Using gp As New GraphicsPath()
+                    ' draw the frame
+                    gp.AddLine(New Point(bounds.X, top), New Point(bounds.X + 4, top))
+                    gp.AddLine(New Point(bounds.X, top), New Point(bounds.X + 2, top + 2))
+                    gp.AddLine(New Point(bounds.X + 2, top + 2), New Point(bounds.X + 4, top))
+                    gp.CloseFigure()
+
+                    ' draw border
+                    Using borderPen As New Pen(Color.FromArgb(240, DropArrowColor), 0.5F)
+                        g.DrawPath(borderPen, gp)
+                    End Using
+
+                    ' fill path
+                    Using backBrush As Brush = New SolidBrush(DropArrowColor)
+                        g.FillPath(backBrush, gp)
+                    End Using
+                End Using
+            End Using
+        End Sub
+
+        Private Sub drawDottedGrip(ByVal g As Graphics, ByVal bounds As Rectangle, ByVal vertical As Boolean)
+            ' circle bounds
+            bounds.Height -= 3
+            Dim position As New Point(bounds.X, bounds.Y)
+            Dim sep As Integer
+            Dim posRect As New Rectangle(0, 0, 2, 2)
+
+            Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                ' draw vista style grip
+                Dim hdc As IntPtr
+                If vertical Then
+                    sep = bounds.Height
+                    position.Y += 8
+                    Dim i As Integer = 0
+                    While position.Y > 4
+                        position.Y = sep - (2 + i)
+                        If GripStyle = GripType.LargeDot Then
+                            posRect.Location = position
+                            drawCircle(g, posRect, SeperatorOuterColor, SeperatorInnerColor)
+                        Else
+                            hdc = g.GetHdc()
+                            SetPixel(hdc, position.X, position.Y, ColorTranslator.ToWin32(SeperatorInnerColor))
+                            SetPixel(hdc, position.X + 1, position.Y, ColorTranslator.ToWin32(SeperatorOuterColor))
+                            SetPixel(hdc, position.X, position.Y + 1, ColorTranslator.ToWin32(SeperatorOuterColor))
+
+                            SetPixel(hdc, position.X + 3, position.Y, ColorTranslator.ToWin32(SeperatorInnerColor))
+                            SetPixel(hdc, position.X + 4, position.Y, ColorTranslator.ToWin32(SeperatorOuterColor))
+                            SetPixel(hdc, position.X + 3, position.Y + 1, ColorTranslator.ToWin32(SeperatorOuterColor))
+                            g.ReleaseHdc(hdc)
+                        End If
+                        i += 4
+                    End While
+                Else
+                    ' horizontal orientation
+                    bounds.Inflate(-2, 0)
+                    sep = bounds.Width
+                    position.X += 2
+                    Dim i As Integer = 1
+                    While position.X > 0
+                        position.X = sep - (2 + i)
+                        If GripStyle = GripType.LargeDot Then
+                            posRect.Location = position
+                            drawCircle(g, posRect, SeperatorOuterColor, SeperatorInnerColor)
+                        Else
+                            hdc = g.GetHdc()
+                            SetPixel(hdc, position.X, position.Y, ColorTranslator.ToWin32(SeperatorInnerColor))
+                            SetPixel(hdc, position.X + 1, position.Y, ColorTranslator.ToWin32(SeperatorOuterColor))
+                            SetPixel(hdc, position.X, position.Y + 1, ColorTranslator.ToWin32(SeperatorOuterColor))
+
+                            SetPixel(hdc, position.X + 3, position.Y, ColorTranslator.ToWin32(SeperatorInnerColor))
+                            SetPixel(hdc, position.X + 4, position.Y, ColorTranslator.ToWin32(SeperatorOuterColor))
+                            SetPixel(hdc, position.X + 3, position.Y + 1, ColorTranslator.ToWin32(SeperatorOuterColor))
+                            g.ReleaseHdc(hdc)
+                        End If
+                        i += 4
+                    End While
+                End If
+            End Using
+        End Sub
+
+        Private Sub drawDottedStatusGrip(ByVal g As Graphics, ByVal bounds As Rectangle)
+            ' circle bounds
+            Dim shape As New Rectangle(0, 0, 2, 2)
+            shape.X = bounds.Width - 17
+            shape.Y = bounds.Height - 8
+            Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                ' lowest outer circle
+                drawCircle(g, shape, SeperatorOuterColor, SeperatorInnerColor)
+                shape.X = bounds.Width - 12
+                drawCircle(g, shape, SeperatorOuterColor, SeperatorInnerColor)
+                shape.X = bounds.Width - 7
+                drawCircle(g, shape, SeperatorOuterColor, SeperatorInnerColor)
+                shape.Y = bounds.Height - 13
+                drawCircle(g, shape, SeperatorOuterColor, SeperatorInnerColor)
+                shape.Y = bounds.Height - 18
+                drawCircle(g, shape, SeperatorOuterColor, SeperatorInnerColor)
+                shape.Y = bounds.Height - 13
+                shape.X = bounds.Width - 12
+                drawCircle(g, shape, SeperatorOuterColor, SeperatorInnerColor)
+            End Using
+        End Sub
+
+        Private Overloads Sub drawImageMargin(ByVal g As Graphics, ByVal bounds As Rectangle)
+            If MenuStyle = MenuType.Office Then
+                ' adjust the size
+                bounds.Offset(1, 1)
+                bounds.Width -= 1
+                bounds.Height -= 2
+                ' fill the box
+                Using marginBrush As New SolidBrush(MenuImageMarginGradientBegin)
+                    g.FillRectangle(marginBrush, bounds)
+                End Using
+                ' draw the inside border
+                Using penSeperator As New Pen(Color.DarkGray)
+                    g.DrawLine(penSeperator, New Point(bounds.Width, bounds.Y), New Point(bounds.Width, bounds.Height))
+                End Using
+            ElseIf MenuStyle = MenuType.[Custom] Then
+                bounds.Inflate(-1, -1)
+                bounds.Height -= 1
+                ' not using a gradient
+                If (MenuImageMarginGradientBegin = MenuImageMarginGradientEnd) OrElse (MenuImageMarginGradientEnd = Color.Magenta) Then
+                    Using marginBrush As New SolidBrush(MenuImageMarginGradientBegin)
+                        g.FillRectangle(marginBrush, bounds)
+                    End Using
+                    ' draw the inside border
+
+                    Using penSeperator As New Pen(Color.FromArgb(150, Color.DarkGray))
+                        g.DrawLine(penSeperator, New Point(bounds.Width + 1, bounds.Y), New Point(bounds.Width + 1, bounds.Height))
+                    End Using
+                Else
+                    drawBlendedGradient(g, LinearGradientMode.Horizontal, MenuImageMarginGradientEnd, MenuImageMarginGradientBegin, bounds, MenuStripGradientBlend)
+                End If
+                ' draw the inside border
+                Using penSeperator As New Pen(MenuImageMarginGradientBegin)
+                    g.DrawRectangle(penSeperator, bounds)
+                End Using
+            ElseIf MenuStyle = MenuType.Vista Then
+                bounds.Inflate(0, -1)
+                Using marginBrush As New SolidBrush(Color.FromArgb(255, &HF5, &HF5, &HF5))
+                    g.FillRectangle(marginBrush, bounds)
+                End Using
+                ' draw the inside border
+                Using penSeperator As New Pen(Color.LightGray)
+                    g.DrawLine(penSeperator, New Point(bounds.Width - 1, bounds.Y), New Point(bounds.Width - 1, bounds.Height))
+                End Using
+                ' draw accent border
+                Using penAccent As New Pen(Color.White)
+                    g.DrawLine(penAccent, New Point(bounds.Width, bounds.Y), New Point(bounds.Width, bounds.Height))
+                End Using
+            Else
+                bounds.Inflate(0, -2)
+                ' draw the inside border
+                Using penSeperator As New Pen(SeperatorOuterColor)
+                    g.DrawLine(penSeperator, New Point(bounds.Width - 1, bounds.Y), New Point(bounds.Width - 1, bounds.Height))
+                End Using
+                ' draw accent border
+                Using penAccent As New Pen(SeperatorInnerColor)
+                    g.DrawLine(penAccent, New Point(bounds.Width, bounds.Y), New Point(bounds.Width, bounds.Height))
+                End Using
+            End If
+        End Sub
+
+        Private Overloads Sub drawItemCheck(ByVal g As Graphics, ByVal bounds As Rectangle, ByVal image As Image, ByVal state As CheckState)
+            bounds.X -= 1
+
+            ' border path
+            Using mode As New GraphicsMode(g, System.Drawing.Drawing2D.SmoothingMode.AntiAlias)
+                Using boxPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 1.0F)
+                    ' draw the border
+                    Using boxPen As New Pen(MenuFocusedForeColor)
+                        g.DrawPath(boxPen, boxPath)
+                    End Using
+
+                    ' if empty fill
+                    If image Is Nothing Then
+                        ' draw the background
+                        Using backBrush As New SolidBrush(MenuBackGroundColor)
+                            g.FillPath(backBrush, boxPath)
+                        End Using
+                    Else
+                        ' draw the appropriate state
+                        Select Case state
+                            Case CheckState.Checked
+                                bounds.Inflate(-3, -3)
+                                ' create inset path
+                                Using checkPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 1.0F)
+                                    ' draw the outer region
+                                    Using excludePath As New Region(boxPath)
+                                        excludePath.Exclude(checkPath)
+                                        Using backBrush As New SolidBrush(MenuBackGroundColor)
+                                            g.FillPath(backBrush, boxPath)
+                                        End Using
+                                    End Using
+                                    ' draw the border
+                                    Using penBorder As New Pen(MenuStripGradientEnd)
+                                        g.DrawPath(penBorder, checkPath)
+                                    End Using
+                                    ' draw the check
+                                    drawBlendedGradient(g, LinearGradientMode.Vertical, Color.LimeGreen, Color.LightGreen, bounds, MenuStripGradientBlend)
+                                End Using
+                                Exit Select
+                            Case CheckState.Indeterminate
+                                ' fill disabled color
+                                Using tickBrush As New SolidBrush(Color.FromKnownColor(KnownColor.ButtonShadow))
+                                    g.FillPath(tickBrush, boxPath)
+                                End Using
+                                Exit Select
+                        End Select
+                    End If
+                End Using
+            End Using
+        End Sub
+
+        Private Overloads Sub drawMenuItemBackground(ByVal g As Graphics, ByVal bounds As Rectangle, ByVal state As ButtonSelectedState)
+            ' access current theme choice
+            If MenuStyle = MenuType.[Custom] Then
+                If state = ButtonSelectedState.Pressed Then
+                    drawPressedButton(g, bounds)
+                ElseIf state = ButtonSelectedState.Focused Then
+                    If ButtonHoverEffect = ButtonHoverType.Bevelled Then
+                        drawBevelledMask(g, bounds, 10)
+                    ElseIf ButtonHoverEffect = ButtonHoverType.Flat Then
+                        drawFlatMask(g, bounds, 10)
+                    ElseIf ButtonHoverEffect = ButtonHoverType.Glass Then
+                        drawGlassButton(g, bounds, 10)
+                    ElseIf ButtonHoverEffect = ButtonHoverType.Glow Then
+                        drawDiffusedGlow(g, bounds, 10)
+                    ElseIf ButtonHoverEffect = ButtonHoverType.Raised Then
+                        drawRaisedButton(g, bounds, 10)
+                    End If
+                End If
+                ' draw a flat menu
+            ElseIf MenuStyle = MenuType.Office Then
+                If state = ButtonSelectedState.Pressed Then
+                    ' draw connecting frame 
+                    Using framePen As New Pen(Color.LightGray)
+                        g.DrawLine(framePen, New Point(bounds.X, bounds.Y), New Point(bounds.X, bounds.Height))
+                        g.DrawLine(framePen, New Point(bounds.X + 1, bounds.Y), New Point(bounds.Width - 1, bounds.Y))
+                        g.DrawLine(framePen, New Point(bounds.Width - 1, bounds.Y + 1), New Point(bounds.Width - 1, bounds.Height - 1))
+                    End Using
+
+                    bounds.Inflate(-1, -1)
+                    Using backBrush As Brush = New SolidBrush(MenuImageMarginGradientBegin)
+                        g.FillRectangle(backBrush, bounds)
+                    End Using
+                ElseIf state = ButtonSelectedState.Focused Then
+                    drawOfficeMenuButton(g, bounds)
+                End If
+                ' draw office style menu
+            ElseIf MenuStyle = MenuType.Flat Then
+                ' flat style menu button
+                If (state = ButtonSelectedState.Pressed) OrElse (state = ButtonSelectedState.Focused) Then
+                    drawFlatMask(g, bounds, 10)
+                End If
+                ' draw vista style menu
+            ElseIf MenuStyle = MenuType.Vista Then
+                ' draw a raised style menu button
+                If (state = ButtonSelectedState.Pressed) OrElse (state = ButtonSelectedState.Focused) Then
+                    drawVistaMenuButton(g, bounds)
+                End If
+            End If
+        End Sub
+
+        Private Sub drawVistaMenuButton(ByVal g As Graphics, ByVal bounds As Rectangle)
+            Using fillBrush As Brush = New SolidBrush(ButtonGradientBegin)
+                g.FillRectangle(fillBrush, bounds)
+            End Using
+        End Sub
+
+        Private Sub drawOfficeMenuButton(ByVal g As Graphics, ByVal bounds As Rectangle)
+            bounds.Width -= 1
+            bounds.Height -= 1
+            Using framePen As New Pen(ButtonGradientBegin)
+                g.DrawRectangle(framePen, bounds)
+            End Using
+            bounds.Inflate(-1, -1)
+            bounds.Width += 1
+            bounds.Height += 1
+            Using fillBrush As Brush = New SolidBrush(ButtonGradientEnd)
+                g.FillRectangle(fillBrush, bounds)
+            End Using
+        End Sub
+
+        Private Sub drawOverflowArrow(ByVal g As Graphics, ByVal bounds As Rectangle)
+            ' get the center
+            Dim top As Integer = bounds.Y + 6
+            bounds.X += 6
+            Using gp As New GraphicsPath()
+                ' draw the frame
+                gp.AddLine(New Point(bounds.X, top), New Point(bounds.X, top + 5))
+                gp.AddLine(New Point(bounds.X, top + 5), New Point(bounds.X + 2, top + 3))
+                gp.AddLine(New Point(bounds.X + 2, top + 3), New Point(bounds.X, top))
+                gp.CloseFigure()
+
+                ' draw border
+                Using borderPen As New Pen(Color.FromArgb(240, DropArrowColor), 0.5F)
+                    g.DrawPath(borderPen, gp)
+                End Using
+
+                ' fill path
+                Using backBrush As Brush = New SolidBrush(DropArrowColor)
+                    g.FillPath(backBrush, gp)
+                End Using
+            End Using
+        End Sub
+
+        Private Sub drawSelectorBar(ByVal g As Graphics, ByVal bounds As Rectangle, ByVal align As Boolean)
+            bounds.Inflate(-2, -1)
+            Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                Using barPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 1.0F)
+                    ' draw the border
+                    Using borderPen As New Pen(Color.FromArgb(125, 162, 206), 0.5F)
+                        g.DrawPath(borderPen, barPath)
+                    End Using
+
+                    ' fill with a gradient
+                    Using fillBrush As New LinearGradientBrush(bounds, Color.FromArgb(220, 235, 252), Color.FromArgb(193, 219, 252), LinearGradientMode.Vertical)
+                        fillBrush.Blend = MenuStripGradientBlend
+                        ' fill the path
+                        g.FillPath(fillBrush, barPath)
+                    End Using
+                End Using
+            End Using
+        End Sub
+
+        Private Sub drawSeperator(ByVal g As Graphics, ByVal bounds As Rectangle, ByVal light As Color, ByVal dark As Color, ByVal vertical As Boolean)
+            ' draw inner and outer lines
+            Using inner As New Pen(light), outer As New Pen(dark)
+                If vertical Then
+                    g.DrawLine(outer, New Point(bounds.X + 3, bounds.Y + 2), New Point(bounds.X + 3, bounds.Height - 3))
+                    g.DrawLine(inner, New Point(bounds.X + 4, bounds.Y + 3), New Point(bounds.X + 4, bounds.Height - 4))
+                Else
+                    g.DrawLine(outer, New Point(bounds.X + 4, bounds.Y + 1), New Point(bounds.Width - 4, bounds.Y + 1))
+                    g.DrawLine(inner, New Point(bounds.X + 4, bounds.Y + 2), New Point(bounds.Width - 4, bounds.Y + 2))
+                End If
+            End Using
+        End Sub
+
+        Private Sub drawSolidGrip(ByVal g As Graphics, ByVal bounds As Rectangle, ByVal vertical As Boolean)
+            If vertical Then
+                Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                    ' create the path
+                    Using gripPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y + 2, bounds.X + 2, bounds.Height - 6, 1.0F)
+                        ' draw the frame
+                        Using outer As New Pen(Color.FromArgb(150, SeperatorOuterColor), 0.5F)
+                            g.DrawPath(outer, gripPath)
+                            ' fiil the path
+                            Using inner As Brush = New SolidBrush(Color.FromArgb(100, SeperatorInnerColor))
+                                g.FillPath(inner, gripPath)
+                            End Using
+                        End Using
+                        ' draw an accent
+                        Using accent As New Pen(Color.FromArgb(75, Color.Snow), 0.5F)
+                            g.DrawLine(accent, New PointF(bounds.X + 2, bounds.Y + 4), New PointF(bounds.X + 2, bounds.Height - 4))
+                        End Using
+                    End Using
+                End Using
+            Else
+                Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                    Using gripPath As GraphicsPath = createRoundRectanglePath(g, bounds.X + 2, bounds.Y, bounds.Width - 4, bounds.Y + 3, 1.0F)
+                        Using outer As New Pen(SeperatorOuterColor)
+                            g.DrawPath(outer, gripPath)
+                            Using inner As Brush = New SolidBrush(Color.FromArgb(200, SeperatorInnerColor))
+                                g.FillPath(inner, gripPath)
+                            End Using
+                        End Using
+                        Using accent As New Pen(Color.FromArgb(90, Color.Snow), 0.5F)
+                            g.DrawLine(accent, New PointF(bounds.X + 4, bounds.Y + 1), New PointF(bounds.Width - 4, bounds.Y + 1))
+                        End Using
+                    End Using
+                End Using
+            End If
+        End Sub
+
+        Private Sub drawSolidStatusGrip(ByVal g As Graphics, ByVal bounds As Rectangle)
+            Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                Using inner As New Pen(SeperatorInnerColor), outer As New Pen(SeperatorOuterColor)
+                    'outer line
+                    g.DrawLine(outer, New Point(bounds.Width - 14, bounds.Height - 6), New Point(bounds.Width - 4, bounds.Height - 16))
+                    g.DrawLine(inner, New Point(bounds.Width - 13, bounds.Height - 6), New Point(bounds.Width - 4, bounds.Height - 15))
+                    ' line
+                    g.DrawLine(outer, New Point(bounds.Width - 12, bounds.Height - 6), New Point(bounds.Width - 4, bounds.Height - 14))
+                    g.DrawLine(inner, New Point(bounds.Width - 11, bounds.Height - 6), New Point(bounds.Width - 4, bounds.Height - 13))
+                    ' line
+                    g.DrawLine(outer, New Point(bounds.Width - 10, bounds.Height - 6), New Point(bounds.Width - 4, bounds.Height - 12))
+                    g.DrawLine(inner, New Point(bounds.Width - 9, bounds.Height - 6), New Point(bounds.Width - 4, bounds.Height - 11))
+                    ' line
+                    g.DrawLine(outer, New Point(bounds.Width - 8, bounds.Height - 6), New Point(bounds.Width - 4, bounds.Height - 10))
+                    g.DrawLine(inner, New Point(bounds.Width - 7, bounds.Height - 6), New Point(bounds.Width - 4, bounds.Height - 9))
+                    ' inner line
+                    g.DrawLine(outer, New Point(bounds.Width - 6, bounds.Height - 6), New Point(bounds.Width - 4, bounds.Height - 8))
+                    g.DrawLine(inner, New Point(bounds.Width - 5, bounds.Height - 6), New Point(bounds.Width - 4, bounds.Height - 7))
+                End Using
+            End Using
+        End Sub
+
+        Private Overloads Sub drawToolStripBackground(ByVal g As Graphics, ByVal area As Rectangle, ByVal toolStrip As ToolStrip)
+            Dim bounds As New Rectangle(Point.Empty, toolStrip.Bounds.Size)
+
+            ' right to left offset
+            Dim offset As Integer
+            If toolStrip.RightToLeft = RightToLeft.Yes Then
+                offset = 2
+            Else
+                offset = 25
+            End If
+
+            If Not bounds.IsEmpty Then
+                ' draw the menustrip gradient
+                If (TypeOf toolStrip Is MenuStrip) Then
+                    bounds.Inflate(-1, -1)
+                    If (MenuStripStyle = ToolStripType.HorizontalGradient) OrElse (MenuStripStyle = ToolStripType.VerticalGradient) Then
+                        drawBlendedGradient(g, gradientDirection(toolStrip, MenuStripGradientDirection), ToolStripGradientBegin, ToolStripGradientEnd, bounds, MenuStripGradientBlend)
+                    ElseIf MenuStripStyle = ToolStripType.FlatColor Then
+                        Using fillBrush As Brush = New SolidBrush(MenuStripGradientBegin)
+                            g.FillRectangle(fillBrush, bounds)
+                        End Using
+                    End If
+                ElseIf (TypeOf toolStrip Is ContextMenuStrip) OrElse (TypeOf toolStrip Is ToolStripDropDownMenu) Then
+                    ' fill the area with the bc
+                    If MenuStyle = MenuType.Flat Then
+                        drawFrame(g, bounds, Color.LightGray, Color.DarkGray)
+                        Using fillBrush As Brush = New SolidBrush(MenuBackGroundColor)
+                            bounds.Inflate(-1, -1)
+                            g.FillRectangle(fillBrush, bounds)
+                        End Using
+                        ' draw the background & panel
+                    ElseIf (MenuStyle = MenuType.Office) Then
+                        If area.IsEmpty Then
+                            bounds.Inflate(-1, -1)
+                            ' JU: changed e.AffectedBounds to bounds
+                            drawFrame(g, bounds, Color.LightGray, Color.DarkGray)
+                            Using fillBrush As Brush = New SolidBrush(MenuBackGroundColor)
+                                bounds.Inflate(-1, -1)
+                                bounds.X = offset
+                                g.FillRectangle(fillBrush, bounds)
+                            End Using
+                        Else
+                            Dim clipBounds As Rectangle = area
+                            clipBounds.Inflate(-1, -1)
+                            Using clipRegion As New Region(clipBounds)
+                                g.SetClip(clipRegion, CombineMode.Exclude)
+                                drawFrame(g, bounds, Color.LightGray, Color.DarkGray)
+                                g.ResetClip()
+                            End Using
+
+                            Using coverPen As New Pen(MenuImageMarginGradientBegin, 2.0F)
+                                g.DrawLine(coverPen, New Point(area.X, area.Y), New Point(offset, area.Y))
+                            End Using
+
+                            Using borderPen As New Pen(Color.DarkGray, 2.0F)
+                                g.DrawLine(borderPen, New Point(offset, area.Y), New Point(area.Width + 1, area.Y))
+                                g.DrawLine(borderPen, New Point(offset, bounds.Y), New Point(offset, bounds.Height - 1))
+                            End Using
+
+                            Using fillBrush As Brush = New SolidBrush(MenuBackGroundColor)
+                                bounds.Inflate(-1, -1)
+                                bounds.X = offset
+                                g.FillRectangle(fillBrush, bounds)
+                            End Using
+                        End If
+                    ElseIf MenuStyle = MenuType.Vista Then
+                        drawFrame(g, bounds, Color.LightGray, Color.DarkGray)
+                        Using fillBrush As Brush = New SolidBrush(Color.FromArgb(255, &HF5, &HF5, &HF5))
+                            bounds.Inflate(-1, -1)
+                            bounds.X = 25
+                            g.FillRectangle(fillBrush, bounds)
+                        End Using
+                        ' draw flat background
+                    ElseIf MenuStyle = MenuType.[Custom] Then
+                        drawFrame(g, bounds, Color.LightGray, Color.DarkGray)
+                        Using fillBrush As Brush = New SolidBrush(MenuBackGroundColor)
+                            bounds.Inflate(-1, -1)
+                            bounds.X = 25
+                            g.FillRectangle(fillBrush, bounds)
+                        End Using
+                    End If
+                    ' draw the statusstrip bg
+                ElseIf (TypeOf toolStrip Is StatusStrip) Then
+                    bounds.Inflate(-1, -1)
+                    If (StatusStripStyle = ToolStripType.HorizontalGradient) OrElse (StatusStripStyle = ToolStripType.VerticalGradient) Then
+                        drawBlendedGradient(g, gradientDirection(toolStrip, StatusStripGradientDirection), ToolStripGradientBegin, ToolStripGradientEnd, bounds, MenuStripGradientBlend)
+                    ElseIf StatusStripStyle = ToolStripType.FlatColor Then
+                        Using fillBrush As Brush = New SolidBrush(StatusStripGradientBegin)
+                            g.FillRectangle(fillBrush, bounds)
+                        End Using
+                    End If
+                    ' draw the toolstrip bg
+                ElseIf (TypeOf toolStrip Is ToolStrip) Then
+                    bounds.Inflate(-1, -1)
+                    If (ToolStripStyle = ToolStripType.HorizontalGradient) OrElse (ToolStripStyle = ToolStripType.VerticalGradient) Then
+                        drawBlendedGradient(g, gradientDirection(toolStrip, ToolStripGradientDirection), ToolStripGradientBegin, ToolStripGradientEnd, bounds, MenuStripGradientBlend)
+                    ElseIf ToolStripStyle = ToolStripType.FlatColor Then
+                        Using fillBrush As Brush = New SolidBrush(ToolStripGradientBegin)
+                            g.FillRectangle(fillBrush, bounds)
+                        End Using
+                    End If
+                End If
+            End If
+        End Sub
+
+        Private Overloads Sub drawToolStripBorder(ByVal g As Graphics, ByVal bounds As Rectangle, ByVal border As Color)
+            ' draw the frame
+            Using borderPen As New Pen(border)
+                g.DrawRectangle(borderPen, bounds)
+            End Using
+        End Sub
+#End Region
+
+#Region "Helpers"
+        Private Function createRoundRectanglePath(ByVal g As Graphics, ByVal X As Single, ByVal Y As Single, ByVal width As Single, ByVal height As Single, ByVal radius As Single) As GraphicsPath
+            ' create a path
+            Dim pathBounds As New GraphicsPath()
+            pathBounds.AddLine(X + radius, Y, X + width - (radius * 2), Y)
+            pathBounds.AddArc(X + width - (radius * 2), Y, radius * 2, radius * 2, 270, 90)
+            pathBounds.AddLine(X + width, Y + radius, X + width, Y + height - (radius * 2))
+            pathBounds.AddArc(X + width - (radius * 2), Y + height - (radius * 2), radius * 2, radius * 2, 0, 90)
+            pathBounds.AddLine(X + width - (radius * 2), Y + height, X + radius, Y + height)
+            pathBounds.AddArc(X, Y + height - (radius * 2), radius * 2, radius * 2, 90, 90)
+            pathBounds.AddLine(X, Y + height - (radius * 2), X, Y + radius)
+            pathBounds.AddArc(X, Y, radius * 2, radius * 2, 180, 90)
+            pathBounds.CloseFigure()
+            Return pathBounds
+        End Function
+
+        Private Sub drawBlendedGradient(ByVal g As Graphics, ByVal mode As LinearGradientMode, ByVal begin As Color, ByVal [end] As Color, ByVal rc As Rectangle, ByVal bp As Blend)
+            Using hb As New LinearGradientBrush(rc, begin, [end], mode)
+                hb.Blend = bp
+                g.FillRectangle(hb, rc)
+            End Using
+        End Sub
+
+        Private Sub drawBevelledMask(ByVal g As Graphics, ByVal bounds As RectangleF, ByVal opacity As Integer)
+            ' initial bounds
+            bounds.Inflate(-1, -1)
+            ' use antialias
+            Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                ' create outline path
+                Using buttonPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 2)
+                    ' draw the outline
+                    Using borderPen As New Pen(Color.FromArgb(opacity * 10, ButtonBorderColor), 0.5F)
+                        g.DrawPath(borderPen, buttonPath)
+                    End Using
+                End Using
+
+                ' create inner path
+                bounds.Inflate(-1, -1)
+                Using buttonPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 2)
+                    ' draw the bevel
+                    Using bevelBrush As New LinearGradientBrush(bounds, Color.FromArgb(opacity * 10, ToolStripGradientBegin), Color.FromArgb(opacity * 10, ToolStripGradientEnd), LinearGradientMode.ForwardDiagonal)
+                        Using bevelPen As New Pen(bevelBrush, 1.0F)
+                            g.DrawPath(bevelPen, buttonPath)
+
+                        End Using
+                    End Using
+                    ' fill the path
+                    Using gradientBrush As New LinearGradientBrush(bounds, Color.FromArgb(opacity * 5, Color.White), Color.FromArgb(opacity * 5, Color.LightGray), LinearGradientMode.ForwardDiagonal)
+                        gradientBrush.Blend = ToolStripGradientBlend
+                        g.FillPath(gradientBrush, buttonPath)
+                    End Using
+                End Using
+            End Using
+        End Sub
+
+        Private Sub drawCircle(ByVal g As Graphics, ByVal bounds As Rectangle, ByVal borderColor As Color, ByVal fillColor As Color)
+            Using circlePath As New GraphicsPath()
+                ' create the path
+                circlePath.AddEllipse(bounds)
+                circlePath.CloseFigure()
+                ' draw outer edge
+                Using borderPen As New Pen(borderColor)
+                    g.DrawPath(borderPen, circlePath)
+                End Using
+                ' fill path
+                Using backBrush As Brush = New SolidBrush(fillColor)
+                    g.FillPath(backBrush, circlePath)
+                End Using
+            End Using
+        End Sub
+
+        Private Sub drawDiffusedGlow(ByVal g As Graphics, ByVal bounds As RectangleF, ByVal opacity As Integer)
+            Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                Using diffusedPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 2)
+                    Using borderPen As New Pen(Color.FromArgb(opacity * 5, ButtonBorderColor), 0.8F)
+                        g.DrawPath(borderPen, diffusedPath)
+                    End Using
+                End Using
+
+                bounds.Inflate(-1, -1)
+                Using diffusedPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 2)
+                    Using borderPen As New Pen(Color.FromArgb(opacity * 10, ButtonBorderColor), 0.8F)
+                        g.DrawPath(borderPen, diffusedPath)
+                    End Using
+                End Using
+
+                bounds.Inflate(-1, -1)
+                Using diffusedPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 2)
+                    Using borderPen As New Pen(Color.FromArgb(opacity * 20, ButtonBorderColor), 0.8F)
+                        g.DrawPath(borderPen, diffusedPath)
+                    End Using
+                End Using
+            End Using
+        End Sub
+
+        Private Sub drawFlatMask(ByVal g As Graphics, ByVal bounds As RectangleF, ByVal opacity As Integer)
+            ' initial bounds
+            bounds.Inflate(-1, -1)
+            ' draw using anti alias
+            Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                ' create the path
+                Using buttonPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 1.0F)
+                    ' draw the outer edge
+                    Using borderPen As New Pen(Color.FromArgb(opacity * 15, ButtonBorderColor), 0.5F)
+                        g.DrawPath(borderPen, buttonPath)
+                    End Using
+                End Using
+                bounds.Inflate(-1, -1)
+
+                Using buttonPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 1.0F)
+                    ' draw the inner edge
+                    Using borderPen As New Pen(Color.FromArgb(opacity * 5, ButtonBorderColor), 1.0F)
+                        g.DrawPath(borderPen, buttonPath)
+                    End Using
+
+                    ' create a thin gradient cover
+                    Using fillBrush As New LinearGradientBrush(bounds, Color.FromArgb(opacity * 5, ButtonGradientBegin), Color.FromArgb(opacity * 5, Color.LightGray), LinearGradientMode.Vertical)
+                        ' shift the blend factors
+                        Dim blend As New Blend()
+                        blend.Positions = New Single() {0.0F, 0.3F, 0.6F, 1.0F}
+                        blend.Factors = New Single() {0.0F, 0.5F, 0.8F, 0.2F}
+                        fillBrush.Blend = blend
+                        ' fill the path
+                        g.FillPath(fillBrush, buttonPath)
+                    End Using
+                End Using
+            End Using
+        End Sub
+
+        Private Sub drawFrame(ByVal g As Graphics, ByVal bounds As Rectangle, ByVal light As Color, ByVal dark As Color)
+            Using lightPen As New Pen(light), darkPen As New Pen(dark)
+                g.DrawLines(lightPen, New Point() {New Point(0, bounds.Height - 1), New Point(0, 0), New Point(bounds.Width - 1, 0)})
+                g.DrawLines(darkPen, New Point() {New Point(0, bounds.Height - 1), New Point(bounds.Width - 1, bounds.Height - 1), New Point(bounds.Width - 1, 0)})
+            End Using
+        End Sub
+
+        Private Sub drawGlassButton(ByVal g As Graphics, ByVal bounds As RectangleF, ByVal opacity As Integer)
+            ' initial bounds
+            bounds.Inflate(-1, -1)
+            ' draw using anti alias
+            Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                ' draw the border around the button
+                Using buttonPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 1.0F)
+                    Using borderBrush As New LinearGradientBrush(bounds, Color.FromArgb(opacity * 20, ButtonGradientEnd), Color.FromArgb(opacity * 20, ButtonGradientBegin), 90.0F)
+                        borderBrush.SetSigmaBellShape(0.5F)
+                        Using borderPen As New Pen(borderBrush, 0.5F)
+                            g.DrawPath(borderPen, buttonPath)
+                        End Using
+                    End Using
+
+                    ' create a clipping region
+                    Dim clipBounds As RectangleF = bounds
+                    clipBounds.Inflate(-1, -1)
+                    Using clipPath As GraphicsPath = createRoundRectanglePath(g, clipBounds.X, clipBounds.Y, clipBounds.Width, clipBounds.Height, 1.0F)
+                        Using region As New Region(clipPath)
+                            g.SetClip(region, CombineMode.Exclude)
+                        End Using
+                    End Using
+
+                    ' fill in the edge accent
+                    Using edgeBrush As New LinearGradientBrush(bounds, Color.FromArgb(opacity * 15, ButtonBorderColor), Color.FromArgb(opacity * 5, Color.Black), 90.0F)
+                        edgeBrush.SetBlendTriangularShape(0.1F)
+                        g.FillPath(edgeBrush, buttonPath)
+                        g.ResetClip()
+                        bounds.Inflate(-1, -1)
+                    End Using
+
+                    ' fill the button with a subtle glow
+                    Using fillBrush As New LinearGradientBrush(bounds, Color.FromArgb(opacity * 10, Color.White), Color.FromArgb(opacity * 5, ButtonGradientBegin), LinearGradientMode.ForwardDiagonal)
+                        fillBrush.SetBlendTriangularShape(0.4F)
+                        g.FillPath(fillBrush, buttonPath)
+                        g.ResetClip()
+                    End Using
+                End Using
+            End Using
+        End Sub
+
+        Private Sub drawPressedButton(ByVal g As Graphics, ByVal bounds As RectangleF)
+            ' initial bounds
+            bounds.Inflate(-1, -1)
+            ' use anti alias
+            Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                ' draw the outer border
+                Using diffusedPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 1.0F)
+                    Using borderPen As New Pen(Color.FromArgb(150, ButtonBorderColor), 0.5F)
+                        g.DrawPath(borderPen, diffusedPath)
+                    End Using
+                End Using
+
+                ' draw the inner shading
+                bounds.Inflate(-0.5F, -0.5F)
+                Using diffusedPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 1.0F)
+                    Using borderPen As New Pen(Color.FromArgb(100, Color.Black), 0.5F)
+                        g.DrawPath(borderPen, diffusedPath)
+                    End Using
+                End Using
+
+                bounds.Inflate(-0.5F, -0.5F)
+                Using diffusedPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 1.0F)
+                    Using borderPen As New Pen(Color.FromArgb(50, Color.Black), 0.5F)
+                        g.DrawPath(borderPen, diffusedPath)
+                    End Using
+                    ' draw a dim mask over the button
+                    Using fillBrush As Brush = New SolidBrush(Color.FromArgb(40, ToolStripGradientEnd))
+                        g.FillPath(fillBrush, diffusedPath)
+                    End Using
+                End Using
+            End Using
+        End Sub
+
+        Private Sub drawRaisedButton(ByVal g As Graphics, ByVal bounds As RectangleF, ByVal opacity As Integer)
+            bounds.Width -= 1
+            bounds.Y += 1
+            bounds.Height -= 2
+
+            ' draw using anti alias
+            Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                ' create the path
+                Using buttonPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 1.0F)
+                    ' draw the outer edge
+                    Using borderPen As New Pen(Color.FromArgb(opacity * 15, Color.SlateGray), 0.5F)
+                        g.DrawPath(borderPen, buttonPath)
+                    End Using
+                End Using
+                bounds.Inflate(-1, -1)
+
+                Using buttonPath As GraphicsPath = createRoundRectanglePath(g, bounds.X, bounds.Y, bounds.Width, bounds.Height, 1.0F)
+                    ' draw the inner edge
+                    Using borderPen As New Pen(Color.FromArgb(opacity * 15, ButtonBorderColor), 1.5F)
+                        g.DrawPath(borderPen, buttonPath)
+                    End Using
+
+                    ' create a thin gradient cover
+                    Using fillBrush As New LinearGradientBrush(bounds, Color.FromArgb(opacity * 5, Color.FromArgb(200, Color.White)), Color.FromArgb(opacity * 5, ButtonGradientEnd), LinearGradientMode.Vertical)
+                        ' shift the blend factors
+                        Dim blend As New Blend()
+                        blend.Positions = New Single() {0.0F, 0.3F, 0.6F, 1.0F}
+                        blend.Factors = New Single() {0.0F, 0.5F, 0.8F, 0.2F}
+                        fillBrush.Blend = blend
+                        ' fill the path
+                        g.FillPath(fillBrush, buttonPath)
+                    End Using
+                End Using
+            End Using
+        End Sub
+
+        Private Function getButtonState(ByVal toolStrip As ToolStrip, ByVal item As ToolStripItem) As ButtonSelectedState
+            If Not item.Enabled Then
+                Return ButtonSelectedState.Disabled
+            End If
+
+            If TypeOf item Is ToolStripButton Then
+                Dim button As ToolStripButton = DirectCast(item, ToolStripButton)
+                If button.Checked Then
+                    Return ButtonSelectedState.Checked
+                End If
+            End If
+
+            If item.Pressed Then
+                Return ButtonSelectedState.Pressed
+            Else
+                Dim cursorPos As Point = toolStrip.PointToClient(Cursor.Position)
+                If (item.Visible) AndAlso (item.Bounds.Contains(cursorPos)) Then
+                    Return ButtonSelectedState.Focused
+                Else
+                    Return ButtonSelectedState.None
+                End If
+            End If
+        End Function
+
+        Private Function getImageRect(ByVal item As ToolStripItem) As Rectangle
+            Dim itemBounds As New Rectangle()
+            If TypeOf item Is ToolStripSplitButton Then
+                Dim button As ToolStripSplitButton = DirectCast(item, ToolStripSplitButton)
+                itemBounds = button.Bounds
+            ElseIf TypeOf item Is ToolStripDropDownButton Then
+                Dim button As ToolStripDropDownButton = DirectCast(item, ToolStripDropDownButton)
+                itemBounds = button.Bounds
+                If button.RightToLeft = RightToLeft.Yes Then
+                    itemBounds.Inflate(5, 0)
+                Else
+                    itemBounds.Width -= 8
+                End If
+            ElseIf TypeOf item Is ToolStripButton Then
+                Dim button As ToolStripButton = DirectCast(item, ToolStripButton)
+                itemBounds = button.Bounds
+            End If
+            Dim imageSize As Size = item.Owner.ImageScalingSize
+            Return New Rectangle((itemBounds.Width - imageSize.Width) \ 2, (itemBounds.Height - imageSize.Height) \ 2, imageSize.Width, imageSize.Height)
+        End Function
+
+        Private Function gradientDirection(ByVal toolStrip As ToolStrip, ByVal gradientSetting As LinearGradientMode) As LinearGradientMode
+            If (toolStrip.LayoutStyle = ToolStripLayoutStyle.Flow) AndAlso (gradientSetting = LinearGradientMode.Vertical) Then
+                If toolStrip.Height > toolStrip.Width Then
+                    Return LinearGradientMode.Horizontal
+                Else
+                    Return LinearGradientMode.Vertical
+                End If
+            ElseIf (toolStrip.LayoutStyle = ToolStripLayoutStyle.Flow) AndAlso (gradientSetting = LinearGradientMode.Horizontal) Then
+                If toolStrip.Height > toolStrip.Width Then
+                    Return LinearGradientMode.Vertical
+                Else
+                    Return LinearGradientMode.Horizontal
+                End If
+            ElseIf (toolStrip.LayoutStyle = ToolStripLayoutStyle.Table) AndAlso (gradientSetting = LinearGradientMode.Vertical) Then
+                If toolStrip.Height > toolStrip.Width Then
+                    Return LinearGradientMode.Horizontal
+                Else
+                    Return LinearGradientMode.Vertical
+                End If
+            ElseIf (toolStrip.LayoutStyle = ToolStripLayoutStyle.Table) AndAlso (gradientSetting = LinearGradientMode.Horizontal) Then
+                If toolStrip.Height > toolStrip.Width Then
+                    Return LinearGradientMode.Vertical
+                Else
+                    Return LinearGradientMode.Horizontal
+                End If
+            ElseIf (toolStrip.Orientation = Orientation.Horizontal) AndAlso (gradientSetting = LinearGradientMode.Vertical) Then
+                Return LinearGradientMode.Vertical
+            ElseIf (toolStrip.Orientation = Orientation.Vertical) AndAlso (gradientSetting = LinearGradientMode.Vertical) Then
+                Return LinearGradientMode.Horizontal
+            ElseIf (toolStrip.Orientation = Orientation.Vertical) AndAlso (gradientSetting = LinearGradientMode.Horizontal) Then
+                Return LinearGradientMode.Vertical
+            ElseIf (toolStrip.Orientation = Orientation.Horizontal) AndAlso (gradientSetting = LinearGradientMode.Horizontal) Then
+                Return LinearGradientMode.Horizontal
+            Else
+                Return gradientSetting
+            End If
+        End Function
+#End Region
+#End Region
+
+#Region "Finalizer"
+        Public Sub Dispose() Implements IDisposable.Dispose
+            If _comboBoxExtender IsNot Nothing Then
+                _comboBoxExtender.Dispose()
+            End If
+            If _toolStripExtender IsNot Nothing Then
+                _toolStripExtender.Dispose()
+            End If
+            If _toolTip IsNot Nothing Then
+                _toolTip.Dispose()
+            End If
+
+        End Sub
+
+        Protected Overrides Sub Finalize()
+            Try
+                Dispose()
+            Finally
+                MyBase.Finalize()
+            End Try
+        End Sub
+#End Region
+#End Region
+
+#Region "GraphicsMode"
+        Friend Class GraphicsMode
+            Implements IDisposable
+#Region "Instance Fields"
+            Private _graphicCopy As Graphics
+            Private _oldMode As SmoothingMode
+#End Region
+
+#Region "Identity"
+            ''' <summary>
+            ''' Initialize a new instance of the class.
+            ''' </summary>
+            ''' <param name="g">Graphics instance.</param>
+            ''' <param name="mode">Desired Smoothing mode.</param>
+            Public Sub New(ByVal g As Graphics, ByVal mode As SmoothingMode)
+                _graphicCopy = g
+                _oldMode = _graphicCopy.SmoothingMode
+                _graphicCopy.SmoothingMode = mode
+            End Sub
+
+            ''' <summary>
+            ''' Revert the SmoothingMode to original setting.
+            ''' </summary>
+            Public Sub Dispose() Implements IDisposable.Dispose
+                _graphicCopy.SmoothingMode = _oldMode
+            End Sub
+#End Region
+        End Class
+#End Region
+
+#Region "ComboBoxExtender"
+        <System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name:="FullTrust")> _
+        Friend Class ComboBoxExtender
+            Inherits NativeWindow
+#Region "Structs"
+            <StructLayout(LayoutKind.Sequential)> _
+            Private Structure RECT
+                Friend Sub New(ByVal X As Integer, ByVal Y As Integer, ByVal Width As Integer, ByVal Height As Integer)
+                    Me.Left = X
+                    Me.Top = Y
+                    Me.Right = Width
+                    Me.Bottom = Height
+                End Sub
+                Friend Left As Integer
+                Friend Top As Integer
+                Friend Right As Integer
+                Friend Bottom As Integer
+            End Structure
+
+            <StructLayout(LayoutKind.Sequential)> _
+            Private Structure PAINTSTRUCT
+                Friend hdc As IntPtr
+                Friend fErase As Integer
+                Friend rcPaint As RECT
+                Friend fRestore As Integer
+                Friend fIncUpdate As Integer
+                Friend Reserved1 As Integer
+                Friend Reserved2 As Integer
+                Friend Reserved3 As Integer
+                Friend Reserved4 As Integer
+                Friend Reserved5 As Integer
+                Friend Reserved6 As Integer
+                Friend Reserved7 As Integer
+                Friend Reserved8 As Integer
+            End Structure
+#End Region
+
+#Region "API"
+            <DllImport("user32.dll")> _
+            Private Shared Function BeginPaint(ByVal hWnd As IntPtr, ByRef ps As PAINTSTRUCT) As IntPtr
+            End Function
+
+            <DllImport("user32.dll")> _
+            Private Shared Function EndPaint(ByVal hWnd As IntPtr, ByRef ps As PAINTSTRUCT) As Boolean
+            End Function
+#End Region
+
+#Region "Fields"
+            Friend _bPainting As Boolean = False
+            Friend _bMoved As Boolean = False
+            Friend _comboBox As ToolStripComboBox
+            Friend _toolStrip As ToolStrip
+            Friend _parentClass As vtExtender
+#End Region
+
+#Region "Constructor"
+            Public Sub New(ByVal sender As [Object], ByVal toolStrip As ToolStrip, ByVal comboBox As ToolStripComboBox)
+                _parentClass = DirectCast(sender, vtExtender)
+                _toolStrip = toolStrip
+                _comboBox = comboBox
+                Me.AssignHandle(_comboBox.ComboBox.Handle)
+            End Sub
+#End Region
+
+#Region "Properties"
+            Friend ReadOnly Property Parent() As vtExtender
+                Get
+                    Return _parentClass
+                End Get
+            End Property
+
+            Friend ReadOnly Property ToolStrip() As ToolStrip
+                Get
+                    Return _toolStrip
+                End Get
+            End Property
+#End Region
+
+#Region "Methods"
+            Private Sub drawCombo(ByVal combo As ToolStripComboBox, ByVal focused As Boolean)
+                Dim bounds As Rectangle
+                Dim clientBounds As Rectangle = combo.ComboBox.ClientRectangle
+                clientBounds.Height -= 1
+
+                If combo.DroppedDown Then
+                    focused = True
+                End If
+                'bounds.X = 2;
+                If combo.IsOnOverflow Then
+                End If
+                If combo.RightToLeft = RightToLeft.Yes Then
+                    bounds = New Rectangle(New Point(0, 0), New Size(14, combo.Height))
+                Else
+                    bounds = New Rectangle(New Point(combo.Width - 14, 0), New Size(14, combo.Height))
+                End If
+
+                Using g As Graphics = Graphics.FromHwnd(combo.ComboBox.Handle)
+                    ' prepaint entire background
+                    Dim flatRect As Rectangle = clientBounds
+                    If combo.RightToLeft = RightToLeft.Yes Then
+                        flatRect.X += 14
+                    Else
+                        flatRect.Width -= 14
+                    End If
+                    flatRect.Inflate(-1, -1)
+                    flatRect.Height += 1
+                    Using flatBrush As Brush = New SolidBrush(Color.White)
+                        g.FillRectangle(flatBrush, flatRect)
+                    End Using
+
+                    If Parent.ToolStripStyle = ToolStripType.FlatColor Then
+                        ' fill the background
+                        Using flatBrush As Brush = New SolidBrush(Parent.ButtonGradientBegin)
+                            g.FillRectangle(flatBrush, bounds)
+                        End Using
+                        ' draw a focused mask
+                        If focused Then
+                            bounds.Inflate(0, -1)
+                            Using flatBrush As Brush = New SolidBrush(Color.FromArgb(100, Color.White))
+                                g.FillRectangle(flatBrush, bounds)
+                            End Using
+                            bounds.Inflate(0, 1)
+                        End If
+                        ' frame the button
+                        Using framePen As New Pen(Color.FromArgb(100, Parent.SeperatorOuterColor), 0.5F)
+                            g.DrawRectangle(framePen, clientBounds)
+                        End Using
+                        bounds.Width -= 1
+                        ' draw a border
+                        Using borderPen As New Pen(Color.FromArgb(200, Parent.SeperatorOuterColor), 0.5F)
+                            g.DrawRectangle(borderPen, bounds)
+                        End Using
+                    ElseIf Parent.ToolStripStyle = ToolStripType.Image Then
+                        ' blit the image in
+                        If ToolStrip.BackgroundImage IsNot Nothing Then
+                            g.DrawImage(ToolStrip.BackgroundImage, bounds, bounds, GraphicsUnit.Pixel)
+                        End If
+                        If focused Then
+                            ' fill in the edge accent
+                            Using fillBrush As New LinearGradientBrush(bounds, Color.FromArgb(50, Parent.SeperatorInnerColor), Color.FromArgb(50, Parent.SeperatorOuterColor), 90.0F)
+                                fillBrush.SetBlendTriangularShape(0.2F)
+                                g.FillRectangle(fillBrush, bounds)
+                            End Using
+                        End If
+                        ' draw the frame
+                        Using framePen As New Pen(Color.FromArgb(150, Color.Black), 0.5F)
+                            g.DrawRectangle(framePen, clientBounds)
+                        End Using
+                        bounds.Width -= 1
+                        Using borderPen As New Pen(Color.FromArgb(200, Color.Black), 0.5F)
+                            g.DrawRectangle(borderPen, bounds)
+                        End Using
+                    Else
+                        ' fill in the edge accent
+                        Using fillBrush As New LinearGradientBrush(bounds, Parent.ToolStripGradientBegin, Parent.ToolStripGradientEnd, Parent.gradientDirection(_toolStrip, Parent.ToolStripGradientDirection))
+                            fillBrush.Blend = Parent.ToolStripGradientBlend
+                            g.FillRectangle(fillBrush, bounds)
+                        End Using
+                        ' draw a focused mask
+                        If focused Then
+                            ' fill in the mask
+                            Using fillBrush As New LinearGradientBrush(bounds, Color.FromArgb(50, Color.LightGray), Color.FromArgb(50, Color.White), 90.0F)
+                                fillBrush.SetBlendTriangularShape(0.2F)
+                                g.FillRectangle(fillBrush, bounds)
+                            End Using
+                        End If
+                        Using framePen As New Pen(Color.FromArgb(150, Color.Black), 0.5F)
+                            g.DrawRectangle(framePen, clientBounds)
+                        End Using
+                        bounds.Width -= 1
+                        Using borderPen As New Pen(Color.FromArgb(200, Color.Black), 0.5F)
+                            g.DrawRectangle(borderPen, bounds)
+                        End Using
+                    End If
+                    drawComboArrow(g, bounds)
+                End Using
+            End Sub
+
+            Private Sub drawComboArrow(ByVal g As Graphics, ByVal bounds As Rectangle)
+                ' get the center
+                Dim top As Integer = (bounds.Height \ 2) - 8
+                bounds.X += 4
+                Using gp As New GraphicsPath()
+                    ' draw the frame
+                    gp.AddLine(New Point(bounds.X, top), New Point(bounds.X + 4, top))
+                    gp.AddLine(New Point(bounds.X, top), New Point(bounds.X + 2, top + 2))
+                    gp.AddLine(New Point(bounds.X + 2, top + 2), New Point(bounds.X + 4, top))
+                    gp.CloseFigure()
+
+                    ' draw border
+                    Using borderPen As New Pen(Parent.DropArrowColor)
+                        g.DrawPath(borderPen, gp)
+                    End Using
+
+                    ' fill path
+                    Using backBrush As Brush = New SolidBrush(Parent.DropArrowColor)
+                        g.FillPath(backBrush, gp)
+                    End Using
+                End Using
+            End Sub
+
+            Private Function isOnItem(ByVal bounds As Rectangle) As Boolean
+                Dim cursorPos As Point = ToolStrip.PointToClient(Cursor.Position)
+                If bounds.Contains(cursorPos) Then
+                    Return True
+                End If
+                Return False
+            End Function
+
+            Public Sub Dispose()
+                Me.ReleaseHandle()
+            End Sub
+#End Region
+
+#Region "WndProc"
+
+            Protected Overrides Sub WndProc(ByRef m As Message)
+                Dim tPaint As New PAINTSTRUCT()
+                Select Case m.Msg
+                    Case WM_PAINT
+                        If Parent.ToolStripStyle = ToolStripType.System Then
+                            MyBase.WndProc(m)
+                        Else
+                            If Not _bPainting Then
+                                _bPainting = True
+                                ' start painting engine
+                                BeginPaint(m.HWnd, tPaint)
+                                drawCombo(_comboBox, _bMoved)
+                                ' done
+                                EndPaint(m.HWnd, tPaint)
+                                _bPainting = False
+                            Else
+                                MyBase.WndProc(m)
+                            End If
+                        End If
+                        Exit Select
+
+                    Case WM_MOUSEMOVE
+                        _bMoved = True
+                        MyBase.WndProc(m)
+                        Exit Select
+
+                    Case WM_MOUSELEAVE
+                        _bMoved = False
+                        MyBase.WndProc(m)
+                        Exit Select
+                    Case Else
+
+                        MyBase.WndProc(m)
+                        Exit Select
+                End Select
+            End Sub
+#End Region
+        End Class
+#End Region
+
+#Region "ToolStripExtender"
+        <System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name:="FullTrust")> _
+        Friend Class ToolStripExtender
+            Inherits NativeWindow
+            Implements IDisposable
+#Region "API"
+            <DllImport("user32.dll")> _
+            Friend Shared Function GetUpdateRect(ByVal hWnd As IntPtr, ByRef rect As RECT, ByVal bErase As Boolean) As Boolean
+            End Function
+
+            <DllImport("user32.dll")> _
+            Friend Shared Function ValidateRect(ByVal hWnd As IntPtr, ByRef lpRect As RECT) As Boolean
+            End Function
+
+            <DllImport("gdi32.dll")> _
+            Friend Shared Function BitBlt(ByVal hdc As IntPtr, ByVal nXDest As Integer, ByVal nYDest As Integer, ByVal nWidth As Integer, ByVal nHeight As Integer, ByVal hdcSrc As IntPtr, _
+    ByVal nXSrc As Integer, ByVal nYSrc As Integer, ByVal dwRop As Integer) As <MarshalAs(UnmanagedType.Bool)> Boolean
+            End Function
+#End Region
+
+#Region "Struct"
+            <StructLayout(LayoutKind.Sequential)> _
+            Friend Structure RECT
+                Friend Sub New(ByVal X As Integer, ByVal Y As Integer, ByVal Width As Integer, ByVal Height As Integer)
+                    Me.Left = X
+                    Me.Top = Y
+                    Me.Right = Width
+                    Me.Bottom = Height
+                End Sub
+                Friend Left As Integer
+                Friend Top As Integer
+                Friend Right As Integer
+                Friend Bottom As Integer
+            End Structure
+#End Region
+
+#Region "Fields"
+            Friend _toolStrip As ToolStrip
+            Friend _parentClass As vtExtender
+            Friend _fader As New Dictionary(Of ToolStripItem, FadeTimer)()
+#End Region
+
+#Region "Constructor"
+            Public Sub New(ByVal sender As [Object], ByVal toolstrip As ToolStrip)
+                _parentClass = DirectCast(sender, vtExtender)
+                _toolStrip = toolstrip
+                _toolStrip.Renderer = _parentClass
+                Me.AssignHandle(_toolStrip.Handle)
+                AddHandler _toolStrip.ItemAdded, New ToolStripItemEventHandler(AddressOf ToolStrip_ItemAdded)
+                AddHandler _toolStrip.ItemRemoved, New ToolStripItemEventHandler(AddressOf ToolStrip_ItemRemoved)
+                addItems()
+            End Sub
+#End Region
+
+#Region "Event Handlers"
+            Friend Sub FadeTimer_Complete(ByVal sender As Object)
+                Dim fader As FadeTimer = DirectCast(sender, FadeTimer)
+                fader.Reset()
+                Dim bounds As New Rectangle(Point.Empty, fader.ToolItem.Bounds.Size)
+                '
+                fader.ToolItem.Invalidate(bounds)
+                'drawBackGround(fader.ToolItem.Bounds, fader.ButtonDc.Hdc);
+            End Sub
+
+            Friend Sub FadeTimer_Tick(ByVal sender As Object)
+                Dim fader As FadeTimer = DirectCast(sender, FadeTimer)
+                drawButtonFader(fader.ToolItem, fader.ButtonDc.Hdc, fader.TickCount)
+            End Sub
+
+            Friend Sub Item_MouseDown(ByVal sender As Object, ByVal e As MouseEventArgs)
+                Dim item As ToolStripItem = DirectCast(sender, ToolStripItem)
+                If _fader(item) IsNot Nothing Then
+                    _fader(item).Reset()
+                    drawBackGround(item.Bounds, _fader(item).ButtonDc.Hdc)
+                End If
+            End Sub
+
+            Friend Sub Item_MouseEnter(ByVal sender As Object, ByVal e As EventArgs)
+                If ToolStrip.Visible Then
+                    Dim item As ToolStripItem = DirectCast(sender, ToolStripItem)
+                    If (item IsNot Nothing) AndAlso (item.Visible) AndAlso (Not item.Pressed) AndAlso (hasFader(item)) Then
+                        If TypeOf item Is ToolStripButton Then
+                            Dim button As ToolStripButton = DirectCast(item, ToolStripButton)
+                            If (Not button.Checked) AndAlso (item.Enabled) Then
+                                _fader(item).Fade(FadeType.FadeIn)
+                            End If
+                        Else
+                            If (item.Enabled) AndAlso ((Not item.IsOnDropDown) OrElse (Not item.IsOnOverflow)) Then
+                                _fader(item).Fade(FadeType.FadeIn)
+                            End If
+                        End If
+                    End If
+                End If
+            End Sub
+
+            Friend Sub Item_MouseLeave(ByVal sender As Object, ByVal e As EventArgs)
+                Dim item As ToolStripItem = DirectCast(sender, ToolStripItem)
+                If (item IsNot Nothing) AndAlso (hasFader(item)) AndAlso (_fader(item) IsNot Nothing) Then
+                    If _fader(item).IsReset Then
+                        _fader(item).Fade(FadeType.FadeFast)
+                        _fader(item).TickCount = 0
+                    Else
+                        If getState(item) = ItemState.OffControl Then
+                            _fader(item).Fade(FadeType.FadeFast)
+                        Else
+                            _fader(item).Fade(FadeType.FadeOut)
+                        End If
+                    End If
+                End If
+            End Sub
+
+            Friend Sub Item_MouseUp(ByVal sender As Object, ByVal e As MouseEventArgs)
+                Dim item As ToolStripItem = DirectCast(sender, ToolStripItem)
+                item.Invalidate()
+            End Sub
+
+            Friend Sub ToolStrip_ItemRemoved(ByVal sender As Object, ByVal e As ToolStripItemEventArgs)
+                removeItemEvents(e.Item)
+            End Sub
+
+            Friend Sub ToolStrip_ItemAdded(ByVal sender As Object, ByVal e As ToolStripItemEventArgs)
+                addItemEvents(e.Item)
+            End Sub
+#End Region
+
+#Region "Properties"
+            Friend ReadOnly Property Parent() As vtExtender
+                Get
+                    Return _parentClass
+                End Get
+            End Property
+
+            Friend ReadOnly Property ToolStrip() As ToolStrip
+                Get
+                    Return _toolStrip
+                End Get
+            End Property
+#End Region
+
+#Region "Drawing"
+            Friend Sub drawBackGround(ByVal itemRect As Rectangle, ByVal hdc As IntPtr)
+                Dim g As Graphics = Graphics.FromHwnd(Handle)
+                BitBlt(g.GetHdc(), itemRect.X, itemRect.Y, itemRect.Width, itemRect.Height, hdc, _
+                 0, 0, &HCC0020)
+                g.ReleaseHdc()
+                g.Dispose()
+            End Sub
+
+            Friend Sub drawButtonFader(ByVal item As ToolStripItem, ByVal hdc As IntPtr, ByVal opacity As Integer)
+                ' create a buffered temporary canvas
+                Dim bounds As Rectangle = item.Bounds
+                Dim backDc As New cStoreDc()
+                backDc.Height = bounds.Height
+                backDc.Width = bounds.Width
+                ' create graphics
+                Using g As Graphics = Graphics.FromHdc(backDc.Hdc)
+                    ' blit in the background
+                    BitBlt(backDc.Hdc, 0, 0, bounds.Width, bounds.Height, hdc, _
+                     0, 0, &HCC0020)
+                    Dim boundsF As New RectangleF(Point.Empty, bounds.Size)
+                    If (TypeOf item Is ToolStripButton) OrElse (TypeOf item Is ToolStripDropDownButton) OrElse (TypeOf item Is ToolStripOverflowButton) Then
+                        If Parent.ButtonHoverEffect = ButtonHoverType.Flat Then
+                            Parent.drawFlatMask(g, boundsF, opacity)
+                        ElseIf Parent.ButtonHoverEffect = ButtonHoverType.Glass Then
+                            Parent.drawGlassButton(g, boundsF, opacity)
+                        ElseIf Parent.ButtonHoverEffect = ButtonHoverType.Glow Then
+                            Parent.drawDiffusedGlow(g, boundsF, opacity)
+                        ElseIf Parent.ButtonHoverEffect = ButtonHoverType.Raised Then
+                            Parent.drawRaisedButton(g, boundsF, opacity)
+                        ElseIf Parent.ButtonHoverEffect = ButtonHoverType.Bevelled Then
+                            Parent.drawBevelledMask(g, boundsF, opacity)
+                        End If
+                    ElseIf TypeOf item Is ToolStripSplitButton Then
+                        Dim button As ToolStripSplitButton = DirectCast(item, ToolStripSplitButton)
+                        Dim buttonF As RectangleF = button.ButtonBounds
+                        Dim dropF As RectangleF = button.DropDownButtonBounds
+                        If Parent.ButtonHoverEffect = ButtonHoverType.Flat Then
+                            Parent.drawFlatMask(g, dropF, opacity)
+                            Parent.drawFlatMask(g, buttonF, opacity)
+                        ElseIf Parent.ButtonHoverEffect = ButtonHoverType.Glass Then
+                            Parent.drawGlassButton(g, dropF, opacity)
+                            Parent.drawGlassButton(g, buttonF, opacity)
+                        ElseIf Parent.ButtonHoverEffect = ButtonHoverType.Glow Then
+                            Parent.drawDiffusedGlow(g, dropF, opacity)
+                            Parent.drawDiffusedGlow(g, buttonF, opacity)
+                        ElseIf Parent.ButtonHoverEffect = ButtonHoverType.Raised Then
+                            Parent.drawRaisedButton(g, dropF, opacity)
+                            Parent.drawRaisedButton(g, buttonF, opacity)
+                        ElseIf Parent.ButtonHoverEffect = ButtonHoverType.Bevelled Then
+                            Parent.drawBevelledMask(g, dropF, opacity)
+                            Parent.drawBevelledMask(g, buttonF, opacity)
+                        End If
+                        bounds = button.DropDownButtonBounds
+                        bounds.X += (bounds.Width - 4) \ 2
+                        Parent.drawArrow(g, bounds)
+                    End If
+                End Using
+                bounds = item.Bounds
+                ' blit to screen
+                Using g As Graphics = Graphics.FromHwnd(ToolStrip.Handle)
+                    BitBlt(g.GetHdc(), bounds.X, bounds.Y, bounds.Width, bounds.Height, backDc.Hdc, _
+                     0, 0, &HCC0020)
+                    g.ReleaseHdc()
+                    backDc.Dispose()
+                End Using
+            End Sub
+#End Region
+
+#Region "Methods"
+            Friend Sub addItems()
+                For Each item As ToolStripItem In ToolStrip.Items
+                    addItemEvents(item)
+                Next
+            End Sub
+
+            Friend Sub addItemEvents(ByVal item As ToolStripItem)
+                Try
+                    If hasFader(item) Then
+                        AddHandler item.MouseEnter, New EventHandler(AddressOf Item_MouseEnter)
+                        AddHandler item.MouseLeave, New EventHandler(AddressOf Item_MouseLeave)
+                        AddHandler item.MouseDown, New MouseEventHandler(AddressOf Item_MouseDown)
+                        AddHandler item.MouseUp, New MouseEventHandler(AddressOf Item_MouseUp)
+                        _fader.Add(item, New FadeTimer(item, ToolStrip))
+                        AddHandler _fader(item).Tick, New FadeTimer.TickDelegate(AddressOf FadeTimer_Tick)
+                        AddHandler _fader(item).Complete, New FadeTimer.CompleteDelegate(AddressOf FadeTimer_Complete)
+                    End If
+                Catch
+                End Try
+            End Sub
+
+            Friend Function bypassPaint() As Boolean
+                Dim updateRect As Rectangle = updateRegion()
+                For Each item As ToolStripItem In ToolStrip.Items
+                    If (_fader.ContainsKey(item)) AndAlso (_fader(item).TickCount > 0) AndAlso (Not item.IsOnOverflow) AndAlso (Not _fader(item).Invalidating) AndAlso (updateRect.IntersectsWith(item.Bounds)) Then
+                        If ((_fader(item).FadeStyle = FadeType.FadeOut) OrElse (_fader(item).FadeStyle = FadeType.FadeFast)) Then
+                            Dim validRect As New RECT(updateRect.Left, updateRect.Top, updateRect.Right, updateRect.Bottom)
+                            ValidateRect(ToolStrip.Handle, validRect)
+                            Return True
+                        End If
+                    End If
+                Next
+                Return False
+            End Function
+
+            Friend Function isOnItem(ByVal bounds As Rectangle) As Boolean
+                Dim cursorPos As Point = ToolStrip.PointToClient(Cursor.Position)
+                If bounds.Contains(cursorPos) Then
+                    Return True
+                End If
+                Return False
+            End Function
+
+            Friend Function getState(ByVal item As ToolStripItem) As ItemState
+                Dim tc As ToolStripItem = selectedItem()
+                If tc Is Nothing Then
+                    Return ItemState.OffContainer
+                ElseIf item Is tc Then
+                    Return ItemState.ItemHover
+                Else
+                    Return ItemState.OffControl
+                End If
+            End Function
+
+            Friend Function hasFader(ByVal item As ToolStripItem) As Boolean
+                If (TypeOf item Is ToolStripButton) OrElse (TypeOf item Is ToolStripDropDownButton) OrElse (TypeOf item Is ToolStripSplitButton) Then
+                    Return True
+                End If
+                Return False
+            End Function
+
+            Friend Sub removeItemEvents(ByVal item As ToolStripItem)
+                Try
+                    If hasFader(item) Then
+                        RemoveHandler item.MouseEnter, New EventHandler(AddressOf Item_MouseEnter)
+                        RemoveHandler item.MouseLeave, New EventHandler(AddressOf Item_MouseLeave)
+                        RemoveHandler item.MouseDown, New MouseEventHandler(AddressOf Item_MouseDown)
+                        RemoveHandler item.MouseUp, New MouseEventHandler(AddressOf Item_MouseUp)
+                        _fader.Remove(item)
+                    End If
+                Catch
+                End Try
+            End Sub
+
+            Friend Function selectedItem() As ToolStripItem
+                Dim clientPoint As Point = ToolStrip.PointToClient(Cursor.Position)
+                Return ToolStrip.GetItemAt(clientPoint)
+            End Function
+
+            Friend Function updateRegion() As Rectangle
+                Dim updateRect As RECT
+                GetUpdateRect(ToolStrip.Handle, updateRect, False)
+                Return New Rectangle(updateRect.Left, updateRect.Top, updateRect.Right - updateRect.Left, updateRect.Bottom - updateRect.Top)
+            End Function
+#End Region
+
+#Region "WndProc"
+            Protected Overrides Sub WndProc(ByRef m As Message)
+                Select Case m.Msg
+                    ' bypasses an invalidation thrown by parent when mouse leaves
+                    ' a button, this causes a slight flicker when drawing fader
+                    ' if someone knows a better way, post a message..
+                    Case WM_PAINT
+                        If Not bypassPaint() Then
+                            MyBase.WndProc(m)
+                        Else
+                            m.Result = New IntPtr(1)
+                        End If
+                        Exit Select
+                    Case Else
+
+                        MyBase.WndProc(m)
+                        Exit Select
+                End Select
+            End Sub
+#End Region
+
+#Region "Finalizer"
+            Protected Overrides Sub Finalize()
+                Try
+                    Dispose()
+                Finally
+                    MyBase.Finalize()
+                End Try
+            End Sub
+
+            Public Sub Dispose() Implements IDisposable.Dispose
+                Try
+                    Me.ReleaseHandle()
+                    For Each ft As FadeTimer In _fader.Values
+                        ft.Dispose()
+                    Next
+                Catch
+                End Try
+            End Sub
+
+#End Region
+        End Class
+#End Region
+
+#Region "ToolTip"
+        <System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name:="FullTrust")> _
+        Friend Class ToolTip
+            Inherits NativeWindow
+#Region "Constants"
+            ' setwindowpos
+            Shared ReadOnly HWND_NOTOPMOST As New IntPtr(-2)
+            Shared ReadOnly HWND_TOPMOST As New IntPtr(-1)
+            Shared ReadOnly HWND_TOP As New IntPtr(0)
+            Shared ReadOnly HWND_BOTTOM As New IntPtr(1)
+            ' size/move
+            Friend Const SWP_NOSIZE As UInteger = &H1
+            Friend Const SWP_NOMOVE As UInteger = &H2
+            Friend Const SWP_NOZORDER As UInteger = &H4
+            Friend Const SWP_NOREDRAW As UInteger = &H8
+            Friend Const SWP_NOACTIVATE As UInteger = &H10
+            Friend Const SWP_FRAMECHANGED As UInteger = &H20
+            Friend Const SWP_SHOWWINDOW As UInteger = &H40
+            Friend Const SWP_HIDEWINDOW As UInteger = &H80
+            Friend Const SWP_NOCOPYBITS As UInteger = &H100
+            Friend Const SWP_NOOWNERZORDER As UInteger = &H200
+            Friend Const SWP_NOSENDCHANGING As UInteger = &H400
+            ' styles
+            Friend Const TTS_ALWAYSTIP As Integer = &H1
+            Friend Const TTS_NOPREFIX As Integer = &H2
+            Friend Const TTS_NOANIMATE As Integer = &H10
+            Friend Const TTS_NOFADE As Integer = &H20
+            Friend Const TTS_BALLOON As Integer = &H40
+            Friend Const TTS_CLOSE As Integer = &H80
+            Friend Const TTS_USEVISUALSTYLE As Integer = &H100
+            ' window messages
+            Friend Const WM_NOTIFY As Integer = &H4E
+            Friend Const WM_REFLECT As Integer = &H2000
+            Friend Const WM_PAINT As Integer = &HF
+            Friend Const WM_SIZE As Integer = &H5
+            Friend Const WM_MOVE As Integer = &H3
+            Friend Const WM_SETFONT As Integer = &H30
+            Friend Const WM_GETFONT As Integer = &H31
+            Friend Const WM_SHOWWINDOW As Integer = &H18
+            Friend Const WM_MOUSEMOVE As Integer = &H200
+            Friend Const WM_MOUSELEAVE As Integer = &H2A3
+            Friend Const WM_LBUTTONDOWN As Integer = &H201
+            Friend Const WM_LBUTTONUP As Integer = &H202
+            Friend Const WM_LBUTTONDBLCLK As Integer = &H203
+            Friend Const WM_RBUTTONDOWN As Integer = &H204
+            Friend Const WM_RBUTTONUP As Integer = &H205
+            Friend Const WM_RBUTTONDBLCLK As Integer = &H206
+            Friend Const WM_MBUTTONDOWN As Integer = &H207
+            Friend Const WM_MBUTTONUP As Integer = &H208
+            Friend Const WM_MBUTTONDBLCLK As Integer = &H209
+            Friend Const WM_MOUSEWHEEL As Integer = &H20A
+            Friend Const WM_TIMER As Integer = &H113
+            Friend Const WM_NCPAINT As Integer = &H85
+            Friend Const WM_DESTROY As Integer = &H2
+            Friend Const WM_SETFOCUS As Integer = &H7
+            Friend Const WM_KILLFOCUS As Integer = &H8
+            Friend Const WM_IME_NOTIFY As Integer = &H282
+            Friend Const WM_IME_SETCONTEXT As Integer = &H281
+            Friend Const WM_ACTIVATE As Integer = &H6
+            Friend Const WM_NCACTIVATE As Integer = &H86
+            Friend Const WM_STYLECHANGED As Integer = &H7D
+            Friend Const WM_STYLECHANGING As Integer = &H7C
+            Friend Const WM_WINDOWPOSCHANGING As Integer = &H46
+            Friend Const WM_WINDOWPOSCHANGED As Integer = &H47
+            Friend Const WM_NCCALCSIZE As Integer = &H83
+            Friend Const WM_CTLCOLOR As Integer = &H3D8D610
+            ' window styles
+            Friend Const GWL_STYLE As Integer = (-16)
+            Friend Const GWL_EXSTYLE As Integer = (-20)
+            Friend Const SS_OWNERDRAW As Integer = &HD
+            Friend Const WS_OVERLAPPED As Integer = &H0
+            Friend Const WS_TABSTOP As Integer = &H10000
+            Friend Const WS_THICKFRAME As Integer = &H40000
+            Friend Const WS_HSCROLL As Integer = &H100000
+            Friend Const WS_VSCROLL As Integer = &H200000
+            Friend Const WS_BORDER As Integer = &H800000
+            Friend Const WS_CLIPCHILDREN As Integer = &H2000000
+            Friend Const WS_CLIPSIBLINGS As Integer = &H4000000
+            Friend Const WS_VISIBLE As Integer = &H10000000
+            Friend Const WS_CHILD As Integer = &H40000000
+            Friend Const WS_POPUP As Integer = -2147483648
+            ' window extended styles
+            Friend Const WS_EX_LTRREADING As Integer = &H0
+            Friend Const WS_EX_LEFT As Integer = &H0
+            Friend Const WS_EX_RIGHTSCROLLBAR As Integer = &H0
+            Friend Const WS_EX_DLGMODALFRAME As Integer = &H1
+            Friend Const WS_EX_NOPARENTNOTIFY As Integer = &H4
+            Friend Const WS_EX_TOPMOST As Integer = &H8
+            Friend Const WS_EX_ACCEPTFILES As Integer = &H10
+            Friend Const WS_EX_TRANSPARENT As Integer = &H20
+            Friend Const WS_EX_MDICHILD As Integer = &H40
+            Friend Const WS_EX_TOOLWINDOW As Integer = &H80
+            Friend Const WS_EX_WINDOWEDGE As Integer = &H100
+            Friend Const WS_EX_CLIENTEDGE As Integer = &H200
+            Friend Const WS_EX_CONTEXTHELP As Integer = &H400
+            Friend Const WS_EX_RIGHT As Integer = &H1000
+            Friend Const WS_EX_RTLREADING As Integer = &H2000
+            Friend Const WS_EX_LEFTSCROLLBAR As Integer = &H4000
+            Friend Const WS_EX_CONTROLPARENT As Integer = &H10000
+            Friend Const WS_EX_STATICEDGE As Integer = &H20000
+            Friend Const WS_EX_APPWINDOW As Integer = &H40000
+            Friend Const WS_EX_NOACTIVATE As Integer = &H8000000
+            Friend Const WS_EX_LAYERED As Integer = &H80000
+#End Region
+
+#Region "Structs"
+            <StructLayout(LayoutKind.Sequential)> _
+            Friend Structure RECT
+                Friend Sub New(ByVal X As Integer, ByVal Y As Integer, ByVal Width As Integer, ByVal Height As Integer)
+                    Me.Left = X
+                    Me.Top = Y
+                    Me.Right = Width
+                    Me.Bottom = Height
+                End Sub
+                Friend Left As Integer
+                Friend Top As Integer
+                Friend Right As Integer
+                Friend Bottom As Integer
+            End Structure
+#End Region
+
+#Region "API"
+            <DllImport("user32.dll", SetLastError:=True)> _
+            Friend Shared Function CreateWindowEx(ByVal exstyle As Integer, ByVal lpClassName As String, ByVal lpWindowName As String, ByVal dwStyle As Integer, ByVal x As Integer, ByVal y As Integer, _
+    ByVal nWidth As Integer, ByVal nHeight As Integer, ByVal hwndParent As IntPtr, ByVal Menu As IntPtr, ByVal hInstance As IntPtr, ByVal lpParam As IntPtr) As IntPtr
+            End Function
+
+            <DllImport("user32.dll")> _
+            Friend Shared Function DestroyWindow(ByVal hWnd As IntPtr) As <MarshalAs(UnmanagedType.Bool)> Boolean
+            End Function
+
+            <DllImport("user32.dll", SetLastError:=False)> _
+            Private Shared Function GetDesktopWindow() As IntPtr
+            End Function
+
+            <DllImport("user32.dll", ExactSpelling:=True)> _
+            Friend Shared Function SetTimer(ByVal hWnd As IntPtr, ByVal nIDEvent As Integer, ByVal uElapse As UInteger, ByVal lpTimerFunc As IntPtr) As IntPtr
+            End Function
+
+            <DllImport("user32.dll", ExactSpelling:=True)> _
+            Friend Shared Function KillTimer(ByVal hWnd As IntPtr, ByVal uIDEvent As UInteger) As <MarshalAs(UnmanagedType.Bool)> Boolean
+            End Function
+
+            <DllImport("user32.dll")> _
+            Friend Shared Function SetWindowPos(ByVal hWnd As IntPtr, ByVal hWndAfter As IntPtr, ByVal x As Integer, ByVal y As Integer, ByVal cx As Integer, ByVal cy As Integer, _
+    ByVal flags As UInteger) As <MarshalAs(UnmanagedType.Bool)> Boolean
+            End Function
+
+            <DllImport("user32.dll")> _
+            Friend Shared Function GetClientRect(ByVal hWnd As IntPtr, ByRef r As RECT) As Boolean
+            End Function
+
+            <DllImport("user32.dll")> _
+            Friend Shared Function GetWindowRect(ByVal hWnd As IntPtr, ByRef lpRect As RECT) As <MarshalAs(UnmanagedType.Bool)> Boolean
+            End Function
+
+            <DllImport("user32.dll")> _
+            Friend Shared Function GetWindowLong(ByVal hwnd As IntPtr, ByVal nIndex As Integer) As Integer
+            End Function
+
+            <DllImport("user32.dll")> _
+            Friend Shared Function SetWindowLong(ByVal hwnd As IntPtr, ByVal nIndex As Integer, ByVal dwNewLong As Integer) As Integer
+            End Function
+
+            <DllImport("user32.dll")> _
+            Friend Shared Function GetCursorPos(ByRef lpPoint As Point) As <MarshalAs(UnmanagedType.Bool)> Boolean
+            End Function
+
+            <DllImport("user32.dll")> _
+            Friend Shared Function ScreenToClient(ByVal hWnd As IntPtr, ByRef lpPoint As Point) As Boolean
+            End Function
+
+            <DllImport("user32.dll")> _
+            Friend Shared Function GetDC(ByVal handle As IntPtr) As IntPtr
+            End Function
+
+            <DllImport("user32.dll")> _
+            Friend Shared Function ReleaseDC(ByVal handle As IntPtr, ByVal hdc As IntPtr) As Integer
+            End Function
+
+            <DllImport("gdi32.dll")> _
+            Friend Shared Function BitBlt(ByVal hdc As IntPtr, ByVal nXDest As Integer, ByVal nYDest As Integer, ByVal nWidth As Integer, ByVal nHeight As Integer, ByVal hdcSrc As IntPtr, _
+    ByVal nXSrc As Integer, ByVal nYSrc As Integer, ByVal dwRop As Integer) As <MarshalAs(UnmanagedType.Bool)> Boolean
+            End Function
+#End Region
+
+#Region "Fields"
+            Friend _timerActive As Boolean = False
+            Friend _tipShowing As Boolean = False
+            Friend _textRightToLeft As Boolean = False
+            Friend _useIcon As Boolean = False
+            Friend _timerTick As Integer = 0
+            Friend _horzOffset As Integer = 4
+            Friend _vertOffset As Integer = 4
+            Friend _delayTime As Integer = 1000
+            Friend _visibleTime As Integer = 2000
+            Friend _clientCaption As String = [String].Empty
+            Friend _clientTitle As String = [String].Empty
+            Friend _foreColor As Color = Color.Black
+            Friend _gradientBegin As Color = Color.White
+            Friend _gradientEnd As Color = Color.Silver
+            Friend _hTipWnd As IntPtr = IntPtr.Zero
+            Friend _hInstance As IntPtr = IntPtr.Zero
+            Friend _hParentWnd As IntPtr = IntPtr.Zero
+            Friend _clientBounds As New Rectangle()
+            Friend _titleFont As Font
+            Friend _captionFont As Font
+            Friend _clientImage As Bitmap = Nothing
+#End Region
+
+#Region "Constructor"
+            Public Sub New(ByVal hParentWnd As IntPtr)
+                Dim t As Type = GetType(ToolTip)
+                Dim m As [Module] = t.[Module]
+                _hInstance = Marshal.GetHINSTANCE(m)
+                _hParentWnd = hParentWnd
+                ' create window
+                _hTipWnd = CreateWindowEx(WS_EX_TOPMOST Or WS_EX_TOOLWINDOW, "STATIC", "", SS_OWNERDRAW Or WS_CHILD Or WS_CLIPSIBLINGS Or WS_OVERLAPPED, 0, 0, _
+                 0, 0, GetDesktopWindow(), IntPtr.Zero, _hInstance, IntPtr.Zero)
+                ' set starting position
+                SetWindowPos(_hTipWnd, HWND_TOP, 0, 0, 0, 0, _
+                 SWP_NOMOVE Or SWP_NOSIZE Or SWP_NOACTIVATE Or SWP_NOOWNERZORDER)
+                createFonts()
+                Me.AssignHandle(_hTipWnd)
+            End Sub
+#End Region
+
+#Region "Properties"
+            Friend Property Bounds() As Rectangle
+                Get
+                    Return _clientBounds
+                End Get
+                Set(ByVal value As Rectangle)
+                    _clientBounds = value
+                End Set
+            End Property
+
+            Friend Property Caption() As String
+                Get
+                    Return _clientCaption
+                End Get
+                Set(ByVal value As String)
+                    _clientCaption = value
+                End Set
+            End Property
+
+            Friend Property DelayTime() As Integer
+                Get
+                    Return _delayTime
+                End Get
+                Set(ByVal value As Integer)
+                    _delayTime = value
+                End Set
+            End Property
+            Friend Property ForeColor() As Color
+                Get
+                    Return _foreColor
+                End Get
+                Set(ByVal value As Color)
+                    _foreColor = value
+                End Set
+            End Property
+
+            Friend Property GradientBegin() As Color
+                Get
+                    Return _gradientBegin
+                End Get
+                Set(ByVal value As Color)
+                    _gradientBegin = value
+                End Set
+            End Property
+
+            Friend Property GradientEnd() As Color
+                Get
+                    Return _gradientEnd
+                End Get
+                Set(ByVal value As Color)
+                    _gradientEnd = value
+                End Set
+            End Property
+
+            Friend Property ItemImage() As Bitmap
+                Get
+                    Return _clientImage
+                End Get
+                Set(ByVal value As Bitmap)
+                    _clientImage = value
+                End Set
+            End Property
+
+            Public WriteOnly Property MaximumLength() As Integer
+                Set(ByVal value As Integer)
+                    _clientBounds.Width = value
+                End Set
+            End Property
+
+            Public Property TextRightToLeft() As Boolean
+                Get
+                    Return _textRightToLeft
+                End Get
+                Set(ByVal value As Boolean)
+                    _textRightToLeft = value
+                End Set
+            End Property
+
+            Friend Property Title() As String
+                Get
+                    Return _clientTitle
+                End Get
+                Set(ByVal value As String)
+                    _clientTitle = value
+                End Set
+            End Property
+
+            Friend Property UseIcon() As Boolean
+                Get
+                    Return _useIcon
+                End Get
+                Set(ByVal value As Boolean)
+                    _useIcon = value
+                End Set
+            End Property
+
+            Friend Property VisibleTime() As Integer
+                Get
+                    Return _visibleTime
+                End Get
+                Set(ByVal value As Integer)
+                    _visibleTime = value
+                End Set
+            End Property
+#End Region
+
+#Region "Public Methods"
+            Friend Sub Start(ByVal title__1 As String, ByVal caption__2 As String, ByVal image As Bitmap, ByVal bounds__3 As Rectangle)
+                If _timerActive Then
+                    [Stop]()
+                End If
+                destroyImage()
+                Title = title__1
+                Caption = caption__2
+                ItemImage = image
+                Bounds = bounds__3
+                SetTimer(_hTipWnd, 1, 100, IntPtr.Zero)
+            End Sub
+
+            Friend Sub [Stop]()
+                ' kill the timer
+                KillTimer(_hTipWnd, 1)
+                ' hide the window
+                showWindow(False)
+                ' reset properties
+                Title = [String].Empty
+                Caption = [String].Empty
+                ItemImage = Nothing
+                Bounds = Rectangle.Empty
+                ' reset timer values
+                _timerTick = 0
+                _tipShowing = False
+                _timerActive = False
+            End Sub
+
+            Public Sub Dispose()
+                If _hTipWnd <> IntPtr.Zero Then
+                    Me.ReleaseHandle()
+                    destroyFonts()
+                    destroyImage()
+                    DestroyWindow(_hTipWnd)
+                    _hTipWnd = IntPtr.Zero
+                End If
+            End Sub
+#End Region
+
+#Region "Internal Methods"
+            Friend Function calculateSize() As Rectangle
+                Dim bounds__1 As New Rectangle()
+                Dim offset As Integer = 0
+
+                ' is there an image?
+                If (ItemImage IsNot Nothing) AndAlso (UseIcon) AndAlso (Not [String].IsNullOrEmpty(Title)) Then
+                    Dim titleSize As SizeF = calcTextSize(Title, _titleFont, 0)
+                    bounds__1.Width = ItemImage.Size.Width + CInt(Math.Truncate(titleSize.Width)) + 12
+                    bounds__1.Height = ItemImage.Size.Height + 8
+                    offset = ItemImage.Size.Width + 8
+                ElseIf Not [String].IsNullOrEmpty(Title) Then
+                    Dim titleSize As SizeF = calcTextSize(Title, _titleFont, 0)
+                    bounds__1.Width = CInt(Math.Truncate(titleSize.Width)) + 8
+                    bounds__1.Height = CInt(Math.Truncate(titleSize.Height)) + 8
+                    offset = 4
+                ElseIf (ItemImage IsNot Nothing) AndAlso (UseIcon) Then
+                    bounds__1.Height = ItemImage.Size.Height + 8
+                    bounds__1.Width = ItemImage.Size.Width + 8
+                    offset = ItemImage.Size.Width + 8
+                End If
+
+                ' add caption size
+                Dim width As Integer = Bounds.Width
+                If bounds__1.Width > width Then
+                    width = bounds__1.Width
+                ElseIf bounds__1.Width > 0 Then
+                    width = bounds__1.Width
+                End If
+
+                Dim captionSize As SizeF = calcTextSize(Caption, _captionFont, width - offset)
+                bounds__1.Height += CInt(Math.Truncate(captionSize.Height)) + 4
+                bounds__1.Width = width + 12
+                ' return the sized rectangle
+                Return bounds__1
+            End Function
+
+            Private Function calcTextSize(ByVal text As String, ByVal font As Font, ByVal width As Integer) As SizeF
+                Dim sF As New SizeF()
+                Dim hdc As IntPtr = GetDC(_hTipWnd)
+                Dim g As Graphics = Graphics.FromHdc(hdc)
+                If width > 0 Then
+                    sF = g.MeasureString(text, font, width)
+                Else
+                    sF = g.MeasureString(text, font)
+                End If
+                ReleaseDC(_hTipWnd, hdc)
+                g.Dispose()
+                Return sF
+            End Function
+
+            Friend Sub copyBackground(ByVal g As Graphics)
+                Dim windowRect As New RECT()
+                GetWindowRect(_hTipWnd, windowRect)
+                g.CopyFromScreen(windowRect.Left, windowRect.Top, 0, 0, New Size(windowRect.Right - windowRect.Left, windowRect.Bottom - windowRect.Top), CopyPixelOperation.SourceCopy)
+            End Sub
+
+            Friend Sub createFonts()
+                _titleFont = New Font("Tahoma", 8, FontStyle.Bold)
+                _captionFont = New Font("Tahoma", 8, FontStyle.Regular)
+            End Sub
+
+            Friend Function createRoundRectanglePath(ByVal g As Graphics, ByVal X As Single, ByVal Y As Single, ByVal width As Single, ByVal height As Single, ByVal radius As Single) As GraphicsPath
+                ' create a path
+                Dim pathBounds As New GraphicsPath()
+                pathBounds.AddLine(X + radius, Y, X + width - (radius * 2), Y)
+                pathBounds.AddArc(X + width - (radius * 2), Y, radius * 2, radius * 2, 270, 90)
+                pathBounds.AddLine(X + width, Y + radius, X + width, Y + height - (radius * 2))
+                pathBounds.AddArc(X + width - (radius * 2), Y + height - (radius * 2), radius * 2, radius * 2, 0, 90)
+                pathBounds.AddLine(X + width - (radius * 2), Y + height, X + radius, Y + height)
+                pathBounds.AddArc(X, Y + height - (radius * 2), radius * 2, radius * 2, 90, 90)
+                pathBounds.AddLine(X, Y + height - (radius * 2), X, Y + radius)
+                pathBounds.AddArc(X, Y, radius * 2, radius * 2, 180, 90)
+                pathBounds.CloseFigure()
+                Return pathBounds
+            End Function
+
+            Friend Sub destroyFonts()
+                If _titleFont IsNot Nothing Then
+                    _titleFont.Dispose()
+                End If
+                If _captionFont IsNot Nothing Then
+                    _captionFont.Dispose()
+                End If
+            End Sub
+
+            Friend Sub destroyImage()
+                If ItemImage IsNot Nothing Then
+                    ItemImage.Dispose()
+                End If
+                ItemImage = Nothing
+            End Sub
+
+            Friend Sub drawBackground(ByVal hdc As IntPtr)
+                ' create the graphics instance
+                Dim g As Graphics = Graphics.FromHdc(hdc)
+                ' copy in the background to mimic transparency
+                copyBackground(g)
+                ' create the shadow rect
+                Dim shadowArea As New Rectangle(3, Bounds.Height - 3, Bounds.Width - 3, Bounds.Height)
+                ' draw the bottom shadow
+                Using mode As New GraphicsMode(g, SmoothingMode.AntiAlias)
+                    Using shadowPath As GraphicsPath = createRoundRectanglePath(g, 4, Bounds.Height - 4, Bounds.Width - 4, Bounds.Height, 1.0F)
+                        Using shadowBrush As New LinearGradientBrush(shadowArea, Color.FromArgb(100, &H99, &H99, &H99), Color.FromArgb(60, &H44, &H44, &H44), LinearGradientMode.Vertical)
+                            Dim blend As New Blend()
+                            blend.Positions = New Single() {0.0F, 0.3F, 0.6F, 1.0F}
+                            blend.Factors = New Single() {0.0F, 0.3F, 0.6F, 0.9F}
+                            shadowBrush.Blend = blend
+                            g.FillPath(shadowBrush, shadowPath)
+                        End Using
+                    End Using
+                    ' draw the right shadow
+                    Using shadowPath As GraphicsPath = createRoundRectanglePath(g, Bounds.Width - 4, 4, Bounds.Width - 4, Bounds.Height - 8, 1.0F)
+                        Using shadowBrush As New LinearGradientBrush(shadowArea, Color.FromArgb(100, &H99, &H99, &H99), Color.FromArgb(60, &H44, &H44, &H44), LinearGradientMode.Horizontal)
+                            Dim blend As New Blend()
+                            blend.Positions = New Single() {0.0F, 0.3F, 0.6F, 1.0F}
+                            blend.Factors = New Single() {0.0F, 0.3F, 0.6F, 0.9F}
+                            shadowBrush.Blend = blend
+                            g.FillPath(shadowBrush, shadowPath)
+                        End Using
+                    End Using
+                    ' adjust the bounds
+                    Dim fillBounds As New Rectangle(0, 0, Bounds.Width - 4, Bounds.Height - 4)
+                    Using fillPath As GraphicsPath = createRoundRectanglePath(g, fillBounds.X, fillBounds.Y, fillBounds.Width, fillBounds.Height, 2.0F)
+                        Using shadowBrush As New LinearGradientBrush(shadowArea, GradientBegin, GradientEnd, LinearGradientMode.Vertical)
+                            ' draw the frame
+                            Using fillPen As New Pen(Color.FromArgb(250, &H44, &H44, &H44))
+                                g.DrawPath(fillPen, fillPath)
+                            End Using
+                            ' fill the body
+                            Dim blend As New Blend()
+                            blend.Positions = New Single() {0.0F, 0.4F, 0.6F, 1.0F}
+                            blend.Factors = New Single() {0.0F, 0.3F, 0.6F, 0.8F}
+                            shadowBrush.Blend = blend
+                            g.FillPath(shadowBrush, fillPath)
+                        End Using
+                    End Using
+                End Using
+                g.Dispose()
+            End Sub
+
+            Friend Sub drawCaption(ByVal hdc As IntPtr)
+                Dim g As Graphics = Graphics.FromHdc(hdc)
+                Using sF As New StringFormat()
+                    Dim vOffset As Integer
+                    Dim hOffset As Integer
+
+                    If (ItemImage IsNot Nothing) AndAlso (UseIcon) Then
+                        vOffset = ItemImage.Size.Width + 8
+                        hOffset = (ItemImage.Size.Height \ 2) + (_titleFont.Height)
+                    ElseIf Not [String].IsNullOrEmpty(Title) Then
+                        vOffset = 4
+                        hOffset = (_titleFont.Height + 8)
+                    Else
+                        vOffset = 4
+                        hOffset = 8
+                    End If
+
+                    sF.Alignment = StringAlignment.Near
+                    sF.LineAlignment = StringAlignment.Near
+                    If TextRightToLeft Then
+                        sF.FormatFlags = StringFormatFlags.DirectionRightToLeft
+                    End If
+                    Using captionBrush As Brush = New SolidBrush(ForeColor)
+                        g.DrawString(Caption, _captionFont, captionBrush, New RectangleF(vOffset, hOffset, Bounds.Width - vOffset, Bounds.Height - hOffset), sF)
+                    End Using
+                End Using
+                g.Dispose()
+            End Sub
+
+            Friend Sub drawIcon(ByVal hdc As IntPtr)
+                If ItemImage IsNot Nothing Then
+                    Dim g As Graphics = Graphics.FromHdc(hdc)
+                    g.DrawImage(ItemImage, New Point(4, 4))
+                    g.Dispose()
+                End If
+            End Sub
+
+            Friend Sub drawTitle(ByVal hdc As IntPtr)
+                Dim g As Graphics = Graphics.FromHdc(hdc)
+                Using sF As New StringFormat()
+                    Dim vOffset As Integer
+                    Dim hOffset As Integer
+
+                    If (ItemImage IsNot Nothing) AndAlso (UseIcon) Then
+                        vOffset = ItemImage.Size.Width + 8
+                        hOffset = (ItemImage.Size.Height \ 2) + 2
+                    Else
+                        vOffset = 4
+                        hOffset = 8
+                    End If
+
+                    sF.Alignment = StringAlignment.Near
+                    sF.LineAlignment = StringAlignment.Center
+                    sF.HotkeyPrefix = System.Drawing.Text.HotkeyPrefix.None
+                    sF.FormatFlags = StringFormatFlags.NoWrap
+
+                    If TextRightToLeft Then
+                        sF.FormatFlags = StringFormatFlags.DirectionRightToLeft
+                    End If
+                    Using titleBrush As Brush = New SolidBrush(ForeColor)
+                        g.DrawString(Title, _titleFont, titleBrush, New PointF(vOffset, hOffset), sF)
+                    End Using
+                End Using
+                g.Dispose()
+            End Sub
+
+            Friend Sub positionWindow()
+                If _hTipWnd <> IntPtr.Zero Then
+                    ' offset with screen position
+                    Dim windowRect As New RECT()
+                    GetWindowRect(_hParentWnd, windowRect)
+                    windowRect.Left += Bounds.X
+                    windowRect.Top += Bounds.Y
+                    ' position the window
+                    SetWindowPos(_hTipWnd, HWND_TOPMOST, windowRect.Left, windowRect.Top, Bounds.Width, Bounds.Height, _
+                     SWP_SHOWWINDOW Or SWP_NOACTIVATE)
+                End If
+            End Sub
+
+            Friend Sub renderTip()
+                If (Caption <> [String].Empty) AndAlso (Bounds <> Rectangle.Empty) Then
+                    ' create the canvas
+                    _clientBounds.Height = 50
+                    Dim bounds__1 As Rectangle = calculateSize()
+                    bounds__1.X = Bounds.X
+                    bounds__1.Y = Bounds.Y
+                    Bounds = bounds__1
+                    Dim drawDc As New cStoreDc()
+                    drawDc.Width = Bounds.Width
+                    drawDc.Height = Bounds.Height
+                    positionWindow()
+                    ' show the window
+                    showWindow(True)
+                    ' draw the background to the temp dc
+                    drawBackground(drawDc.Hdc)
+                    ' draw image and text
+                    If (ItemImage IsNot Nothing) AndAlso (UseIcon) Then
+                        drawIcon(drawDc.Hdc)
+                    End If
+                    If Title <> [String].Empty Then
+                        drawTitle(drawDc.Hdc)
+                    End If
+                    drawCaption(drawDc.Hdc)
+                    ' draw the tempdc to the window
+                    Dim hdc As IntPtr = GetDC(_hTipWnd)
+                    BitBlt(hdc, 0, 0, Bounds.Width, Bounds.Height, drawDc.Hdc, _
+                     0, 0, &HCC0020)
+                    ReleaseDC(_hTipWnd, hdc)
+                    ' cleanup
+                    drawDc.Dispose()
+                End If
+
+            End Sub
+
+            Friend Sub showWindow(ByVal show As Boolean)
+                If show Then
+                    SetWindowPos(_hTipWnd, HWND_TOPMOST, 0, 0, 0, 0, _
+                     SWP_SHOWWINDOW Or SWP_NOACTIVATE Or SWP_NOMOVE Or SWP_NOSIZE)
+                Else
+                    SetWindowPos(_hTipWnd, HWND_TOPMOST, 0, 0, 0, 0, _
+                     SWP_HIDEWINDOW Or SWP_NOACTIVATE Or SWP_NOMOVE Or SWP_NOSIZE)
+                End If
+            End Sub
+#End Region
+
+#Region "WndProc"
+            Protected Overrides Sub WndProc(ByRef m As Message)
+                Select Case m.Msg
+                    Case WM_TIMER
+                        _timerTick += 1
+                        If _timerTick > (DelayTime \ 100) Then
+                            If Not _tipShowing Then
+                                _tipShowing = True
+                                renderTip()
+                            End If
+                        End If
+                        If _timerTick > ((DelayTime + VisibleTime) \ 100) Then
+                            [Stop]()
+                        End If
+                        MyBase.WndProc(m)
+                        Exit Select
+                    Case Else
+
+                        MyBase.WndProc(m)
+                        Exit Select
+                End Select
+            End Sub
+#End Region
+        End Class
+#End Region
+    End Class
+#End Region
+
+#Region "Fade Timer"
+    <System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name:="FullTrust")> _
+    Friend Class FadeTimer
+        Implements IDisposable
+#Region "Structs"
+        <StructLayout(LayoutKind.Sequential)> _
+        Friend Structure RECT
+            Friend Sub New(ByVal X As Integer, ByVal Y As Integer, ByVal Width As Integer, ByVal Height As Integer)
+                Me.Left = X
+                Me.Top = Y
+                Me.Right = Width
+                Me.Bottom = Height
+            End Sub
+            Friend Left As Integer
+            Friend Top As Integer
+            Friend Right As Integer
+            Friend Bottom As Integer
+        End Structure
+#End Region
+
+#Region "API"
+        <DllImport("user32.dll")> _
+        Friend Shared Function GetDC(ByVal handle As IntPtr) As IntPtr
+        End Function
+
+        <DllImport("user32.dll")> _
+        Friend Shared Function ReleaseDC(ByVal handle As IntPtr, ByVal hdc As IntPtr) As Integer
+        End Function
+
+        <DllImport("gdi32.dll")> _
+        Friend Shared Function BitBlt(ByVal hdc As IntPtr, ByVal nXDest As Integer, ByVal nYDest As Integer, ByVal nWidth As Integer, ByVal nHeight As Integer, ByVal hdcSrc As IntPtr, _
+   ByVal nXSrc As Integer, ByVal nYSrc As Integer, ByVal dwRop As Integer) As <MarshalAs(UnmanagedType.Bool)> Boolean
+        End Function
+
+        <DllImport("user32.dll")> _
+        Friend Shared Function GetDesktopWindow() As IntPtr
+        End Function
+
+        <DllImport("user32.dll")> _
+        Friend Shared Function GetWindowRect(ByVal hWnd As IntPtr, ByRef lpRect As RECT) As <MarshalAs(UnmanagedType.Bool)> Boolean
+        End Function
+#End Region
+
+#Region "Events"
+        Public Delegate Sub CompleteDelegate(ByVal sender As Object)
+        Public Delegate Sub TickDelegate(ByVal sender As Object)
+        Public Event Complete As CompleteDelegate
+        Public Event Tick As TickDelegate
+#End Region
+
+#Region "Fields"
+        Friend _cancelTimer As Boolean
+        Friend _isReset As Boolean
+        Friend _tickCounter As Integer
+        Friend _tickMaximum As Integer
+        Friend _fadeType As FadeType
+        Friend _toolItem As ToolStripItem
+        Friend _buttonDc As New cStoreDc()
+        Friend _parentClass As ToolStrip
+        Friend _aTimer As System.Timers.Timer
+        Friend _invalidating As Boolean = False
+#End Region
+
+#Region "Constructor"
+        Public Sub New(ByVal item As ToolStripItem, ByVal sender As Object)
+            _tickCounter = 0
+            _tickMaximum = 10
+            _parentClass = DirectCast(sender, ToolStrip)
+            _toolItem = item
+            _aTimer = New System.Timers.Timer()
+            _aTimer.Interval = 50
+            _aTimer.SynchronizingObject = DirectCast(sender, ISynchronizeInvoke)
+            AddHandler _aTimer.Elapsed, New ElapsedEventHandler(AddressOf OnTimedEvent)
+        End Sub
+#End Region
+
+#Region "Properties"
+        Friend Property ButtonDc() As cStoreDc
+            Get
+                Return _buttonDc
+            End Get
+            Set(ByVal value As cStoreDc)
+                _buttonDc = value
+            End Set
+        End Property
+
+        Friend Property Invalidating() As Boolean
+            Get
+                Return _invalidating
+            End Get
+            Set(ByVal value As Boolean)
+                _invalidating = value
+            End Set
+        End Property
+        Friend Property IsReset() As Boolean
+            Get
+                Return _isReset
+            End Get
+            Set(ByVal value As Boolean)
+                _isReset = value
+            End Set
+        End Property
+
+        Friend Property Cancel() As Boolean
+            Get
+                Return _cancelTimer
+            End Get
+            Set(ByVal value As Boolean)
+                _cancelTimer = value
+            End Set
+        End Property
+
+        Friend ReadOnly Property Enabled() As Boolean
+            Get
+                Return _aTimer.Enabled
+            End Get
+        End Property
+
+        Friend Property FadeStyle() As FadeType
+            Get
+                Return _fadeType
+            End Get
+            Set(ByVal value As FadeType)
+                _fadeType = value
+            End Set
+        End Property
+
+        Friend Property TickCount() As Integer
+            Get
+                Return _tickCounter
+            End Get
+            Set(ByVal value As Integer)
+                _tickCounter = value
+            End Set
+        End Property
+
+        Friend Property TickMaximum() As Integer
+            Get
+                Return _tickMaximum
+            End Get
+            Set(ByVal value As Integer)
+                _tickMaximum = value
+            End Set
+        End Property
+
+        Friend Property ToolItem() As ToolStripItem
+            Get
+                Return _toolItem
+            End Get
+            Set(ByVal value As ToolStripItem)
+                _toolItem = value
+            End Set
+        End Property
+#End Region
+
+#Region "Public Methods"
+        Public Sub Dispose() Implements IDisposable.Dispose
+            Reset()
+            If _buttonDc IsNot Nothing Then
+                _buttonDc.Dispose()
+            End If
+            If _aTimer IsNot Nothing Then
+                _aTimer.Dispose()
+            End If
+            'GC.SuppressFinalize(this);
+        End Sub
+
+        Public Sub Fade(ByVal ft As FadeType)
+            Cancel = False
+            IsReset = False
+            Invalidating = False
+            _fadeType = ft
+            If _fadeType = FadeType.FadeIn Then
+                TickCount = 0
+                captureDc()
+            ElseIf _fadeType = FadeType.FadeOut Then
+                TickCount = 10
+            ElseIf _fadeType = FadeType.FadeFast Then
+                TickCount = 10
+            End If
+            _aTimer.Enabled = True
+        End Sub
+
+        Public Sub [Stop]()
+            _aTimer.[Stop]()
+        End Sub
+
+        Public Sub Reset()
+            TickCount = 0
+            _fadeType = FadeType.None
+            IsReset = True
+            _aTimer.[Stop]()
+            _aTimer.Enabled = False
+        End Sub
+#End Region
+
+#Region "Event Handlers"
+        Friend Sub OnTimedEvent(ByVal source As Object, ByVal e As ElapsedEventArgs)
+            If Cancel Then
+                Invalidating = True
+                RaiseEvent Complete(Me)
+                Return
+            Else
+                Select Case _fadeType
+                    Case FadeType.FadeIn
+                        fadeIn()
+                        Exit Select
+                    Case FadeType.FadeFast
+                        fadeOut()
+                        Exit Select
+                    Case FadeType.FadeOut
+                        fadeOut()
+                        Exit Select
+                End Select
+            End If
+        End Sub
+#End Region
+
+#Region "Internal Methods"
+        Friend Sub captureDc()
+            Try
+                _buttonDc.Width = _toolItem.Width
+                _buttonDc.Height = _toolItem.Height
+                If _buttonDc.Hdc <> IntPtr.Zero Then
+                    Using g As Graphics = Graphics.FromHdc(_buttonDc.Hdc)
+                        Dim boundedRect As New RECT()
+                        GetWindowRect(_parentClass.Handle, boundedRect)
+                        g.CopyFromScreen(boundedRect.Left + _toolItem.Bounds.X, boundedRect.Top + _toolItem.Bounds.Y, 0, 0, New Size(_buttonDc.Width, _buttonDc.Height), CopyPixelOperation.SourceCopy)
+                    End Using
+                End If
+            Catch
+            End Try
+        End Sub
+
+        Friend Sub fadeIn()
+            If TickCount < TickMaximum Then
+                TickCount += 1
+                RaiseEvent Tick(Me)
+            Else
+                TickCount = TickMaximum
+            End If
+        End Sub
+
+        Friend Sub fadeOut()
+            If TickCount > 0 Then
+                If _fadeType = FadeType.FadeFast Then
+                    TickCount -= 2
+                    If TickCount < 0 Then
+                        TickCount = 0
+                    End If
+                Else
+                    TickCount -= 1
+                End If
+                RaiseEvent Tick(Me)
+            Else
+                Reset()
+                Invalidating = True
+                RaiseEvent Complete(Me)
+            End If
+        End Sub
+
+        Protected Overrides Sub Finalize()
+            Try
+                Dispose()
+            Finally
+                MyBase.Finalize()
+            End Try
+        End Sub
+#End Region
+    End Class
+#End Region
+
+#Region "StoreDc"
+    <System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name:="FullTrust")> _
+    Friend Class cStoreDc
+        <DllImport("gdi32.dll")> _
+        Friend Shared Function CreateDCA(<MarshalAs(UnmanagedType.LPStr)> ByVal lpszDriver As String, <MarshalAs(UnmanagedType.LPStr)> ByVal lpszDevice As String, <MarshalAs(UnmanagedType.LPStr)> ByVal lpszOutput As String, ByVal lpInitData As Integer) As IntPtr
+        End Function
+
+        <DllImport("gdi32.dll")> _
+        Friend Shared Function CreateDCW(<MarshalAs(UnmanagedType.LPWStr)> ByVal lpszDriver As String, <MarshalAs(UnmanagedType.LPWStr)> ByVal lpszDevice As String, <MarshalAs(UnmanagedType.LPWStr)> ByVal lpszOutput As String, ByVal lpInitData As Integer) As IntPtr
+        End Function
+
+        <DllImport("gdi32.dll")> _
+        Friend Shared Function CreateDC(ByVal lpszDriver As String, ByVal lpszDevice As String, ByVal lpszOutput As String, ByVal lpInitData As Integer) As IntPtr
+        End Function
+
+        <DllImport("gdi32.dll")> _
+        Friend Shared Function CreateCompatibleDC(ByVal hdc As IntPtr) As IntPtr
+        End Function
+
+        <DllImport("gdi32.dll")> _
+        Friend Shared Function CreateCompatibleBitmap(ByVal hdc As IntPtr, ByVal nWidth As Integer, ByVal nHeight As Integer) As IntPtr
+        End Function
+
+        <DllImport("gdi32.dll")> _
+        Friend Shared Function DeleteDC(ByVal hdc As IntPtr) As <MarshalAs(UnmanagedType.Bool)> Boolean
+        End Function
+
+        <DllImport("gdi32.dll", ExactSpelling:=True, PreserveSig:=True)> _
+        Friend Shared Function SelectObject(ByVal hdc As IntPtr, ByVal hgdiobj As IntPtr) As IntPtr
+        End Function
+
+        <DllImport("gdi32.dll")> _
+        Friend Shared Function DeleteObject(ByVal hObject As IntPtr) As <MarshalAs(UnmanagedType.Bool)> Boolean
+        End Function
+
+        Friend _Height As Integer = 0
+        Friend _Width As Integer = 0
+        Friend _Hdc As IntPtr = IntPtr.Zero
+        Friend _Bmp As IntPtr = IntPtr.Zero
+        Friend _BmpOld As IntPtr = IntPtr.Zero
+
+        Public ReadOnly Property Hdc() As IntPtr
+            Get
+                Return _Hdc
+            End Get
+        End Property
+
+        Public ReadOnly Property HBmp() As IntPtr
+            Get
+                Return _Bmp
+            End Get
+        End Property
+
+        Public Property Height() As Integer
+            Get
+                Return _Height
+            End Get
+            Set(ByVal value As Integer)
+                If _Height <> value Then
+                    _Height = value
+                    ImageCreate(_Width, _Height)
+                End If
+            End Set
+        End Property
+
+        Public Property Width() As Integer
+            Get
+                Return _Width
+            End Get
+            Set(ByVal value As Integer)
+                If _Width <> value Then
+                    _Width = value
+                    ImageCreate(_Width, _Height)
+                End If
+            End Set
+        End Property
+
+        Friend Sub ImageCreate(ByVal Width As Integer, ByVal Height As Integer)
+            Dim pHdc As IntPtr = IntPtr.Zero
+
+            ImageDestroy()
+            pHdc = CreateDCA("DISPLAY", "", "", 0)
+            _Hdc = CreateCompatibleDC(pHdc)
+            _Bmp = CreateCompatibleBitmap(pHdc, _Width, _Height)
+            _BmpOld = SelectObject(_Hdc, _Bmp)
+            If _BmpOld = IntPtr.Zero Then
+                ImageDestroy()
+            Else
+                _Width = Width
+                _Height = Height
+            End If
+            DeleteDC(pHdc)
+            pHdc = IntPtr.Zero
+        End Sub
+
+        Friend Sub ImageDestroy()
+            If _BmpOld <> IntPtr.Zero Then
+                SelectObject(_Hdc, _BmpOld)
+                _BmpOld = IntPtr.Zero
+            End If
+            If _Bmp <> IntPtr.Zero Then
+                DeleteObject(_Bmp)
+                _Bmp = IntPtr.Zero
+            End If
+            If _Hdc <> IntPtr.Zero Then
+                DeleteDC(_Hdc)
+                _Hdc = IntPtr.Zero
+            End If
+        End Sub
+
+        Public Sub Dispose()
+            ImageDestroy()
+        End Sub
+    End Class
+#End Region
+End Namespace

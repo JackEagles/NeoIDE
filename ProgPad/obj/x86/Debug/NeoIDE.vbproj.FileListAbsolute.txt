@@ -1,0 +1,186 @@
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\bin\Debug\NeoIDE.exe.config
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\bin\Debug\NeoIDE.exe.manifest
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\bin\Debug\NeoIDE.application
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\bin\Debug\NeoIDE.exe
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\bin\Debug\NeoIDE.pdb
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmFindResults.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmEditHiglightingType.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCloudEditor.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCloudUploader.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCreateProgrammersCloudAccount.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCloudLogin.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmAbout.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmAddRun.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCodeBlockManager.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmConfig.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmEditExplorerIntegration.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmFindInFiles.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmInsertSymbol.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmEncrypt.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmLocalHostrUploader.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmInstalling.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmBackup.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCodeDomOptions.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmFTP.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmMacroManager.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmMain.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmRunEditor.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmSelector.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmSave.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmSidebar.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmTab.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmTips.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmTabControl.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmUpdater.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmNewProject.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.Resources.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\ResGen.read.1 (SchoolPC's conflicted copy 2012-04-25).tlog
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\ResGen.read.1.tlog
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\ResGen.write.1 (SchoolPC's conflicted copy 2012-04-25).tlog
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\ResGen.write.1.tlog
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.exe.manifest
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.application
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.exe
+C:\Users\Josh The Great\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.pdb
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\bin\Debug\NeoIDE.exe.config
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.exe
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.pdb
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\bin\Debug\NeoIDE.exe.manifest
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\bin\Debug\NeoIDE.application
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\bin\Debug\NeoIDE.exe
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\bin\Debug\NeoIDE.pdb
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmFindResults.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmEditHiglightingType.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCloudEditor.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCloudUploader.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCreateProgrammersCloudAccount.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCloudLogin.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmAbout.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmAddRun.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCodeBlockManager.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmConfig.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmEditExplorerIntegration.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmFindInFiles.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmInsertSymbol.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmEncrypt.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmLocalHostrUploader.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmInstalling.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmBackup.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCodeDomOptions.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmFTP.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmMacroManager.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmMain.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmRunEditor.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmSelector.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmSave.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmSidebar.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmTab.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmTips.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmTabControl.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmUpdater.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmNewProject.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.Resources.resources
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\ResGen.read.1 (SchoolPC's conflicted copy 2012-04-25).tlog
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\ResGen.read.1.tlog
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\ResGen.write.1 (SchoolPC's conflicted copy 2012-04-25).tlog
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\ResGen.write.1.tlog
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.exe.manifest
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.application
+C:\Users\Josh\Dropbox\Public\Projects\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmHTMLSidebar.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\bin\Debug\NeoIDE.exe.config
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.exe
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.pdb
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmFindResults.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmHTMLSidebar.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmEditHiglightingType.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCloudEditor.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCloudUploader.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCreateProgrammersCloudAccount.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCloudLogin.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmAbout.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmAddRun.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCodeBlockManager.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmConfig.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmEditExplorerIntegration.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmFindInFiles.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmInsertSymbol.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmEncrypt.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmLocalHostrUploader.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmInstalling.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmBackup.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmCodeDomOptions.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmFTP.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmMacroManager.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmMain.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmRunEditor.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmSelector.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmSave.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmSidebar.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmTab.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmTips.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmTabControl.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmUpdater.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.frmNewProject.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.Resources.resources
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\ResGen.read.1 (SchoolPC's conflicted copy 2012-04-25).tlog
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\ResGen.read.1.tlog
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\ResGen.write.1 (SchoolPC's conflicted copy 2012-04-25).tlog
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\ResGen.write.1.tlog
+C:\Users\Josh\Desktop\ProgPad\ProgPad\bin\Debug\NeoIDE.exe.manifest
+C:\Users\Josh\Desktop\ProgPad\ProgPad\bin\Debug\NeoIDE.application
+C:\Users\Josh\Desktop\ProgPad\ProgPad\bin\Debug\NeoIDE.exe
+C:\Users\Josh\Desktop\ProgPad\ProgPad\bin\Debug\NeoIDE.pdb
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.exe.manifest
+C:\Users\Josh\Desktop\ProgPad\ProgPad\obj\x86\Debug\NeoIDE.application
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\bin\Debug\NeoIDE.exe.config
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.exe
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.pdb
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\bin\Debug\NeoIDE.exe.manifest
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\bin\Debug\NeoIDE.application
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\bin\Debug\NeoIDE.exe
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\bin\Debug\NeoIDE.pdb
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmFindResults.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmHTMLSidebar.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmEditHiglightingType.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCloudEditor.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCloudUploader.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCreateProgrammersCloudAccount.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCloudLogin.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmAbout.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmAddRun.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCodeBlockManager.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmConfig.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmEditExplorerIntegration.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmFindInFiles.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmInsertSymbol.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmEncrypt.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmLocalHostrUploader.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmInstalling.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmBackup.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCodeDomOptions.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmFTP.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmMacroManager.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmMain.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmRunEditor.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmSelector.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmSave.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmSidebar.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmTab.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmTips.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmTabControl.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmUpdater.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmNewProject.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.Resources.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\ResGen.read.1 (SchoolPC's conflicted copy 2012-04-25).tlog
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\ResGen.read.1.tlog
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\ResGen.write.1 (SchoolPC's conflicted copy 2012-04-25).tlog
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\ResGen.write.1.tlog
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.exe.manifest
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.application
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmDownloadTheme.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmGetExtensions.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.AddonButton.resources

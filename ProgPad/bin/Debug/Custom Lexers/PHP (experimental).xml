@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScintillaNET>
+    <Language Name="php">
+
+        <Lexer LexerName="phpscript" LineCommentPrefix="//" />
+        <Styles Inherit="False">
+
+            <SubLanguage Name="PHP">
+                <Style Name="COMPLEX_VARIABLE" ForeColor="Red" />
+                <Style Name="DEFAULT" ForeColor="Red" />
+                <Style Name="HSTRING" ForeColor="DarkBlue" />
+                <Style Name="SIMPLESTRING" ForeColor="Red" />
+                <Style Name="WORD" ForeColor="Red" />
+                <Style Name="NUMBER" ForeColor="Blue" />
+                <Style Name="VARIABLE" ForeColor="DarkBlue" />
+                <Style Name="COMMENT" ForeColor="#EEEEEE" />
+                <Style Name="COMMENTLINE" ForeColor="#EEEEEE" />
+                <Style Name="HSTRING_VARIABLE" ForeColor="DarkBlue" />
+                <Style Name="OPERATOR" ForeColor="Red" />
+           </SubLanguage>
+
+            <SubLanguage Name="HTML">
+                <Style Name="TAG" ForeColor="Green"/>
+                <Style Name="DEFAULT" ForeColor="Green"/>
+            </SubLanguage>
+
+        </Styles>
+
+    </Language>
+</ScintillaNET>

@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="tmrScroll.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="txtChangelog.Text" xml:space="preserve">
+    <value>NeoIDE Changelog:
+
+v0.1 - Program created with the following features:
+-Tabbed
+-Text Manipulation
+-Find, Replace, Find In Files, Undo, Redo, etc
+-Insert Date &amp; Time, Symbols, or Custom user defined code blocks
+-View topmost &amp; full screen
+-Crappy project sidebar
+-Format font, text color, word wrap, line highlighting, bookmarking
+-Run in menu
+-Syntax highligting for any number of languages (from the Custom Lexers) folder
+-Multithreaded line count
+-Support for zoom
+-Automatic file backup &amp; recovery in case NeoIDE is terminated prematurely
+
+
+v0.2 - Added new features:
+-User customizable quick access toolbar
+-Show EOL &amp; Whitespace
+-New settings dialog with various options for the program
+-Improved sidebar
+-Drag &amp; Drop functionality for the program
+-New GUI with support for more themes, whilst maintaining a very small size for the program.
+-Automatically uses syntax higlighting of certain types while opening certain documents.
+-DRAMATIC reduction in memory usage (used to be ~10-17mb, now usually less than 2mb).
+-Command line support (i.e you can use "Open With" with the program).
+-Explorer integration using a contextmenu (right click txt files, etc in order to edit with NeoIDE).
+-New text manipulation functions.
+-Tips function
+
+
+v0.3 - Added new features:
+-New tabcontrol with support for
+	-Skinning (user customizable)
+	-Tab closer on tabs
+	-Multiline &amp; different tab orientations
+-Docking (project sidebar &amp; find in files dock to the side of the window)
+-New, more efficient saving dialog
+-Find in files completley re-written to show details of where certain phrases were found inside each file
+
+Notable fixes in 0.3
+-Fixed certain settings &amp; remembering them
+-Fixed an issue with the "Run In" menu where documents would not open properly if they had spaces in the file name
+-Fixed a saving issue with the project sidebar
+-Improved/Fixed ImageList display for treeviews on the Toolbar Customization window
+-Fixed behaviour of font dialog to inherit from currently selected font
+-Integrated "ScintillaNet.dll" with the "neoide.exe" assembly reducing installed size from 1.5 to 0.99mb
+-Rewritten right click code on "Project Sidebar"
+
+
+v0.5 - Added new features:
+-Added the ability to encrypt/decrypt files (using Rijndael)
+-Icons of filetpyes are now shown on each tab
+-Multiple files can now be opened by the Open File Dialog.
+-Find feature now displays icons for the file types.
+-New feature: Programmer's Cloud - lets you upload &amp; download files &amp; manage files to cloud storage.
+	-Store files
+	-Upload &amp; Download files (compressed)
+	-Rename files
+	-Delete files
+	-Upload files to localhostr from programmer's cloud in order to save them
+	-Files are kept secure in Programmer's Cloud - accounts are created on a per-user basis. They are encrypted using the password of the account using AES.
+	-It is possible to log in as Anonymous too, although files will be public.
+-Upload files to localhostr directly from the program (thanks to Perplexity)
+-The program has a feature to install itself and register itself as installed in Windows. It can also create shortcuts to itself on the desktop and start menu.
+-The program can uninstall itself too
+-Small installation size has been maintained, at 1.9mb.
+-File Encryption.
+
+Notable fixes in 0.5:
+-Fixed a relatively major bug with the saving process - where documents would not register as saved, so the save dialog would show them as not saved even if they had been saved.
+-Fixed an issue with the "remember session" feature where not all items in the session would be saved, so thus would not be remembered.
+-Resolved some issues with the "Run In" menu.
+
+
+v0.5.1 - Added new features:
+
+v0.5.1
+-Added an updater - in future you need only go ? -&gt; Check for updates in order to update the program!
+
+Notable fixes in 0.5.1:
+-Fixed a major session remembering bug (yes, another one)
+-Fixed some UI issues with the Quick Access Toolbar selector window
+-Fixed several major issues with command lines (where files would not open)
+-A major bug with programmer's cloud is currently being addressed whereby users are unable to create accounts. If you use 10minutemail, it should work.
+
+
+v0.5.5 - Added new features:
+-User customizable macros
+-Export as HTML
+-Code type detection on paste - the program can automatically apply syntax highlighting when you paste code of a certain type into the program!
+-Redesigned save dialog
+-New backup mechanism
+-Added recent documents feature
+-The project sidebar can now open .csproj and .vbproj files!</value>
+  </data>
+</root>
