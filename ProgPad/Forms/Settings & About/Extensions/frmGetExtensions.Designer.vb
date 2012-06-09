@@ -31,8 +31,14 @@ Partial Class frmGetExtensions
         Me.tbInstalled = New System.Windows.Forms.TabPage()
         Me.tcInstalled = New System.Windows.Forms.TabControl()
         Me.tbInstalledAddons = New System.Windows.Forms.TabPage()
+        Me.btnUninstallSelected = New System.Windows.Forms.Button()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.tvInstalledAddons = New System.Windows.Forms.TreeView()
         Me.tbInstalledThemes = New System.Windows.Forms.TabPage()
+        Me.tvInstalledThemes = New System.Windows.Forms.TreeView()
+        Me.btnApplyTheme = New System.Windows.Forms.Button()
+        Me.Button2 = New System.Windows.Forms.Button()
+        Me.Button3 = New System.Windows.Forms.Button()
         Me.tbAddonDetails = New System.Windows.Forms.TabPage()
         Me.lblPreview = New System.Windows.Forms.Label()
         Me.lblAuthor = New System.Windows.Forms.LinkLabel()
@@ -46,20 +52,19 @@ Partial Class frmGetExtensions
         Me.lblDownloaded = New System.Windows.Forms.Label()
         Me.lblDownloadingAddon = New System.Windows.Forms.Label()
         Me.pbAddonDownloading = New System.Windows.Forms.ProgressBar()
-        Me.tbDownloadingTheme = New System.Windows.Forms.TabPage()
         Me.pbLoadingPlugins = New System.Windows.Forms.ProgressBar()
         Me.lblDownloading = New System.Windows.Forms.Label()
-        Me.Button1 = New System.Windows.Forms.Button()
-        Me.btnUninstallSelected = New System.Windows.Forms.Button()
         Me.AddonContainer = New NeoIDE.AddonButtonContainer()
         Me.ThemeContainer = New NeoIDE.AddonButtonContainer()
         Me.txtAddonDescription = New NeoIDE.ExtendedRichTextBox()
+        Me.nbMain = New NeoIDE.WinComponents.Controls.NotificationBar()
         Me.tcMain.SuspendLayout()
         Me.tbAddons.SuspendLayout()
         Me.tbThemes.SuspendLayout()
         Me.tbInstalled.SuspendLayout()
         Me.tcInstalled.SuspendLayout()
         Me.tbInstalledAddons.SuspendLayout()
+        Me.tbInstalledThemes.SuspendLayout()
         Me.tbAddonDetails.SuspendLayout()
         CType(Me.pbAddonLargeImage, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tbDownloadingAddon.SuspendLayout()
@@ -72,9 +77,8 @@ Partial Class frmGetExtensions
         Me.tcMain.Controls.Add(Me.tbInstalled)
         Me.tcMain.Controls.Add(Me.tbAddonDetails)
         Me.tcMain.Controls.Add(Me.tbDownloadingAddon)
-        Me.tcMain.Controls.Add(Me.tbDownloadingTheme)
         Me.tcMain.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.tcMain.Location = New System.Drawing.Point(0, 0)
+        Me.tcMain.Location = New System.Drawing.Point(0, 25)
         Me.tcMain.Name = "tcMain"
         Me.tcMain.SelectedIndex = 0
         Me.tcMain.Size = New System.Drawing.Size(811, 301)
@@ -137,6 +141,27 @@ Partial Class frmGetExtensions
         Me.tbInstalledAddons.Text = "Installed Addons"
         Me.tbInstalledAddons.UseVisualStyleBackColor = True
         '
+        'btnUninstallSelected
+        '
+        Me.btnUninstallSelected.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.btnUninstallSelected.Location = New System.Drawing.Point(139, 216)
+        Me.btnUninstallSelected.Name = "btnUninstallSelected"
+        Me.btnUninstallSelected.Size = New System.Drawing.Size(130, 23)
+        Me.btnUninstallSelected.TabIndex = 2
+        Me.btnUninstallSelected.Text = "Uninstall Selected"
+        Me.btnUninstallSelected.UseVisualStyleBackColor = True
+        '
+        'Button1
+        '
+        Me.Button1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.Button1.Enabled = False
+        Me.Button1.Location = New System.Drawing.Point(3, 216)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(130, 23)
+        Me.Button1.TabIndex = 1
+        Me.Button1.Text = "Check for Updates"
+        Me.Button1.UseVisualStyleBackColor = True
+        '
         'tvInstalledAddons
         '
         Me.tvInstalledAddons.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
@@ -149,6 +174,10 @@ Partial Class frmGetExtensions
         '
         'tbInstalledThemes
         '
+        Me.tbInstalledThemes.Controls.Add(Me.tvInstalledThemes)
+        Me.tbInstalledThemes.Controls.Add(Me.btnApplyTheme)
+        Me.tbInstalledThemes.Controls.Add(Me.Button2)
+        Me.tbInstalledThemes.Controls.Add(Me.Button3)
         Me.tbInstalledThemes.Location = New System.Drawing.Point(4, 22)
         Me.tbInstalledThemes.Name = "tbInstalledThemes"
         Me.tbInstalledThemes.Padding = New System.Windows.Forms.Padding(3)
@@ -156,6 +185,47 @@ Partial Class frmGetExtensions
         Me.tbInstalledThemes.TabIndex = 1
         Me.tbInstalledThemes.Text = "Installed Themes"
         Me.tbInstalledThemes.UseVisualStyleBackColor = True
+        '
+        'tvInstalledThemes
+        '
+        Me.tvInstalledThemes.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.tvInstalledThemes.Location = New System.Drawing.Point(3, 3)
+        Me.tvInstalledThemes.Name = "tvInstalledThemes"
+        Me.tvInstalledThemes.Size = New System.Drawing.Size(783, 209)
+        Me.tvInstalledThemes.TabIndex = 7
+        '
+        'btnApplyTheme
+        '
+        Me.btnApplyTheme.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.btnApplyTheme.Location = New System.Drawing.Point(3, 216)
+        Me.btnApplyTheme.Name = "btnApplyTheme"
+        Me.btnApplyTheme.Size = New System.Drawing.Size(130, 23)
+        Me.btnApplyTheme.TabIndex = 6
+        Me.btnApplyTheme.Text = "Apply Selected"
+        Me.btnApplyTheme.UseVisualStyleBackColor = True
+        '
+        'Button2
+        '
+        Me.Button2.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.Button2.Location = New System.Drawing.Point(275, 216)
+        Me.Button2.Name = "Button2"
+        Me.Button2.Size = New System.Drawing.Size(130, 23)
+        Me.Button2.TabIndex = 5
+        Me.Button2.Text = "Uninstall Selected"
+        Me.Button2.UseVisualStyleBackColor = True
+        '
+        'Button3
+        '
+        Me.Button3.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.Button3.Enabled = False
+        Me.Button3.Location = New System.Drawing.Point(139, 216)
+        Me.Button3.Name = "Button3"
+        Me.Button3.Size = New System.Drawing.Size(130, 23)
+        Me.Button3.TabIndex = 4
+        Me.Button3.Text = "Check for Updates"
+        Me.Button3.UseVisualStyleBackColor = True
         '
         'tbAddonDetails
         '
@@ -196,6 +266,7 @@ Partial Class frmGetExtensions
         '
         'btnBack
         '
+        Me.btnBack.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnBack.Location = New System.Drawing.Point(580, 247)
         Me.btnBack.Name = "btnBack"
         Me.btnBack.Size = New System.Drawing.Size(105, 25)
@@ -224,6 +295,7 @@ Partial Class frmGetExtensions
         '
         'btnInstallAddon
         '
+        Me.btnInstallAddon.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnInstallAddon.Location = New System.Drawing.Point(690, 247)
         Me.btnInstallAddon.Name = "btnInstallAddon"
         Me.btnInstallAddon.Size = New System.Drawing.Size(105, 25)
@@ -233,6 +305,8 @@ Partial Class frmGetExtensions
         '
         'pbAddonLargeImage
         '
+        Me.pbAddonLargeImage.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.pbAddonLargeImage.Location = New System.Drawing.Point(7, 16)
         Me.pbAddonLargeImage.Name = "pbAddonLargeImage"
         Me.pbAddonLargeImage.Size = New System.Drawing.Size(256, 256)
@@ -288,16 +362,6 @@ Partial Class frmGetExtensions
         Me.pbAddonDownloading.Size = New System.Drawing.Size(789, 23)
         Me.pbAddonDownloading.TabIndex = 1
         '
-        'tbDownloadingTheme
-        '
-        Me.tbDownloadingTheme.Location = New System.Drawing.Point(4, 22)
-        Me.tbDownloadingTheme.Name = "tbDownloadingTheme"
-        Me.tbDownloadingTheme.Padding = New System.Windows.Forms.Padding(3)
-        Me.tbDownloadingTheme.Size = New System.Drawing.Size(803, 275)
-        Me.tbDownloadingTheme.TabIndex = 5
-        Me.tbDownloadingTheme.Text = "Downloading && Installing theme"
-        Me.tbDownloadingTheme.UseVisualStyleBackColor = True
-        '
         'pbLoadingPlugins
         '
         Me.pbLoadingPlugins.Location = New System.Drawing.Point(708, 2)
@@ -315,24 +379,6 @@ Partial Class frmGetExtensions
         Me.lblDownloading.Size = New System.Drawing.Size(117, 13)
         Me.lblDownloading.TabIndex = 3
         Me.lblDownloading.Text = "Downloading addon list"
-        '
-        'Button1
-        '
-        Me.Button1.Location = New System.Drawing.Point(3, 215)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(130, 23)
-        Me.Button1.TabIndex = 1
-        Me.Button1.Text = "Check for Updates"
-        Me.Button1.UseVisualStyleBackColor = True
-        '
-        'btnUninstallSelected
-        '
-        Me.btnUninstallSelected.Location = New System.Drawing.Point(139, 215)
-        Me.btnUninstallSelected.Name = "btnUninstallSelected"
-        Me.btnUninstallSelected.Size = New System.Drawing.Size(130, 23)
-        Me.btnUninstallSelected.TabIndex = 2
-        Me.btnUninstallSelected.Text = "Uninstall Selected"
-        Me.btnUninstallSelected.UseVisualStyleBackColor = True
         '
         'AddonContainer
         '
@@ -352,6 +398,8 @@ Partial Class frmGetExtensions
         '
         'txtAddonDescription
         '
+        Me.txtAddonDescription.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.txtAddonDescription.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.txtAddonDescription.Location = New System.Drawing.Point(270, 77)
         Me.txtAddonDescription.Name = "txtAddonDescription"
@@ -362,7 +410,7 @@ Partial Class frmGetExtensions
         CharStyle1.Strikeout = False
         CharStyle1.Underline = False
         Me.txtAddonDescription.SelectionCharStyle = CharStyle1
-        Me.txtAddonDescription.SelectionFont2 = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Inch)
+        Me.txtAddonDescription.SelectionFont2 = New System.Drawing.Font("Microsoft Sans Serif", 4.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Inch)
         ParaLineSpacing1.ExactSpacing = 0
         ParaLineSpacing1.SpacingStyle = NeoIDE.ExtendedRichTextBox.ParaLineSpacing.LineSpacingStyle.Unknown
         Me.txtAddonDescription.SelectionLineSpacing = ParaLineSpacing1
@@ -378,14 +426,28 @@ Partial Class frmGetExtensions
         Me.txtAddonDescription.TabIndex = 2
         Me.txtAddonDescription.Text = ""
         '
+        'nbMain
+        '
+        Me.nbMain.BackColor = System.Drawing.SystemColors.Info
+        Me.nbMain.Dock = System.Windows.Forms.DockStyle.Top
+        Me.nbMain.Location = New System.Drawing.Point(0, 0)
+        Me.nbMain.Name = "nbMain"
+        Me.nbMain.Size = New System.Drawing.Size(811, 25)
+        Me.nbMain.SmallImageList = Nothing
+        Me.nbMain.TabIndex = 4
+        Me.nbMain.Text = "Addon installation successfull. You must re-start the program for changes to take" & _
+    " affect. Click here to restart now."
+        Me.nbMain.Visible = False
+        '
         'frmGetExtensions
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(811, 301)
+        Me.ClientSize = New System.Drawing.Size(811, 326)
         Me.Controls.Add(Me.lblDownloading)
         Me.Controls.Add(Me.pbLoadingPlugins)
         Me.Controls.Add(Me.tcMain)
+        Me.Controls.Add(Me.nbMain)
         Me.Name = "frmGetExtensions"
         Me.Text = "Manage Addons & Themes for NeoIDE"
         Me.tcMain.ResumeLayout(False)
@@ -394,6 +456,7 @@ Partial Class frmGetExtensions
         Me.tbInstalled.ResumeLayout(False)
         Me.tcInstalled.ResumeLayout(False)
         Me.tbInstalledAddons.ResumeLayout(False)
+        Me.tbInstalledThemes.ResumeLayout(False)
         Me.tbAddonDetails.ResumeLayout(False)
         Me.tbAddonDetails.PerformLayout()
         CType(Me.pbAddonLargeImage, System.ComponentModel.ISupportInitialize).EndInit()
@@ -421,7 +484,6 @@ Partial Class frmGetExtensions
     Friend WithEvents lblPreview As System.Windows.Forms.Label
     Friend WithEvents tbInstalled As System.Windows.Forms.TabPage
     Friend WithEvents tbDownloadingAddon As System.Windows.Forms.TabPage
-    Friend WithEvents tbDownloadingTheme As System.Windows.Forms.TabPage
     Friend WithEvents tcInstalled As System.Windows.Forms.TabControl
     Friend WithEvents tbInstalledAddons As System.Windows.Forms.TabPage
     Friend WithEvents tvInstalledAddons As System.Windows.Forms.TreeView
@@ -432,4 +494,9 @@ Partial Class frmGetExtensions
     Friend WithEvents txtAddonEvents As System.Windows.Forms.TextBox
     Friend WithEvents btnUninstallSelected As System.Windows.Forms.Button
     Friend WithEvents Button1 As System.Windows.Forms.Button
+    Friend WithEvents nbMain As NeoIDE.WinComponents.Controls.NotificationBar
+    Friend WithEvents Button2 As System.Windows.Forms.Button
+    Friend WithEvents Button3 As System.Windows.Forms.Button
+    Friend WithEvents btnApplyTheme As System.Windows.Forms.Button
+    Friend WithEvents tvInstalledThemes As System.Windows.Forms.TreeView
 End Class

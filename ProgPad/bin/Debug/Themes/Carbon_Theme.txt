@@ -1,8 +1,0 @@
-	<Theme>
-		<Name>Carbon Theme</Name>
-		<Description>A striking and dark theme</Description>
-		<SmallImage>http://dl.dropbox.com/u/7543521/Webpages/NeoIDE/Themes/Carbon_Theme.gif</SmallImage>
-		<Version>0.1</Version>
-		<ThemeLocation>http://dl.dropbox.com/u/7543521/Webpages/NeoIDE/Themes/Carbon_Theme.dll</ThemeLocation>
-		<ID>1</ID>
-	</Theme>

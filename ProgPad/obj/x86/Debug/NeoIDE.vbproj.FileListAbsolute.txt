@@ -146,10 +146,6 @@ C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\ResolveAssemb
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmFindResults.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmHTMLSidebar.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmEditHiglightingType.resources
-C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCloudEditor.resources
-C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCloudUploader.resources
-C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCreateProgrammersCloudAccount.resources
-C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCloudLogin.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmAbout.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmAddRun.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCodeBlockManager.resources
@@ -162,7 +158,6 @@ C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmLoc
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmInstalling.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmBackup.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmCodeDomOptions.resources
-C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmFTP.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmMacroManager.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmMain.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmRunEditor.resources
@@ -184,3 +179,8 @@ C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.applic
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmDownloadTheme.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmGetExtensions.resources
 C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.AddonButton.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.ProjectControl.resources
+C:\Users\Josh\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.frmStartPage.resources
+C:\Users\Josh The Great\Dropbox\Public\Projects\NeoIDE\ProgPad\bin\Debug\NeoIDE.exe.config
+C:\Users\Josh The Great\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.exe
+C:\Users\Josh The Great\Dropbox\Public\Projects\NeoIDE\ProgPad\obj\x86\Debug\NeoIDE.pdb

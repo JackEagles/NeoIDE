@@ -3,42 +3,32 @@ Imports System.Xml
 Imports System.ComponentModel
 Imports System.IO
 Imports System.Collections.Specialized
+Imports System.Threading
 
 Public Class frmGetExtensions
     Friend WithEvents bwInitial, bwImages As New BackgroundWorker
     Friend WithEvents wr As New WebClient
     Dim AddonsXML As String
+    Dim BarRestart As Boolean
+
+
+    Private Sub frmGetExtensions_FormClosing(sender As Object, e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
+        If IO.File.Exists(frmMain.ThemeFile) = False Then
+            e.Cancel = True
+            MessageBox.Show("No themes are installed, or the currently applied theme has been uninstalled. Please install and/or select a new theme before closing this form!")
+        Else
+            Me.Dispose()
+        End If
+
+    End Sub
 
     Private Sub frmGetExtensions_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         pbAddonLargeImage.Image = Image.FromFile(Application.StartupPath & "\Images\loading.gif")
         tcMain.Controls.Remove(tbAddonDetails)
         tcMain.Controls.Remove(tbDownloadingAddon)
-        tcMain.Controls.Remove(tbDownloadingTheme)
         txtAddonDescription.SelectionAlignment = ExtendedRichTextBox.RichTextAlign.Justify
         bwInitial.RunWorkerAsync()
 
-
-
-        For Each fi In New DirectoryInfo(Application.StartupPath & "\Addons").GetFiles
-            If fi.Extension = ".txt" Then
-                Dim sizeOfAddon As Integer = 0
-                Dim xmlDoc As New XmlDocument
-                xmlDoc.Load(fi.FullName)
-                Dim ourNode As New TreeNode
-                ourNode.Text = xmlDoc.GetElementsByTagName("Name").Item(0).InnerText
-                ourNode.Nodes.Add("Description: " & xmlDoc.GetElementsByTagName("Description").Item(0).InnerText)
-                ourNode.Nodes.Add("Author: " & xmlDoc.GetElementsByTagName("Author").Item(0).InnerText)
-                ourNode.Nodes.Add("Version: " & xmlDoc.GetElementsByTagName("Version").Item(0).InnerText)
-                Dim finfo As New IO.FileInfo(Application.StartupPath & "\Addons\" & xmlDoc.GetElementsByTagName("PluginFile").Item(0).InnerText)
-                sizeOfAddon += finfo.Length
-                For Each itm In New DirectoryInfo(Application.StartupPath & "\Addons\Resources\" & xmlDoc.GetElementsByTagName("DataDir").Item(0).InnerText).GetFiles
-                    sizeOfAddon += itm.Length
-                Next
-                ourNode.Nodes.Add("Size of addon: " & sizeOfAddon / 1000 & "kb")
-                ourNode.Nodes.Add("ID: " & xmlDoc.GetElementsByTagName("ID").Item(0).InnerText)
-                tvInstalledAddons.Nodes.Add(ourNode)
-            End If
-        Next
 
     End Sub
 
@@ -51,6 +41,16 @@ Public Class frmGetExtensions
             AddonButton.Title.Text = itm.ChildNodes(0).InnerText
             AddonButton.Description.Text = itm.ChildNodes(1).InnerText
             AddonButton.Installed.Text = ""
+            For Each fi In New IO.DirectoryInfo(Application.StartupPath & "\Addons").GetFiles
+                If fi.Extension = ".txt" Then
+                    Dim xmlDoc3 As New XmlDocument
+                    xmlDoc3.Load(fi.FullName)
+                    If itm.ChildNodes(8).InnerText = xmlDoc3.ChildNodes(0).ChildNodes(8).InnerText Then
+                        AddonButton.Installed.Text = "-  Installed"
+                    End If
+                End If
+            Next
+
             AddonButton.Tag = itm.OuterXml
             buttonCollection.Add(AddonButton)
             AddHandler AddonButton.Click, AddressOf ShowAddonInfo
@@ -77,7 +77,50 @@ Public Class frmGetExtensions
             Next
             ThemeButton.Tag = itm.OuterXml
             themeCollection.Add(ThemeButton)
+            AddHandler ThemeButton.Click, AddressOf ShowAddonInfo
+            AddHandler ThemeButton.Title.Click, AddressOf ShowThemeInfo
+            AddHandler ThemeButton.Description.Click, AddressOf ShowThemeInfo
+            AddHandler ThemeButton.ImageBox.Click, AddressOf ShowThemeInfo
+            AddHandler ThemeButton.Installed.Click, AddressOf ShowThemeInfo
         Next
+    End Sub
+
+    Private Sub ShowThemeInfo(sender As System.Object, e As System.EventArgs)
+        Dim sendR As AddonButton
+        Try
+            xDocText = sender.Tag.ToString
+            sendR = sender
+        Catch ex As Exception
+            Try
+                xDocText = CType(sender, Control).Parent.Tag.ToString
+                sendR = sender.Parent
+            Catch ex2 As Exception
+                xDocText = CType(sender, Control).Parent.Parent.Tag.ToString
+                sendR = sender.Parent.Parent
+            End Try
+        End Try
+        If sendR.Installed.Text.Contains("Installed") = False Then
+            Dim thrd As New Thread(AddressOf DownloadTheme)
+            thrd.Start(xDocText)
+            nbMain.Text = "Theme downloaded && Installed. You can apply the theme on the 'Installed Themes' tab."
+            nbMain.Shw(True)
+            sendR.Installed.Text = "-  Installed"
+        Else
+            Dim xmlDoc As New XmlDocument
+            xmlDoc.LoadXml(xDocText)
+            If UninstallTheme(xmlDoc) = True Then
+                sendR.Installed.Text = ""
+            End If
+        End If
+    End Sub
+
+    Private Sub DownloadTheme(ByVal theme As String)
+        Dim xmlDoc As New XmlDocument
+        xmlDoc.LoadXml(theme)
+        Dim loc As String = xmlDoc.ChildNodes(0).ChildNodes(4).InnerText
+        My.Computer.Network.DownloadFile(loc, Application.StartupPath & "\Themes\" & loc.Substring(loc.LastIndexOf("/")).Replace("/", ""))
+        IO.File.WriteAllText(Application.StartupPath & "\Themes\" & loc.Substring(loc.LastIndexOf("/")).Replace("/", "").Replace(".dll", ".txt"), theme)
+        BarRestart = False
     End Sub
 
     Private Sub bw_RunWorkerCompleted(sender As Object, e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles bwInitial.RunWorkerCompleted
@@ -109,8 +152,6 @@ Public Class frmGetExtensions
                     CType(itm, AddonButton).ImageBox.Image = getImage(xmlDoc.ChildNodes(0).ChildNodes(2).InnerText)
                 End If
             Next
-        Else
-            pbAddonLargeImage.Image = getImage(ImageURI)
         End If
     End Sub
 
@@ -156,6 +197,7 @@ Public Class frmGetExtensions
         ShowAddonDetails(xDocText)
     End Sub
 
+
     Private Sub ShowAddonDetails(ByVal XML As String)
         Dim xmlDoc As New XmlDocument
         xmlDoc.LoadXml(XML)
@@ -167,11 +209,12 @@ Public Class frmGetExtensions
         tcMain.Controls.Remove(tbInstalled)
         lblAddonName.Text = xmlDoc.ChildNodes(0).ChildNodes(0).InnerText
         txtAddonDescription.Text = xmlDoc.ChildNodes(0).ChildNodes(3).InnerText
-        gettingLargeImage = True
         ImageURI = xmlDoc.ChildNodes(0).ChildNodes(4).InnerText
         btnInstallAddon.Tag = XML
+        Dim ImageThread As New Thread(AddressOf GetPictureboxImage)
+        ImageThread.Start()
+
         lblAuthor.Text = "Author: " & xmlDoc.ChildNodes(0).ChildNodes(6).InnerText
-        bwImages.RunWorkerAsync()
         For Each fi In New DirectoryInfo(Application.StartupPath & "\Addons").GetFiles
             If fi.Extension = ".txt" Then
                 Dim secondaryDoc As New XmlDocument
@@ -181,6 +224,10 @@ Public Class frmGetExtensions
                 End If
             End If
         Next
+    End Sub
+
+    Private Sub GetPictureboxImage()
+        pbAddonLargeImage.Image = getImage(ImageURI)
     End Sub
 
     Private Sub btnBack_Click(sender As System.Object, e As System.EventArgs) Handles btnBack.Click
@@ -194,7 +241,7 @@ Public Class frmGetExtensions
 
     Friend WithEvents bwAddonDownloader As New BackgroundWorker
     Friend WithEvents wcDownloadAddon As New WebClient
-    Friend WithEvents tmrAddonDownloaderInfoUpdater As New Timer
+    Friend WithEvents tmrAddonDownloaderInfoUpdater As New System.Windows.Forms.Timer
 
     Dim AddonDLLFiles As New StringCollection
     Dim AddonDataFiles As New StringCollection
@@ -252,9 +299,12 @@ Public Class frmGetExtensions
         End If
         DownloadEvents &= "Created addon data directory..." & Environment.NewLine
         For Each itm In AddonDLLFiles
+            Try
                 IO.File.Copy((Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) & "\Temp\" & DownloadExtractDirName) & "\" & itm, Application.StartupPath & "\" & itm)
+            Catch ex As Exception
+                MessageBox.Show("A non fatal error occured during the addon installation: one of the native dll files required for the addon to function properly is already present in the application startup directory. This will be ignored, but if the version of the file in the startup directory is different to the version of the file required by the Addon, errors may occur.", "Non fatal error")
+            End Try
         Next
-
         DownloadEvents &= "Moved resource files for addon..." & Environment.NewLine
         For Each itm In AddonDataFiles
             IO.File.Copy(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) & "\Temp\" & DownloadExtractDirName & "\" & itm, Application.StartupPath & "\Addons\Resources\" & AddonDataDirectory & "\" & itm)
@@ -283,7 +333,9 @@ Public Class frmGetExtensions
     Private Sub bwAddonDownloader_RunWorkerCompleted(sender As Object, e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles bwAddonDownloader.RunWorkerCompleted
         tmrAddonDownloaderInfoUpdater.Stop()
         DownloadEvents = ""
-        MessageBox.Show("Addon downloaded & Installed! Please re-start the program for changed to take effect!", "Addon", MessageBoxButtons.OK)
+        BarRestart = True
+        nbMain.Flash(500, 5)
+        nbMain.Shw(True)
         tcMain.Controls.Remove(tbDownloadingAddon)
         tcMain.Controls.Add(tbAddons)
         tcMain.Controls.Add(tbThemes)
@@ -325,5 +377,133 @@ Public Class frmGetExtensions
                 End If
             End If
         Next
+    End Sub
+
+    Private Sub nbMain_Click(sender As System.Object, e As System.EventArgs) Handles nbMain.Click
+        If BarRestart = True Then
+            Process.Start(Application.ExecutablePath)
+            End
+        End If
+    End Sub
+
+    Private Function UninstallTheme(ByVal XMLFile As XmlDocument) As Boolean
+        Try
+            Dim mbres As DialogResult = MessageBox.Show("Do you want to uninstall this theme?", "Uninstall theme", MessageBoxButtons.YesNo)
+            If mbres = DialogResult.Yes Then
+                Dim loc As String = XMLFile.ChildNodes(0).ChildNodes(4).InnerText
+                IO.File.Delete(Application.StartupPath & "\Themes\" & loc.Substring(loc.LastIndexOf("/")).Replace("/", ""))
+                IO.File.Delete(Application.StartupPath & "\Themes\" & loc.Substring(loc.LastIndexOf("/")).Replace("/", "").Replace(".dll", ".txt"))
+                RefreshThemeBox()
+                Return True
+            Else
+                Return False
+            End If
+        Catch ex As Exception
+            Return False
+        End Try
+    End Function
+
+    Private Sub tcMain_SelectedIndexChanged(sender As Object, e As System.EventArgs) Handles tcMain.SelectedIndexChanged
+        RefreshThemeBox()
+    End Sub
+
+    Private Sub RefreshThemeBox()
+        On Error Resume Next
+        If tcMain.SelectedTab.Text = "Installed Themes && Addons" Then
+            tvInstalledAddons.Nodes.Clear()
+            tvInstalledThemes.Nodes.Clear()
+            For Each fi In New DirectoryInfo(Application.StartupPath & "\Addons").GetFiles
+                If fi.Extension = ".txt" Then
+                    Dim sizeOfAddon As Integer = 0
+                    Dim xmlDoc As New XmlDocument
+                    xmlDoc.Load(fi.FullName)
+                    Dim ourNode As New TreeNode
+                    ourNode.Text = xmlDoc.GetElementsByTagName("Name").Item(0).InnerText
+                    ourNode.Nodes.Add("Description: " & xmlDoc.GetElementsByTagName("Description").Item(0).InnerText)
+                    ourNode.Nodes.Add("Author: " & xmlDoc.GetElementsByTagName("Author").Item(0).InnerText)
+                    ourNode.Nodes.Add("Version: " & xmlDoc.GetElementsByTagName("Version").Item(0).InnerText)
+                    Dim finfo As New IO.FileInfo(Application.StartupPath & "\Addons\" & xmlDoc.GetElementsByTagName("PluginFile").Item(0).InnerText)
+                    sizeOfAddon += finfo.Length
+                    For Each itm In New DirectoryInfo(Application.StartupPath & "\Addons\Resources\" & xmlDoc.GetElementsByTagName("DataDir").Item(0).InnerText).GetFiles
+                        sizeOfAddon += itm.Length
+                    Next
+                    For Each itm As XmlNode In xmlDoc.GetElementsByTagName("Dll")
+                        Dim dllInfo As New FileInfo(Application.StartupPath & "\" & itm.InnerText)
+                        sizeOfAddon += dllInfo.Length
+                    Next
+                    sizeOfAddon = sizeOfAddon / 1024
+                    If sizeOfAddon.ToString.Contains(".") Then
+                        Dim LastPart As String = sizeOfAddon.ToString.Substring(sizeOfAddon.ToString.LastIndexOf("."))
+                        ourNode.Nodes.Add("Size of addon: " & sizeOfAddon.ToString.Replace(LastPart, "") & "kb")
+                    Else
+                        ourNode.Nodes.Add("Size of addon: " & sizeOfAddon & "kb")
+                    End If
+                    ourNode.Nodes.Add("ID: " & xmlDoc.GetElementsByTagName("ID").Item(0).InnerText)
+                    tvInstalledAddons.Nodes.Add(ourNode)
+                End If
+            Next
+            For Each fi In New DirectoryInfo(Application.StartupPath & "\Themes").GetFiles
+                If fi.Extension = ".txt" Then
+                    Dim xmlDoc As New XmlDocument
+                    xmlDoc.Load(fi.FullName)
+                    Dim ourNode As New TreeNode
+                    ourNode.Text = xmlDoc.GetElementsByTagName("Name").Item(0).InnerText
+                    ourNode.Nodes.Add("Description: " & xmlDoc.GetElementsByTagName("Description").Item(0).InnerText)
+                    ourNode.Nodes.Add("Version: " & xmlDoc.GetElementsByTagName("Version").Item(0).InnerText)
+                    ourNode.Nodes.Add("ID: " & xmlDoc.GetElementsByTagName("ID").Item(0).InnerText)
+                    tvInstalledThemes.Nodes.Add(ourNode)
+                End If
+            Next
+        End If
+    End Sub
+
+    Private Sub Button4_Click(sender As System.Object, e As System.EventArgs) Handles btnApplyTheme.Click
+        Dim ourNode As TreeNode
+        If tvInstalledThemes.SelectedNode.Nodes.Count = 0 Then
+            ourNode = tvInstalledThemes.SelectedNode.Parent
+        Else
+            ourNode = tvInstalledThemes.SelectedNode
+        End If
+        For Each itm In New IO.DirectoryInfo(Application.StartupPath & "\Themes").GetFiles
+            If itm.Extension = ".txt" Then
+                Dim xmldoc As New XmlDocument()
+                xmldoc.Load(itm.FullName)
+                If ourNode.Text = xmldoc.GetElementsByTagName("Name").Item(0).InnerText Then
+                    Dim themeDLL As String = xmldoc.GetElementsByTagName("ThemeLocation").Item(0).InnerText
+                    themeDLL = themeDLL.Substring(themeDLL.LastIndexOf("/")).Replace("/", "")
+                    frmMain.SetPluginFile(Application.StartupPath & "\Themes\" & themeDLL)
+                End If
+            End If
+        Next
+        BarRestart = False
+        nbMain.Shw(True)
+        nbMain.Text = "Theme Applied. Some themes may require the application to be restarted before displaying properly."
+    End Sub
+
+    Private Sub Button2_Click(sender As System.Object, e As System.EventArgs) Handles Button2.Click
+        Dim ourNode As TreeNode
+        If tvInstalledThemes.SelectedNode.Nodes.Count = 0 Then
+            ourNode = tvInstalledThemes.SelectedNode.Parent
+        Else
+            ourNode = tvInstalledThemes.SelectedNode
+        End If
+        For Each itm In New IO.DirectoryInfo(Application.StartupPath & "\Themes").GetFiles
+            If itm.Extension = ".txt" Then
+
+                Dim xmldoc As New XmlDocument()
+                xmldoc.Load(itm.FullName)
+                If ourNode.Text = xmldoc.ChildNodes(0).ChildNodes(0).InnerText Then
+                    UninstallTheme(xmldoc)
+                    For Each ctrl In ThemeContainer.Controls
+                        If TypeOf ctrl Is AddonButton Then
+                            If CType(ctrl, AddonButton).Title.Text = ourNode.Text Then
+                                CType(ctrl, AddonButton).Installed.Text = ""
+                            End If
+                        End If
+                    Next
+                End If
+            End If
+        Next
+        tvInstalledThemes.Nodes.Remove(ourNode)
     End Sub
 End Class

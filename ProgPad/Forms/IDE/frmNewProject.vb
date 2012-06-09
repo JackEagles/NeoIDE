@@ -237,7 +237,7 @@ Public Class frmNewProject
             IO.Directory.CreateDirectory(txtProjectLocation.Text & "\Resources\")
             IO.File.Copy(Application.StartupPath & "\Images\app.ico", txtProjectLocation.Text & "\Resources\App.ico")
             frmMain.compiler.Icon = txtProjectLocation.Text & "\Resources\app.ico"
-            frmMain.compiler.ExecuteAfterCompiled = True
+            frmMain.compiler.ExecuteAfterCompiled = False
             frmMain.compiler.Debug = True
 
         End If

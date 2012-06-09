@@ -161,6 +161,9 @@ Public Class frmMain
     Public CodeDetectionRules As New StringCollection
 
     Public compiler As New Compiler
+
+    Dim StartPage As New frmStartPage
+
 #Region "Settings Variables"
     'Variables for settings (not all settings need variables in the program as they are loaded and saved at runtime depending on whether other variables
     'are true or false (i.e visibility of a control, etc)).
@@ -312,6 +315,7 @@ Public Class frmMain
 
 #Region "Startup & Closing Code"
     Private Sub frmMain_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
+        StartPage.Dispose()
 
         '   Dim eTxt As String
         '   For i As Integer = 0 To CodeDetectionRules.Count - 1
@@ -554,7 +558,10 @@ Public Class frmMain
         'Use backgroundworker to load additional settings
         bwLoader.RunWorkerAsync()
         'Create a new document
-        If commandline = False Then NewToolStripMenuItem.PerformClick()
+        If commandline = False Then
+            tcMain.TabPages.Add(StartPage)
+        End If
+        
         'Start the memory reducer to bring us down from 15 megs of ram to ~2
         MemReducer.Interval = 2000
         MemReducer.Start()
@@ -816,11 +823,9 @@ Public Class frmMain
             ThisDocumentToolStripMenuItem.Image = Image.FromFile(Application.StartupPath & "\Images\doc_single.png")
 
             FacebookToolStripMenuItem.Image = Image.FromFile(Application.StartupPath & "\Images\share_facebook_small.png")
-            ProgrammersCloudToolStripMenuItem.Image = Image.FromFile(Application.StartupPath & "\Images\share_cloud_small.png")
             FTPServerToolStripMenuItem.Image = Image.FromFile(Application.StartupPath & "\Images\share_ftp_small.png")
             LocalhostrToolStripMenuItem.Image = Image.FromFile(Application.StartupPath & "\Images\Share_localhostr_small.png")
 
-            ProgrammersCloudToolStripMenuItemMultiple.Image = Image.FromFile(Application.StartupPath & "\Images\share_cloud_small.png")
             FTPServerToolStripMenuItemMultiple.Image = Image.FromFile(Application.StartupPath & "\Images\share_ftp_small.png")
             localhostrToolStripMenuItemMultiple.Image = Image.FromFile(Application.StartupPath & "\Images\Share_localhostr_small.png")
             FacebookToolStripMenuItemMultiple.Image = Image.FromFile(Application.StartupPath & "\Images\share_facebook_small.png")
@@ -939,8 +944,11 @@ Public Class frmMain
                 Addon = Plugin(IO.File.ReadAllBytes(fi.FullName), "Addon")
                 Me.SuspendLayout()
                 Addon.TabControl = tcMain
-                Addon.TopMenu = msMain
-                Addon.SelScinContextMenu = cmuScintilla
+                Addon.MainMenuStrip = msMain
+                Addon.ScintillaContextMenu = cmuScintilla
+                Addon.TabContextMenu = cmuTab
+                Addon.MainForm = Me
+                Addon.DockPanel = dPanel
                 Addon.Initialize()
                 Me.ResumeLayout()
                 Me.Refresh()
@@ -1135,8 +1143,6 @@ Public Class frmMain
         selLine = SendMessage(mHwnd.ToInt32, EM_LINEFROMCHAR, -1, 0)
     End Sub
 
-
-
     Private Sub bwWordCount_RunWorkerCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles bwWordCount.RunWorkerCompleted
         SelScintilla.Margins.Margin0.Width = indent
         lblTextLength.Text = "Length: " & docLength
@@ -1144,21 +1150,24 @@ Public Class frmMain
     End Sub
 
     Private Sub tmrWordCount_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles tmrWordCount.Tick
-        lblColumn.Text = "Column: " & SelScintilla.Lines.Current.SelectionStartPosition - SelScintilla.Lines.Current.StartPosition + 1
-        docText = SelScintilla.Text
-        If SelScintilla.Text.StartsWith("PROGPADENCRYPT:") Then
-            EncryptAndCloseSelectedToolStripMenuItem.Text = "Decrypt Selected"
-        Else
-            EncryptAndCloseSelectedToolStripMenuItem.Text = "Encrypt Selected"
-        End If
-        lineCount = SelScintilla.Lines.Count
-        Try
-            If bwWordCount.IsBusy = False Then
-                bwWordCount.RunWorkerAsync()
+        If tcMain.SelectedForm.Text <> "Start Page" Then
+            lblColumn.Text = "Column: " & SelScintilla.Lines.Current.SelectionStartPosition - SelScintilla.Lines.Current.StartPosition + 1
+            docText = SelScintilla.Text
+            If SelScintilla.Text.StartsWith("PROGPADENCRYPT:") Then
+                EncryptAndCloseSelectedToolStripMenuItem.Text = "Decrypt Selected"
+            Else
+                EncryptAndCloseSelectedToolStripMenuItem.Text = "Encrypt Selected"
             End If
-        Catch ex As Exception
+            lineCount = SelScintilla.Lines.Count
+            Try
+                If bwWordCount.IsBusy = False Then
+                    bwWordCount.RunWorkerAsync()
+                End If
+            Catch ex As Exception
 
-        End Try
+            End Try
+        End If
+
     End Sub
 
 #End Region
@@ -1193,6 +1202,9 @@ Public Class frmMain
         SaveDocument(SelScintilla, SelScintilla.SavePath, tcMain.TabPages.SelectedTab)
     End Sub
 
+    Private Sub NewProjectToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles NewProjectToolStripMenuItem.Click
+        frmNewProject.ShowDialog()
+    End Sub
 
     Public Function SaveDocument(ByVal Scin As ScintillaEx, Optional ByVal SavePath As String = "", Optional ByVal tb As CustomTabControl.TabPage = Nothing) As Boolean
         'What we'll be writing to the file
@@ -1328,160 +1340,170 @@ Public Class frmMain
 
     Public Sub CreateNewDoc(Optional ByVal path As String = "")
         'Create a new document, with an option to load a file
+        Try
+            'Create a new scintilla
+            Dim myScintilla As New ScintillaEx
+            'Make sure it occupies the whole tab
+            myScintilla.Dock = DockStyle.Fill
+            'Set the margins
+            myScintilla.Margins.Margin2.Width = 0
+            myScintilla.Margins.Margin0.Width = 10
+            myScintilla.Margins.Margin3.Width = 0
+            myScintilla.Margins.Margin4.Width = 0
 
-        'Create a new scintilla
-        Dim myScintilla As New ScintillaEx
-        'Make sure it occupies the whole tab
-        myScintilla.Dock = DockStyle.Fill
-        'Set the margins
-        myScintilla.Margins.Margin2.Width = 0
-        myScintilla.Margins.Margin0.Width = 10
-        myScintilla.Margins.Margin3.Width = 0
-        myScintilla.Margins.Margin4.Width = 0
+            If ShowBookmarkMarginToolStripMenuItem.Checked = True Then
+                'If the user wants to show the bookmark margin, then show the bookmark margin...
+                myScintilla.Margins.Margin1.Width = 20
+                myScintilla.Margins.Margin1.IsMarkerMargin = True
+                myScintilla.Margins.Margin1.IsClickable = True
+                myScintilla.Margins.Margin1.AutoToggleMarkerNumber = True
+            Else
+                'Otherwise hide it.
+                myScintilla.Margins.Margin1.Width = 0
+            End If
+            If ScinWordWrap = True Then
+                'If the user wants word wrap, enable it.
+                myScintilla.LineWrapping.Mode = LineWrappingMode.Word
+            End If
+            If ScinColor <> Nothing Then
+                'If the user has specified a color, use it
+                myScintilla.ForeColor = ScinColor
+            End If
+            If ScinFont IsNot Nothing Then
+                'If the user has specified a font, use it.
+                myScintilla.Font = ScinFont
+            End If
+            If ShowEOL = True Then
+                myScintilla.EndOfLine.IsVisible = True
+            End If
+            If ShowWhiteSpace = True Then
+                myScintilla.Whitespace.Mode = WhitespaceMode.VisibleAlways
+            End If
+            myScintilla.ContextMenuStrip = cmuScintilla
+            'If the user wants to highlight the selected line, then do
+            myScintilla.Caret.HighlightCurrentLine = ShowLineHighlight
+            'Set the line highlight to the user defined color.
+            myScintilla.Caret.CurrentLineBackgroundColor = LineHighlightColor
 
-        If ShowBookmarkMarginToolStripMenuItem.Checked = True Then
-            'If the user wants to show the bookmark margin, then show the bookmark margin...
-            myScintilla.Margins.Margin1.Width = 20
-            myScintilla.Margins.Margin1.IsMarkerMargin = True
-            myScintilla.Margins.Margin1.IsClickable = True
-            myScintilla.Margins.Margin1.AutoToggleMarkerNumber = True
-        Else
-            'Otherwise hide it.
-            myScintilla.Margins.Margin1.Width = 0
-        End If
-        If ScinWordWrap = True Then
-            'If the user wants word wrap, enable it.
-            myScintilla.LineWrapping.Mode = LineWrappingMode.Word
-        End If
-        If ScinColor <> Nothing Then
-            'If the user has specified a color, use it
-            myScintilla.ForeColor = ScinColor
-        End If
-        If ScinFont IsNot Nothing Then
-            'If the user has specified a font, use it.
-            myScintilla.Font = ScinFont
-        End If
-        If ShowEOL = True Then
-            myScintilla.EndOfLine.IsVisible = True
-        End If
-        If ShowWhiteSpace = True Then
-            myScintilla.Whitespace.Mode = WhitespaceMode.VisibleAlways
-        End If
-        myScintilla.ContextMenuStrip = cmuScintilla
-        'If the user wants to highlight the selected line, then do
-        myScintilla.Caret.HighlightCurrentLine = ShowLineHighlight
-        'Set the line highlight to the user defined color.
-        myScintilla.Caret.CurrentLineBackgroundColor = LineHighlightColor
+            'Tell the program that the current scintilla is the newly created one
+            SelScintilla = myScintilla
+            'Make sure we know not to prompt to save the document without editing it
+            myScintilla.WasTextChanged = False
+            'Make sure the handle of the scintilla is set for the word count
+            mHwnd = myScintilla.Handle
 
-        'Tell the program that the current scintilla is the newly created one
-        SelScintilla = myScintilla
-        'Make sure we know not to prompt to save the document without editing it
-        myScintilla.WasTextChanged = False
-        'Make sure the handle of the scintilla is set for the word count
-        mHwnd = myScintilla.Handle
+            'Add one to the number of new documents
+            notes += 1
+            'Create a new tabpage
+            Dim tb As New Form
+            AddHandler tb.FormClosing, AddressOf NonSelectedTabClose
 
-        'Add one to the number of new documents
-        notes += 1
-        'Create a new tabpage
-        Dim tb As New Form
-        AddHandler tb.FormClosing, AddressOf formclose
-        'Set the text to inform the user that it's a new document
-        tb.Text = "New - " & notes.ToString
-        tb.Width = 200
-        tb.Icon = Icon.FromHandle(New Bitmap(Application.StartupPath & "\images\page.png").GetHicon)
-
-
-        'Add the scintilla to the tabpage
-        tb.Controls.Add(myScintilla)
-        'Add the tabpage to the tabcontrol
-        Dim x As TabPage = tcMain.TabPages.Add(tb)
-        AddHandler x.MouseClick, AddressOf mDown
-        'Make sure that the tab is selected
-        tcMain.TabPages(tb).Select()
-        'Make sure that the scintilla is selected.
-        myScintilla.Focus()
-        myScintilla.Select()
-        If path <> "" Then
-            'If there is a document location specified, try to load it
-            Try
-                Dim addTo As Boolean = True
-                For Each itm In RecentToolStripMenuItem.DropDownItems
-                    If itm.Text = path Then
-                        addTo = False
-                    End If
-                Next
-                If addTo = True Then
-                    Dim myRecentItem As New RecentItem
-                    myRecentItem.Text = path
-                    myRecentItem.Image = Image.FromFile(Application.StartupPath & "\Images\doc_single.png")
-                    RecentToolStripMenuItem.DropDownItems.Add(myRecentItem)
-                End If
-                If RecentToolStripMenuItem.DropDownItems.Count > 16 Then
-                    RecentToolStripMenuItem.DropDownItems.RemoveAt(RecentToolStripMenuItem.DropDownItems.Count - 1)
-                End If
-                Dim loadf As New IO.StreamReader(path)
-                'Get the file name alone
-                Dim finame As String = path.Substring(path.LastIndexOf("\")).Replace("\", "")
-                'If it's too long then cut it short and set the tab text to the file name
-                If finame.Length > 30 Then
-                    tb.Text = finame.Substring(0, 30) & "..."
-                Else
-                    tb.Text = finame
-                End If
-                tb.Tag = path
-                'Show the user where the file in the tab is from in the tab tooltip
-
-                'Make sure that the user can see the tooltip
-
-                If CreatingDocumentBackup = False Then
-                    'Set the save path for the document as the path that we opened, asssuming we're not loading a backup document.
-                    myScintilla.SavePath = path
-                End If
-                'Set the scintilla text to whatever we read from the file
-                myScintilla.Text = loadf.ReadToEnd
-                If myScintilla.Text.StartsWith("PROGPADENCRYPT:") Then
-                    Dim res As DialogResult = MessageBox.Show("This document has been encrypted. Do you want to decrypt it?", "Encrypted Document", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
-                    If res = Windows.Forms.DialogResult.Yes Then
-                        frmEncrypt.EncryptMode = False
-                        frmEncrypt.ApplicableText = myScintilla.Text
-                        frmEncrypt.ShowDialog()
-                    End If
-                End If
-                'Close and dispose with our loader
-                loadf.Close()
-                loadf.Dispose()
-
-                tb.Icon = Icon.FromHandle(New Bitmap(GetShellIconAsImage(path)).GetHicon)
+            'Set the text to inform the user that it's a new document
+            tb.Text = "New - " & notes.ToString
+            tb.Tag = "SCINFORM"
+            tb.Width = 200
+            tb.Icon = Icon.FromHandle(New Bitmap(Application.StartupPath & "\images\page.png").GetHicon)
 
 
-                If AutoHighlighting = True Then
-                    For Each itm In AutoHighligtingRules
-                        If path.Contains(".") Then
-                            If itm.Contains(path.Substring(path.LastIndexOf("."))) Then
-                                For Each ddItm As ToolStripMenuItem In SyntaxHighlightingToolStripMenuItem.DropDownItems
-                                    If ddItm.Text = itm.Substring(itm.LastIndexOf("$%$")).Replace("$%$", "") Then
-                                        ddItm.PerformClick()
-                                    End If
-                                Next
-                            End If
+            'Add the scintilla to the tabpage
+            tb.Controls.Add(myScintilla)
+            'Add the tabpage to the tabcontrol
+            Dim x As TabPage = tcMain.TabPages.Add(tb)
+            x.Select()
+            AddHandler x.MouseEnter, AddressOf TabMouseEnter
+            AddHandler x.MouseClick, AddressOf TabMouseDown
+            AddHandler x.MouseLeave, AddressOf TabMouseLeave
+
+
+            'Make sure that the tab is selected
+            'Make sure that the scintilla is selected.
+            myScintilla.Focus()
+            myScintilla.Select()
+            If path <> "" Then
+                'If there is a document location specified, try to load it
+                Try
+                    Dim addTo As Boolean = True
+                    For Each itm In RecentToolStripMenuItem.DropDownItems
+                        If itm.Text = path Then
+                            addTo = False
                         End If
                     Next
-                End If
-                Dim finfo As New IO.FileInfo(path)
-                myScintilla.DocumentSize = finfo.Length.ToString
-            Catch ex As Exception
-                'If we cant, then tell the user
-                MessageBox.Show("There was an error opening the file: " & ex.Message, "Error")
-            End Try
-            'Make bloody sure that the scintilla knows that we haven't changed the text yet. Had problems with this, but now solved.
-            myScintilla.WasTextChanged = False
-        End If
-        If DocumentTitleBar = True Then
-            Me.Text = "NeoIDE - " & tb.Text
-        End If
-        If CreatingDocumentBackup = True Then
-            myScintilla.WasTextChanged = True
-        End If
+                    If addTo = True Then
+                        Dim myRecentItem As New RecentItem
+                        myRecentItem.Text = path
+                        myRecentItem.Image = Image.FromFile(Application.StartupPath & "\Images\doc_single.png")
+                        RecentToolStripMenuItem.DropDownItems.Add(myRecentItem)
+                    End If
+                    If RecentToolStripMenuItem.DropDownItems.Count > 16 Then
+                        RecentToolStripMenuItem.DropDownItems.RemoveAt(RecentToolStripMenuItem.DropDownItems.Count - 1)
+                    End If
+                    Dim loadf As New IO.StreamReader(path)
+                    'Get the file name alone
+                    Dim finame As String = path.Substring(path.LastIndexOf("\")).Replace("\", "")
+                    'If it's too long then cut it short and set the tab text to the file name
+                    If finame.Length > 30 Then
+                        tb.Text = finame.Substring(0, 30) & "..."
+                    Else
+                        tb.Text = finame
+                    End If
+                    tb.Tag = path
+                    'Show the user where the file in the tab is from in the tab tooltip
+
+                    'Make sure that the user can see the tooltip
+
+                    If CreatingDocumentBackup = False Then
+                        'Set the save path for the document as the path that we opened, asssuming we're not loading a backup document.
+                        myScintilla.SavePath = path
+                    End If
+                    'Set the scintilla text to whatever we read from the file
+                    myScintilla.Text = loadf.ReadToEnd
+                    If myScintilla.Text.StartsWith("PROGPADENCRYPT:") Then
+                        Dim res As DialogResult = MessageBox.Show("This document has been encrypted. Do you want to decrypt it?", "Encrypted Document", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+                        If res = Windows.Forms.DialogResult.Yes Then
+                            frmEncrypt.EncryptMode = False
+                            frmEncrypt.ApplicableText = myScintilla.Text
+                            frmEncrypt.ShowDialog()
+                        End If
+                    End If
+                    'Close and dispose with our loader
+                    loadf.Close()
+                    loadf.Dispose()
+
+                    tb.Icon = Icon.FromHandle(New Bitmap(GetShellIconAsImage(path)).GetHicon)
+
+
+                    If AutoHighlighting = True Then
+                        For Each itm In AutoHighligtingRules
+                            If path.Contains(".") Then
+                                If itm.Contains(path.Substring(path.LastIndexOf("."))) Then
+                                    For Each ddItm As ToolStripMenuItem In SyntaxHighlightingToolStripMenuItem.DropDownItems
+                                        If ddItm.Text = itm.Substring(itm.LastIndexOf("$%$")).Replace("$%$", "") Then
+                                            ddItm.PerformClick()
+                                        End If
+                                    Next
+                                End If
+                            End If
+                        Next
+                    End If
+                    Dim finfo As New IO.FileInfo(path)
+                    myScintilla.DocumentSize = finfo.Length.ToString
+                Catch ex As Exception
+                    'If we cant, then tell the user
+                    MessageBox.Show("There was an error opening the file: " & ex.Message, "Error")
+                End Try
+                'Make bloody sure that the scintilla knows that we haven't changed the text yet. Had problems with this, but now solved.
+                myScintilla.WasTextChanged = False
+            End If
+            If DocumentTitleBar = True Then
+                Me.Text = "NeoIDE - " & tb.Text
+            End If
+            If CreatingDocumentBackup = True Then
+                myScintilla.WasTextChanged = True
+            End If
+        Catch ex As Exception
+            MessageBox.Show(ex.ToString)
+        End Try
+
     End Sub
 
 
@@ -1504,6 +1526,7 @@ Public Class frmMain
                 tcMain.TabPages(oldindex - 1).Select()
             End If
             tcMain.TabPages.RemoveAt(oldindex)
+            ourPB.Hide()
         Else
             'If the text has been changed, prompt the user to save
             Dim dr As DialogResult = MessageBox.Show("The document: '" & tcMain.SelectedForm.Text & "' has not been saved. Do you want to save it now?", "Document not saved", MessageBoxButtons.YesNoCancel)
@@ -1520,6 +1543,7 @@ Public Class frmMain
                             tcMain.TabPages(oldindex - 1).Select()
                         End If
                         tcMain.TabPages.RemoveAt(oldindex)
+                        ourPB.Hide()
                     End If
                 Else
                     'Otherwise if the document has been saved before, save, but specifying the file path. Then perform the same procedure as before.
@@ -1531,6 +1555,7 @@ Public Class frmMain
                             tcMain.TabPages(oldindex - 1).Select()
                         End If
                         tcMain.TabPages.RemoveAt(oldindex)
+                        ourPB.Hide()
                     End If
                 End If
             ElseIf dr = DialogResult.No Then
@@ -1542,8 +1567,48 @@ Public Class frmMain
                     tcMain.TabPages(oldindex - 1).Select()
                 End If
                 tcMain.TabPages.RemoveAt(oldindex)
+                ourPB.Hide()
             End If
         End If
+    End Sub
+
+    Private Sub NonSelectedTabClose(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs)
+        If tcMain.TabPages.Count <> 1 Then
+            Dim formScintilla As ScintillaEx = CType(sender, Form).Controls(0)
+            'If the text has not been changed, close the document, and select the previous tab.
+            If formScintilla.WasTextChanged = True Then
+                'If the text has been changed, prompt the user to save
+                Dim dr As DialogResult = MessageBox.Show("The document: '" & sender.Text & "' has not been saved. Do you want to save it now?", "Document not saved", MessageBoxButtons.YesNoCancel)
+                If dr = Windows.Forms.DialogResult.Yes Then
+                    'If the user says yes
+                    If formScintilla.SavePath = "" Then
+                        'If the document has not yet been saved before, and thus has no save path, then save the document
+                        If SaveDocument(formScintilla) = False Then
+                            'If the document has been saved successfuly, then perform the same procedure
+                            e.Cancel = True
+                        Else
+                            ourPB.Hide()
+                        End If
+                    Else
+                        'Otherwise if the document has been saved before, save, but specifying the file path. Then perform the same procedure as before.
+                        If SaveDocument(formScintilla, formScintilla.SavePath) = False Then
+                            e.Cancel = True
+                            ourPB.Hide()
+                        Else
+                            ourPB.Hide()
+                        End If
+                    End If
+                ElseIf dr = Windows.Forms.DialogResult.Cancel Then
+                    e.Cancel = True
+                Else
+                    ourPB.Hide()
+                End If
+            Else
+                ourPB.Hide()
+            End If
+        End If
+     
+        
     End Sub
 
     Private Sub OpenToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OpenToolStripMenuItem.Click
@@ -1560,7 +1625,6 @@ Public Class frmMain
         End If
     End Sub
 
-
     Private Sub EncryptAndCloseSelectedToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EncryptAndCloseSelectedToolStripMenuItem.Click
         If EncryptAndCloseSelectedToolStripMenuItem.Text = "Decrypt Selected" Then
             frmEncrypt.EncryptMode = False
@@ -1574,8 +1638,7 @@ Public Class frmMain
     End Sub
 
 #Region "Sharing"
-    Private Sub ProgrammersCloudToolStripMenuItemMultiple_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ProgrammersCloudToolStripMenuItemMultiple.Click
-        frmCloudLogin.ShowDialog()
+    Private Sub ProgrammersCloudToolStripMenuItemMultiple_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
     End Sub
 
     Private Sub localhostrToolStripMenuItemMultiple_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles localhostrToolStripMenuItemMultiple.Click
@@ -1612,12 +1675,7 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub ProgrammersCloudToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ProgrammersCloudToolStripMenuItem.Click
-        frmCloudLogin.ShowDialog()
-    End Sub
 #End Region
-
-
 
     Private Sub ExportToHTMLToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles ExportToHTMLToolStripMenuItem.Click
         Dim ourHTML As String = SelScintilla.ExportHtml()
@@ -1701,27 +1759,28 @@ Public Class frmMain
     End Sub
 #End Region
 #Region "View Menustrip item"
-
-
-
     Private Sub ConfigurationToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ConfigurationToolStripMenuItem.Click
         Dim fc As New frmConfig
         fc.ShowDialog()
 
-        Try
-            PLG = Plugin(IO.File.ReadAllBytes(Application.StartupPath & "\Themes\" & fc.lstTheme.SelectedItem.ToString.Replace(" ", "_") & ".dll"), "Theme")
-        Catch ex As Exception
-            fc.lstTheme.SelectedIndex = 0
-            PLG = Plugin(IO.File.ReadAllBytes(Application.StartupPath & "\Themes\" & fc.lstTheme.SelectedItem.ToString.Replace(" ", "_") & ".dll"), "Theme")
-        End Try
-        ThemeFile = Application.StartupPath & "\Themes\" & fc.lstTheme.SelectedItem.ToString.Replace(" ", "_") & ".dll"
+        
+    End Sub
+
+    Private Sub HTMLSidebarToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles HTMLSidebarToolStripMenuItem.Click
+        'Show the project sidebar
+        frmHTMLSidebar.ShowHint = DockState.DockTop
+        frmHTMLSidebar.Show(dPanel)
+    End Sub
+
+    Public Sub SetPluginFile(ByVal DllName As String)
+        PLG = Plugin(IO.File.ReadAllBytes(DllName), "Theme")
+        ThemeFile = DllName
         Me.SuspendLayout()
         PLG.TabControl = tcMain
         PLG.vExt = _vtExtender
         PLG.InitializeTheme()
         Me.ResumeLayout()
         Me.Refresh()
-
     End Sub
     Private Sub IndicatorsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ShowEolToolstripmenuitem.Click
         For Each tb In tcMain.Controls(2).Controls
@@ -1796,8 +1855,10 @@ Public Class frmMain
         If cpd.ShowDialog() = DialogResult.OK Then
             'Tell each tab to higlight the current line in that color.
             For Each tb In tcMain.Controls(2).Controls
-                CType(tb.Controls(0), ScintillaEx).Caret.CurrentLineBackgroundColor = cpd.Color
-                LineHighlightColor = cpd.Color
+                If tb.Tag = "SCINFORM" Then
+                    CType(tb.Controls(0), ScintillaEx).Caret.CurrentLineBackgroundColor = cpd.Color
+                    LineHighlightColor = cpd.Color
+                End If
             Next
         End If
     End Sub
@@ -1844,23 +1905,25 @@ Public Class frmMain
         Next
     End Sub
 #Region "Bookmarking"
-    Private Sub ViewToolStripMenuItem_DropDownOpening(ByVal sender As Object, ByVal e As System.EventArgs) Handles ViewToolStripMenuItem1.DropDownOpening
-        'As soon as the user hovers over the view toolstripmenuitem, we want the bookmarks item to be expandable, so we have to populate it immediately.
-        BookmarkManagerToolStripMenuItem.DropDownItems.Clear()
-        'Loop through each line, check if it's bookmarked, and if so, add it to the list.. pretty simple.
-        For Each ln As Line In SelScintilla.Lines
-            For Each Marker In SelScintilla.Markers.GetMarkers(ln)
-                If SelScintilla.Markers.GetMarkerMask(ln) <> 0 Then
-                    Dim tsitem As New BookmarkItem
-                    tsitem.Text = "Bookmark - " & ln.Number + 1
-                    BookmarkManagerToolStripMenuItem.DropDownItems.Add(tsitem)
-                    Exit For
-                End If
+    Private Sub ViewToolStripMenuItem_DropDownOpening(ByVal sender As Object, ByVal e As System.EventArgs) Handles ViewToolStripMenuItem.DropDownOpening
+        If tcMain.SelectedForm.Text <> "Start Page" Then
+            'As soon as the user hovers over the view toolstripmenuitem, we want the bookmarks item to be expandable, so we have to populate it immediately.
+            BookmarkManagerToolStripMenuItem.DropDownItems.Clear()
+            'Loop through each line, check if it's bookmarked, and if so, add it to the list.. pretty simple.
+            For Each ln As Line In SelScintilla.Lines
+                For Each Marker In SelScintilla.Markers.GetMarkers(ln)
+                    If SelScintilla.Markers.GetMarkerMask(ln) <> 0 Then
+                        Dim tsitem As New BookmarkItem
+                        tsitem.Text = "Bookmark - " & ln.Number + 1
+                        BookmarkManagerToolStripMenuItem.DropDownItems.Add(tsitem)
+                        Exit For
+                    End If
+                Next
             Next
-        Next
-        'If there are no bookmarks, tell the user
-        If BookmarkManagerToolStripMenuItem.DropDownItems.Count = 0 Then
-            BookmarkManagerToolStripMenuItem.DropDownItems.Add("None...")
+            'If there are no bookmarks, tell the user
+            If BookmarkManagerToolStripMenuItem.DropDownItems.Count = 0 Then
+                BookmarkManagerToolStripMenuItem.DropDownItems.Add("None...")
+            End If
         End If
     End Sub
 
@@ -1917,22 +1980,22 @@ Public Class frmMain
         Next
     End Sub
     Private Sub ShowBookmarkMarginToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ShowBookmarkMarginToolStripMenuItem.Click
-        'For each tab, show or hide the bookmark margin depending on whether the button is checked or not.
-        '      For Each tb In tcMain.Controls(2).Controls
-        ' If ShowBookmarkMarginToolStripMenuItem.Checked = True Then
-        ' With CType(tb.Controls(0), ScintillaEx)
-        ' .Margins.Margin1.Width = 20
-        ' .Margins.Margin1.IsMarkerMargin = True
-        ' .Margins.Margin1.IsClickable = True
-        ' .Margins.Margin1.AutoToggleMarkerNumber = True
-        ' End With
-        '      Else
-        '  With CType(tb.Controls(0), ScintillaEx)
-        ' .Margins.Margin1.Width = 0
-        ' End With
-        '
-        '        End If
-        '       Next
+        On Error Resume Next
+        For Each tb In tcMain.Controls(2).Controls
+            If ShowBookmarkMarginToolStripMenuItem.Checked = True Then
+                With CType(tb.Controls(0), ScintillaEx)
+                    .Margins.Margin1.Width = 20
+                    .Margins.Margin1.IsMarkerMargin = True
+                    .Margins.Margin1.IsClickable = True
+                    .Margins.Margin1.AutoToggleMarkerNumber = True
+                End With
+            Else
+                With CType(tb.Controls(0), ScintillaEx)
+                    .Margins.Margin1.Width = 0
+                End With
+
+            End If
+        Next
     End Sub
 #End Region
 #End Region
@@ -2053,69 +2116,97 @@ ib:
 #End Region
 #Region "TabControl Events"
 
+    Private Sub EnableDisableItems(ByVal Enable As Boolean)
+        SaveToolStripMenuItem.Enabled = Enable
+        SaveAsToolStripMenuItem.Enabled = Enable
+        ExportToHTMLToolStripMenuItem.Enabled = Enable
+        CloseToolStripMenuItem.Enabled = Enable
+
+        EncryptAndCloseSelectedToolStripMenuItem.Enabled = Enable
+        ShareToolStripMenuItem.Enabled = Enable
+        PrintPreviewToolStripMenuItem.Enabled = Enable
+        PrintToolStripMenuItem.Enabled = Enable
+        For Each itm In EditToolStripMenuItem.DropDownItems
+            itm.Enabled = Enable
+        Next
+        For Each itm In InsertToolStripMenuItem.DropDownItems
+            itm.Enabled = Enable
+        Next
+        For Each itm In AddonsToolStripMenuItem.DropDownItems
+            itm.Enabled = Enable
+        Next
+        For Each itm In FormatToolStripMenuItem.DropDownItems
+            itm.Enabled = Enable
+        Next
+        For Each itm In ViewToolStripMenuItem.DropDownItems
+            itm.Enabled = Enable
+        Next
+        For Each itm In MacroToolStripMenuItem.DropDownItems
+            itm.Enabled = Enable
+        Next
+        For Each itm In EncodingToolStripMenuItem.DropDownItems
+            itm.Enabled = Enable
+        Next
+        For Each itm In ZoomToolStripMenuItem.DropDownItems
+            itm.Enabled = Enable
+        Next
+        SyntaxHighlightingToolStripMenuItem.Enabled = Enable
+        RunToolStripMenuItem.Enabled = Enable
+        cmuTab.Enabled = Enable
+        msToolbar.Enabled = Enable
+        msInfo.Enabled = Enable
+        GetAddonsToolStripMenuItem.Enabled = True
+        tmrWordCount.Stop()
+    End Sub
+
     Private Sub tcMain_SelectedTabChanged(sender As Object, e As System.EventArgs) Handles tcMain.SelectedTabChanged
-        'Set "SelScintilla" to the currently selected scintilla, meaning we don't have to use a CType each time we refer to it
-        SelScintilla = CType(tcMain.SelectedForm.Controls.Item(0), ScintillaEx)
-        'Focus the selected scintilla for convenience
-        SelScintilla.Focus()
-        'Stop any auto save process from happening for the previously selected document. Auto save will re-start for the current document when the user starts typing.
-        tmrExpireAutoSave.Stop()
-        tmrTypingAutoSave.Stop()
-        'Used for the word count
-        mHwnd = SelScintilla.Handle
-        'Update the info label
-        lblInfo.Text = tcMain.SelectedForm.Text
-        '    If TabShowClose = True Then
-        ' If tcMain.TabPages.Count <> 1 Then
-        ' tcMain.DisplayStyleProvider.ShowTabCloser = True
-        ' Else
-        ' tcMain.DisplayStyleProvider.ShowTabCloser = False
-        ' End If
-        ' End If
-        If SelScintilla.SavePath <> "" Then
-            If My.Computer.FileSystem.FileExists(SelScintilla.SavePath) = False Then
-                Dim mbRes = MessageBox.Show("The file associated with this document has been deleted! Do you want to keep this document?", "File Deleted!", MessageBoxButtons.YesNo)
-                If mbRes = Windows.Forms.DialogResult.No Then
-                    SelScintilla.WasTextChanged = False
-                    CloseToolStripMenuItem.PerformClick()
-                End If
+        If CType(tcMain.SelectedForm, Form).Text = "Start Page" Then
+            EnableDisableItems(False)
+        ElseIf tcMain.SelectedForm.Tag = "SCINFORM" Then
+            EnableDisableItems(True)
+            'Set "SelScintilla" to the currently selected scintilla, meaning we don't have to use a CType each time we refer to it
+            SelScintilla = CType(tcMain.SelectedForm.Controls.Item(0), ScintillaEx)
+            'Focus the selected scintilla for convenience
+            SelScintilla.Focus()
+            'Stop any auto save process from happening for the previously selected document. Auto save will re-start for the current document when the user starts typing.
+            tmrExpireAutoSave.Stop()
+            tmrTypingAutoSave.Stop()
+            'Used for the word count
+            mHwnd = SelScintilla.Handle
+            'Update the info label
+            lblInfo.Text = tcMain.SelectedForm.Text
+            '    If TabShowClose = True Then
+            ' If tcMain.TabPages.Count <> 1 Then
+            ' tcMain.DisplayStyleProvider.ShowTabCloser = True
+            ' Else
+            ' tcMain.DisplayStyleProvider.ShowTabCloser = False
+            ' End If
+            ' End If
+   
+            If SelScintilla.Text.StartsWith("PROGPADENCRYPT:") Then
+                EncryptAndCloseSelectedToolStripMenuItem.Text = "Decrypt Selected"
+            Else
+                EncryptAndCloseSelectedToolStripMenuItem.Text = "Encrypt Selected"
             End If
-            If SelScintilla.PromptOnExternal = True Then
-                Dim finfo As New IO.FileInfo(SelScintilla.SavePath)
-                If finfo.Length.ToString <> SelScintilla.DocumentSize.ToString Then
-                    If SelScintilla.PromptOnExternal = True Then
-                        Dim mbRes = MessageBox.Show("The file associated with this document has been modified! Do you want to reload this document?", "File Deleted!", MessageBoxButtons.YesNo)
-                        If mbRes = Windows.Forms.DialogResult.Yes Then
-                            Dim sp As String = SelScintilla.SavePath
-                            SelScintilla.WasTextChanged = False
-                            CloseToolStripMenuItem.PerformClick()
-                            CreateNewDoc(sp)
-                        Else
-                            SelScintilla.PromptOnExternal = False
-                        End If
-                    End If
-                End If
+            If DocumentTitleBar = True Then
+                Me.Text = "NeoIDE - " & tcMain.SelectedForm.Text
             End If
-        End If
-        If SelScintilla.Text.StartsWith("PROGPADENCRYPT:") Then
-            EncryptAndCloseSelectedToolStripMenuItem.Text = "Decrypt Selected"
-        Else
-            EncryptAndCloseSelectedToolStripMenuItem.Text = "Encrypt Selected"
-        End If
-        If DocumentTitleBar = True Then
-            Me.Text = "NeoIDE - " & tcMain.SelectedForm.Text
+
+            'tsCompiler.Visible = SelScintilla.CompilerShowMenu
         End If
 
-        'tsCompiler.Visible = SelScintilla.CompilerShowMenu
     End Sub
 #End Region
-
 
     'Run menuitem
     Private Sub EditToolStripMenuItem1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles EditToolStripMenuItem1.Click
         frmRunEditor.ShowDialog()
     End Sub
 
+    'Addons menuitem
+    Private Sub GetAddonsToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles GetAddonsToolStripMenuItem.Click
+        frmGetExtensions.ShowDialog()
+    End Sub
 
 #Region "Toolbar"
     Private Sub ToolStripButton1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles tsbCustomize.Click
@@ -2151,63 +2242,42 @@ ib:
     End Sub
 #End Region
 
-
-    Private Sub btnRunCode_Click(sender As System.Object, e As System.EventArgs) Handles btnRunCode.Click
-        'If SelScintilla.CompilerOutPath <> "" Then
-        '    compiler.Source = SelScintilla.Text
-        '    compiler.ExecuteAfterCompiled = True
-        '    compiler.Debug = btnCompilerDebug.Checked
-        '    compiler.Compile(SelScintilla.CompilerOutPath)
-        'Else
-        '    MessageBox.Show("Please set options for your program before you run it...", "Information", MessageBoxButtons.OK)
-        '    frmCodeDomOptions.ShowDialog()
-        'End If
-    End Sub
-
-
     Private Sub btnCloseCompiler_Click(sender As System.Object, e As System.EventArgs) Handles btnCloseCompiler.Click
         tsCompiler.Hide()
     End Sub
 
-    Private Sub btnAssemblyOptions_Click(sender As System.Object, e As System.EventArgs) Handles btnAssemblyOptions.Click
-        frmCodeDomOptions.ShowDialog()
+#Region "Tab Events"
+#Region "Tab Previews"
+    Dim ourPB As New PictureBox
+    Private Sub TabMouseEnter(sender As Object, e As System.EventArgs)
+        Dim ctrl As Control = CType(sender, Control)
+        Dim frm As Form = CType(sender.Form, Form)
+        Dim thaBm As New Bitmap(frm.Width, frm.Height)
+        CType(sender.Form, Form).DrawToBitmap(thaBm, New Rectangle(0, 0, frm.Width, frm.Height))
+        ourPB.Image = thaBm
+        '   ourPB.SizeMode = PictureBoxSizeMode.StretchImage
+        ourPB.Size = New Size(ctrl.Width + 120, 200)
+        Dim totHeight As Integer
+        If tsCompiler.Visible = True Then
+            totHeight += tsCompiler.Height
+        Else
+            totHeight += msMain.Height + msToolbar.Height
+        End If
+        ourPB.Location = New Point(ctrl.Location.X, totHeight + ctrl.Height + 8)
+        ourPB.Visible = True
+        Me.Controls.Add(ourPB)
+        ourPB.BringToFront()
+        ourPB.BorderStyle = BorderStyle.None
+        AddHandler ourPB.Paint, AddressOf TabPreviewPictureBox_Paint
+    End Sub
+    Private Sub TabMouseLeave(sender As Object, e As System.EventArgs)
+        ourPB.Hide()
     End Sub
 
-    Private Sub CToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs)
-        compiler.Language = Language.CSharp
+    Private Sub TabPreviewPictureBox_Paint(sender As Object, e As System.Windows.Forms.PaintEventArgs)
+        ControlPaint.DrawBorder(e.Graphics, sender.DisplayRectangle, Color.Red, 3, ButtonBorderStyle.Outset, Color.Red, 3, ButtonBorderStyle.Outset, Color.Red, 3, ButtonBorderStyle.Outset, Color.Red, 3, ButtonBorderStyle.Outset)
     End Sub
-
-    Private Sub VBToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs)
-        compiler.Language = Language.VisualBasic
-    End Sub
-
-    Private Sub Framework20ToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles Framework20ToolStripMenuItem.Click
-        compiler.DotNetVersion = DotNetVersion.v2
-    End Sub
-
-    Private Sub Framework30ToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles Framework30ToolStripMenuItem.Click
-        compiler.DotNetVersion = DotNetVersion.v3
-    End Sub
-
-    Private Sub Framework35ToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles Framework35ToolStripMenuItem.Click
-        compiler.DotNetVersion = DotNetVersion.v35
-    End Sub
-
-    Private Sub Framework40ToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles Framework40ToolStripMenuItem.Click
-        compiler.DotNetVersion = DotNetVersion.v4
-    End Sub
-
-
-    Private Sub formclose(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs)
-        e.Cancel = True
-        CloseToolStripMenuItem.PerformClick()
-    End Sub
-
-    Private Sub NewProjectToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles NewProjectToolStripMenuItem.Click
-        frmNewProject.ShowDialog()
-    End Sub
-
-
+#End Region
 #Region "Tab ContextMenu"
     Private Sub cmuTab_Opening(sender As System.Object, e As System.ComponentModel.CancelEventArgs) Handles cmuTab.Opening
         If SelScintilla.SavePath <> "" Then
@@ -2217,7 +2287,7 @@ ib:
         End If
     End Sub
     Dim ContextScin As ScintillaEx
-    Sub mDown(ByVal sender As Object, ByVal e As MouseEventArgs)
+    Sub TabMouseDown(ByVal sender As Object, ByVal e As MouseEventArgs)
         If e.Button = Windows.Forms.MouseButtons.Right Then
             Dim x As New ContextMenuStrip
             Dim t As ToolStripItem = x.Items.Add("Show file in Explorer", Nothing, AddressOf Closeit)
@@ -2229,22 +2299,28 @@ ib:
             End If
             t.Tag = sender
             x.Show(sender, e.Location)
+        ElseIf e.Button = Windows.Forms.MouseButtons.Middle Then
+            sender.Form.Close()
         End If
     End Sub
 
     Sub Closeit(ByVal sender As Object, ByVal e As EventArgs)
         Try
-            Process.Start(ContextScin.SavePath.Substring(0, ContextScin.SavePath.LastIndexOf("\")))
+            Microsoft.VisualBasic.Shell("explorer /e,/select," & ContextScin.SavePath, AppWinStyle.NormalFocus)
         Catch ex As Exception
         End Try
     End Sub
 #End Region
-
+#End Region
 #Region "Find Bar"
     Private Sub ToolStripButton1_Click_1(sender As System.Object, e As System.EventArgs) Handles btnFindNext.Click
         findNext()
     End Sub
 
+    Private Sub QuickFindToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles QuickFindToolStripMenuItem.Click
+        tsFind.Visible = True
+        txtFind.Focus()
+    End Sub
 
     Private Sub btnFindPrevious_Click(sender As System.Object, e As System.EventArgs) Handles btnFindPrevious.Click
         findPrevious()
@@ -2266,7 +2342,6 @@ ib:
         tsFind.Hide()
     End Sub
 
-
     Private Sub findNext()
         If ((txtFind.Text <> String.Empty) AndAlso (Not SelScintilla Is Nothing)) Then
             Dim range As Range = SelScintilla.FindReplace.FindNext(txtFind.Text, True, SelScintilla.FindReplace.Window.GetSearchFlags)
@@ -2275,7 +2350,6 @@ ib:
             End If
             moveFormAwayFromSelection()
         End If
-
     End Sub
 
     Private Sub findPrevious()
@@ -2322,16 +2396,12 @@ ib:
             End If
             moveFormAwayFromSelection()
         End If
-
-
     End Sub
 
     Private Sub btnFindHighlightAll_Click(sender As System.Object, e As System.EventArgs) Handles btnFindHighlightAll.Click
         If ((txtFind.Text <> String.Empty) AndAlso (Not SelScintilla Is Nothing)) Then
             HighlightAll(SelScintilla.FindReplace.FindAll(txtFind.Text))
-
         End If
-
     End Sub
 
     Public Sub HighlightAll(ByVal foundRanges As IList(Of Range))
@@ -2342,26 +2412,18 @@ ib:
     End Sub
 #End Region
 
+    Private Sub FTPServerToolStripMenuItemMultiple_Click(sender As System.Object, e As System.EventArgs) Handles FTPServerToolStripMenuItemMultiple.Click
 
-    Private Sub QuickFindToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles QuickFindToolStripMenuItem.Click
-        tsFind.Visible = True
-        txtFind.Focus()
     End Sub
 
+    Private Sub tcMain_Load(sender As System.Object, e As System.EventArgs) Handles tcMain.Load
 
-    Private Sub HTMLSidebarToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles HTMLSidebarToolStripMenuItem.Click
-        'Show the project sidebar
-        frmHTMLSidebar.ShowHint = DockState.DockTop
-        frmHTMLSidebar.Show(dPanel)
     End Sub
 
-    Private Sub InitializeAddonsToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles InitializeAddonsToolStripMenuItem.Click
- 
-    End Sub
-
-
-    Private Sub GetAddonsToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles GetAddonsToolStripMenuItem.Click
-        frmGetExtensions.ShowDialog()
+    Private Sub frmMain_GotFocus(sender As Object, e As System.EventArgs) Handles Me.GotFocus
+        If tcMain.SelectedForm.Tag = "SCINFORM" Then
+            SelScintilla.CheckForFileMods()
+        End If
     End Sub
 End Class
 #Region "Custom Controls"

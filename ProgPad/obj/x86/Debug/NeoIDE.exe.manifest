@@ -58,18 +58,6 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="AxInterop.CHILKATMAILLib2.dll" size="45056">
-      <assemblyIdentity name="AxInterop.CHILKATMAILLib2" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
-      <hash>
-        <dsig:Transforms>
-          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-        </dsig:Transforms>
-        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>JWL6QbVi0Th9TvXuESdmv6Sdfak=</dsig:DigestValue>
-      </hash>
-    </dependentAssembly>
-  </dependency>
-  <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="CustomTabControl.dll" size="96256">
       <assemblyIdentity name="CustomTabControl" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
@@ -77,55 +65,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>9WOzWCDx4EV/1j3vN6IIddDN1yg=</dsig:DigestValue>
+        <dsig:DigestValue>SDjJIwT+Bwb+wD//Dl2TackgMf0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="edtFTPnet.dll" size="135168">
-      <assemblyIdentity name="edtFTPnet" version="1.2.6.0" publicKeyToken="4B0C991F43097782" language="neutral" />
-      <hash>
-        <dsig:Transforms>
-          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-        </dsig:Transforms>
-        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>i6wLjoNGcSjz8wtPHflsyXAR7ns=</dsig:DigestValue>
-      </hash>
-    </dependentAssembly>
-  </dependency>
-  <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="FtpLib.dll" size="40960">
-      <assemblyIdentity name="FtpLib" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
-      <hash>
-        <dsig:Transforms>
-          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-        </dsig:Transforms>
-        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>QaGOq5U06hFv7rzsEFaNGkIQrsc=</dsig:DigestValue>
-      </hash>
-    </dependentAssembly>
-  </dependency>
-  <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Interop.CHILKATMAILLib2.dll" size="86016">
-      <assemblyIdentity name="Interop.CHILKATMAILLib2" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
-      <hash>
-        <dsig:Transforms>
-          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-        </dsig:Transforms>
-        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>PRLx7qDi6GEy6uF+P1/rF3xazH8=</dsig:DigestValue>
-      </hash>
-    </dependentAssembly>
-  </dependency>
-  <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NeoIDE.exe" size="667136">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NeoIDE.exe" size="630272">
       <assemblyIdentity name="NeoIDE" version="0.5.5.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>DtOmt6K+NZbuUKs7u7h73+9MSSc=</dsig:DigestValue>
+        <dsig:DigestValue>nhl1r1U4YsJu/90q6q4h9dCkCVk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -186,13 +138,13 @@
       <dsig:DigestValue>SGVDTgo4UliN30pvcK/QS1rGBPM=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="NeoIDE.exe.config" size="2011">
+  <file name="NeoIDE.exe.config" size="2662">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>EVV5u7cN65iTcVnnyK7pqzba6Dc=</dsig:DigestValue>
+      <dsig:DigestValue>l8LYn7kKc32tFVxZ87rdtbNyvYM=</dsig:DigestValue>
     </hash>
   </file>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">

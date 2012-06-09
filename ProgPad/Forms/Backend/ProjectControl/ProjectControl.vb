@@ -1,11 +1,12 @@
 ﻿Imports System.Drawing.Drawing2D
 
-Public Class AddonButton
+Public Class ProjectControl
+
 
     Dim mouseIn As Boolean
     Private Sub AddonButton_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         tmrFade.Start()
- 
+
     End Sub
 
     Private Sub tmrFade_Tick(sender As System.Object, e As System.EventArgs) Handles tmrFade.Tick

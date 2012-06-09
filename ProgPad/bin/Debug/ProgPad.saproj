@@ -4,11 +4,11 @@
         <Options>
             <ExceptionReporting Template="res:{SmartExceptions}.1033.dll" />
             <FeatureUsageReporting Template="res:SmartUsageWithUIConsentFirstRun1033.dll" />
-            <StringsEncoding Compress="1" Encode="1" UseCache="1" UseImprovedEncoding="1" />
+            <StringsEncoding Compress="1" Encode="1" UseCache="1" UseImprovedEncoding="0" />
             <StrongNameSigning />
-            <OtherOptimizations ManageMemory="0" SealClasses="1" />
+            <OtherOptimizations ManageMemory="0" SealClasses="0" />
             <Obfuscation FieldsNameMangling="2" NameMangling="3" />
-            <OtherProtections SuppressIldasm="1" />
+            <OtherProtections SuppressIldasm="0" />
             <Debugging />
         </Options>
         <ApplicationName />
@@ -17,17 +17,17 @@
             <Assembly AssemblyName="NeoIDE, Culture=neutral, PublicKeyToken=null">
                 <Merging>
                     <ResourcesCompression Compress="1" />
-                    <MemberRefsProxy Proxy="1" />
+                    <MemberRefsProxy Proxy="0" />
                     <Pruning Prune="1">
                         <Exclusion />
                     </Pruning>
                     <Obfuscation />
-                    <ControlFlow Obfuscate="1" ObfuscationLevel="3" />
+                    <ControlFlow Obfuscate="0" ObfuscationLevel="3" />
                 </Merging>
                 <Embedding />
             </Assembly>
             <Assembly AssemblyName="WeifenLuo.WinFormsUI.Docking, Culture=neutral, PublicKeyToken=null">
-                <Merging Merge="1">
+                <Merging Merge="0">
                     <Pruning Prune="1">
                         <Exclusion />
                     </Pruning>
@@ -36,14 +36,22 @@
                     <MemberRefsProxy />
                     <ResourcesCompression Compress="1" />
                 </Merging>
-                <Embedding />
+                <Embedding Embed="0" />
             </Assembly>
             <Assembly AssemblyName="ScintillaNET, Culture=neutral, PublicKeyToken=948d6c9751444115">
-                <Merging />
-                <Embedding Embed="1" />
+                <Merging Merge="0">
+                    <Pruning>
+                        <Exclusion />
+                    </Pruning>
+                    <Obfuscation />
+                    <ControlFlow />
+                    <MemberRefsProxy />
+                    <ResourcesCompression />
+                </Merging>
+                <Embedding Compress="0" Embed="0" Encrypt="0" />
             </Assembly>
             <Assembly AssemblyName="FtpLib, Culture=neutral, PublicKeyToken=null">
-                <Merging Merge="1">
+                <Merging Merge="0">
                     <Pruning Prune="1">
                         <Exclusion />
                     </Pruning>
@@ -55,7 +63,7 @@
                 <Embedding />
             </Assembly>
             <Assembly AssemblyName="edtFTPnet, Culture=neutral, PublicKeyToken=4b0c991f43097782">
-                <Merging Merge="1">
+                <Merging Merge="0">
                     <Pruning Prune="1">
                         <Exclusion />
                     </Pruning>
@@ -74,12 +82,19 @@
                     <Obfuscation />
                     <ControlFlow />
                     <MemberRefsProxy />
-                    <ResourcesCompression Compress="1" />
+                    <ResourcesCompression Compress="0" />
                 </Merging>
                 <Embedding />
             </Assembly>
             <Assembly AssemblyName="Interop.CHILKATMAILLib2, Culture=neutral, PublicKeyToken=null">
-                <Merging />
+                <Merging Merge="0">
+                    <Pruning>
+                        <Exclusion />
+                    </Pruning>
+                    <Obfuscation />
+                    <ControlFlow />
+                    <MemberRefsProxy />
+                </Merging>
                 <Embedding Embed="1" />
             </Assembly>
             <Assembly AssemblyName="mscorlib, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -199,6 +214,33 @@
                 </Merging>
             </Assembly>
             <Assembly AssemblyName="SmartAssembly.HouseOfCards, Culture=neutral, PublicKeyToken=7f465a1c156d4d57">
+                <Merging />
+            </Assembly>
+            <Assembly AssemblyName="CustomTabControl, Culture=neutral, PublicKeyToken=null">
+                <Merging Merge="0">
+                    <Pruning Prune="0">
+                        <Exclusion />
+                    </Pruning>
+                    <Obfuscation />
+                    <ControlFlow />
+                    <MemberRefsProxy Proxy="0" />
+                    <ResourcesCompression />
+                </Merging>
+                <Embedding Embed="0" />
+            </Assembly>
+            <Assembly AssemblyName="vtExtender, Culture=neutral, PublicKeyToken=null">
+                <Merging Merge="0">
+                    <Pruning>
+                        <Exclusion />
+                    </Pruning>
+                    <Obfuscation />
+                    <ControlFlow />
+                    <MemberRefsProxy />
+                    <ResourcesCompression />
+                </Merging>
+                <Embedding Embed="0" />
+            </Assembly>
+            <Assembly AssemblyName="System.Xml.Linq, Culture=neutral, PublicKeyToken=b77a5c561934e089">
                 <Merging />
             </Assembly>
         </Assemblies>

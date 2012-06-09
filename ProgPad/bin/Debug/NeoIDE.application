@@ -4,14 +4,14 @@
   <description asmv2:publisher="NeoIDE" asmv2:product="NeoIDE" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <deployment install="true" mapFileExtensions="true" />
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="NeoIDE.exe.manifest" size="11104">
+    <dependentAssembly dependencyType="install" codebase="NeoIDE.exe.manifest" size="8573">
       <assemblyIdentity name="NeoIDE.exe" version="1.0.0.1" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="x86" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>5nY/t/ufZ7up68lsGr8ZD4kHCtA=</dsig:DigestValue>
+        <dsig:DigestValue>vgobY4eeId/yjN66Y/6e5akMSxw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

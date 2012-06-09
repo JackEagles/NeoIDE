@@ -51,12 +51,10 @@ Partial Class frmMain
         Me.EncryptAndCloseSelectedToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ShareToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ThisDocumentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ProgrammersCloudToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LocalhostrToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.FTPServerToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.FacebookToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MultipleDocumentsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ProgrammersCloudToolStripMenuItemMultiple = New System.Windows.Forms.ToolStripMenuItem()
         Me.localhostrToolStripMenuItemMultiple = New System.Windows.Forms.ToolStripMenuItem()
         Me.FTPServerToolStripMenuItemMultiple = New System.Windows.Forms.ToolStripMenuItem()
         Me.FacebookToolStripMenuItemMultiple = New System.Windows.Forms.ToolStripMenuItem()
@@ -91,7 +89,7 @@ Partial Class frmMain
         Me.SymbolToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.CodeBlocksToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.CodeBlockEditorToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ViewToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ViewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.WindowsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HTMLSidebarToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ProjectSidebarToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -112,7 +110,7 @@ Partial Class frmMain
         Me.CopyBookmarkedLinesToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.RemoveAllBookmarksToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ConfigurationToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ViewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.FormatToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.FontToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.TextColorToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.WordWrapToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -145,7 +143,6 @@ Partial Class frmMain
         Me.NoneToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.MacroManagerToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AddonsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.InitializeAddonsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.GetAddonsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ilTabControlImages = New System.Windows.Forms.ImageList(Me.components)
         Me.tsFind = New System.Windows.Forms.ToolStrip()
@@ -188,10 +185,10 @@ Partial Class frmMain
         'msInfo
         '
         Me.msInfo.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.lblTextLength, Me.lblColumn, Me.lblLineCount, Me.lblInfo})
-        Me.msInfo.Location = New System.Drawing.Point(0, 370)
+        Me.msInfo.Location = New System.Drawing.Point(0, 477)
         Me.msInfo.Name = "msInfo"
         Me.msInfo.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional
-        Me.msInfo.Size = New System.Drawing.Size(759, 22)
+        Me.msInfo.Size = New System.Drawing.Size(839, 22)
         Me.msInfo.TabIndex = 0
         Me.msInfo.Text = "ToolStrip1"
         '
@@ -218,7 +215,7 @@ Partial Class frmMain
         Me.lblInfo.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right
         Me.lblInfo.Name = "lblInfo"
         Me.lblInfo.RightToLeftAutoMirrorImage = True
-        Me.lblInfo.Size = New System.Drawing.Size(595, 17)
+        Me.lblInfo.Size = New System.Drawing.Size(675, 17)
         Me.lblInfo.Spring = True
         Me.lblInfo.Text = "Ready"
         Me.lblInfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight
@@ -248,7 +245,7 @@ Partial Class frmMain
         Me.msToolbar.Location = New System.Drawing.Point(0, 24)
         Me.msToolbar.Name = "msToolbar"
         Me.msToolbar.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional
-        Me.msToolbar.Size = New System.Drawing.Size(759, 25)
+        Me.msToolbar.Size = New System.Drawing.Size(839, 25)
         Me.msToolbar.TabIndex = 3
         Me.msToolbar.Text = "ToolStrip1"
         '
@@ -355,68 +352,56 @@ Partial Class frmMain
         '
         'ThisDocumentToolStripMenuItem
         '
-        Me.ThisDocumentToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ProgrammersCloudToolStripMenuItem, Me.LocalhostrToolStripMenuItem, Me.FTPServerToolStripMenuItem, Me.FacebookToolStripMenuItem})
+        Me.ThisDocumentToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.LocalhostrToolStripMenuItem, Me.FTPServerToolStripMenuItem, Me.FacebookToolStripMenuItem})
         Me.ThisDocumentToolStripMenuItem.Name = "ThisDocumentToolStripMenuItem"
         Me.ThisDocumentToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
         Me.ThisDocumentToolStripMenuItem.Text = "This Document"
         '
-        'ProgrammersCloudToolStripMenuItem
-        '
-        Me.ProgrammersCloudToolStripMenuItem.Name = "ProgrammersCloudToolStripMenuItem"
-        Me.ProgrammersCloudToolStripMenuItem.Size = New System.Drawing.Size(184, 22)
-        Me.ProgrammersCloudToolStripMenuItem.Text = "Programmer's Cloud"
-        '
         'LocalhostrToolStripMenuItem
         '
         Me.LocalhostrToolStripMenuItem.Name = "LocalhostrToolStripMenuItem"
-        Me.LocalhostrToolStripMenuItem.Size = New System.Drawing.Size(184, 22)
+        Me.LocalhostrToolStripMenuItem.Size = New System.Drawing.Size(129, 22)
         Me.LocalhostrToolStripMenuItem.Text = "localhostr"
         '
         'FTPServerToolStripMenuItem
         '
         Me.FTPServerToolStripMenuItem.Enabled = False
         Me.FTPServerToolStripMenuItem.Name = "FTPServerToolStripMenuItem"
-        Me.FTPServerToolStripMenuItem.Size = New System.Drawing.Size(184, 22)
+        Me.FTPServerToolStripMenuItem.Size = New System.Drawing.Size(129, 22)
         Me.FTPServerToolStripMenuItem.Text = "FTP Server"
         '
         'FacebookToolStripMenuItem
         '
         Me.FacebookToolStripMenuItem.Enabled = False
         Me.FacebookToolStripMenuItem.Name = "FacebookToolStripMenuItem"
-        Me.FacebookToolStripMenuItem.Size = New System.Drawing.Size(184, 22)
+        Me.FacebookToolStripMenuItem.Size = New System.Drawing.Size(129, 22)
         Me.FacebookToolStripMenuItem.Text = "Facebook"
         '
         'MultipleDocumentsToolStripMenuItem
         '
-        Me.MultipleDocumentsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ProgrammersCloudToolStripMenuItemMultiple, Me.localhostrToolStripMenuItemMultiple, Me.FTPServerToolStripMenuItemMultiple, Me.FacebookToolStripMenuItemMultiple})
+        Me.MultipleDocumentsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.localhostrToolStripMenuItemMultiple, Me.FTPServerToolStripMenuItemMultiple, Me.FacebookToolStripMenuItemMultiple})
         Me.MultipleDocumentsToolStripMenuItem.Name = "MultipleDocumentsToolStripMenuItem"
         Me.MultipleDocumentsToolStripMenuItem.Size = New System.Drawing.Size(182, 22)
         Me.MultipleDocumentsToolStripMenuItem.Text = "Multiple Documents"
         '
-        'ProgrammersCloudToolStripMenuItemMultiple
-        '
-        Me.ProgrammersCloudToolStripMenuItemMultiple.Name = "ProgrammersCloudToolStripMenuItemMultiple"
-        Me.ProgrammersCloudToolStripMenuItemMultiple.Size = New System.Drawing.Size(184, 22)
-        Me.ProgrammersCloudToolStripMenuItemMultiple.Text = "Programmer's Cloud"
-        '
         'localhostrToolStripMenuItemMultiple
         '
         Me.localhostrToolStripMenuItemMultiple.Name = "localhostrToolStripMenuItemMultiple"
-        Me.localhostrToolStripMenuItemMultiple.Size = New System.Drawing.Size(184, 22)
+        Me.localhostrToolStripMenuItemMultiple.Size = New System.Drawing.Size(129, 22)
         Me.localhostrToolStripMenuItemMultiple.Text = "localhostr"
         '
         'FTPServerToolStripMenuItemMultiple
         '
         Me.FTPServerToolStripMenuItemMultiple.Enabled = False
         Me.FTPServerToolStripMenuItemMultiple.Name = "FTPServerToolStripMenuItemMultiple"
-        Me.FTPServerToolStripMenuItemMultiple.Size = New System.Drawing.Size(184, 22)
+        Me.FTPServerToolStripMenuItemMultiple.Size = New System.Drawing.Size(129, 22)
         Me.FTPServerToolStripMenuItemMultiple.Text = "FTP Server"
         '
         'FacebookToolStripMenuItemMultiple
         '
         Me.FacebookToolStripMenuItemMultiple.Enabled = False
         Me.FacebookToolStripMenuItemMultiple.Name = "FacebookToolStripMenuItemMultiple"
-        Me.FacebookToolStripMenuItemMultiple.Size = New System.Drawing.Size(184, 22)
+        Me.FacebookToolStripMenuItemMultiple.Size = New System.Drawing.Size(129, 22)
         Me.FacebookToolStripMenuItemMultiple.Text = "Facebook"
         '
         'ToolStripSeparator7
@@ -620,12 +605,12 @@ Partial Class frmMain
         Me.CodeBlockEditorToolStripMenuItem.Size = New System.Drawing.Size(168, 22)
         Me.CodeBlockEditorToolStripMenuItem.Text = "Code Block Editor"
         '
-        'ViewToolStripMenuItem1
+        'ViewToolStripMenuItem
         '
-        Me.ViewToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.WindowsToolStripMenuItem, Me.TopMostToolStripMenuItem, Me.FullScreenToolStripMenuItem, Me.ShowEolToolstripmenuitem, Me.ShowSpaceMarkersToolStripMenuItem, Me.CompilerToolbarToolStripMenuItem, Me.LineHighlightingToolStripMenuItem, Me.BookmarkingToolStripMenuItem, Me.ConfigurationToolStripMenuItem})
-        Me.ViewToolStripMenuItem1.Name = "ViewToolStripMenuItem1"
-        Me.ViewToolStripMenuItem1.Size = New System.Drawing.Size(44, 20)
-        Me.ViewToolStripMenuItem1.Text = "View"
+        Me.ViewToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.WindowsToolStripMenuItem, Me.TopMostToolStripMenuItem, Me.FullScreenToolStripMenuItem, Me.ShowEolToolstripmenuitem, Me.ShowSpaceMarkersToolStripMenuItem, Me.CompilerToolbarToolStripMenuItem, Me.LineHighlightingToolStripMenuItem, Me.BookmarkingToolStripMenuItem, Me.ConfigurationToolStripMenuItem})
+        Me.ViewToolStripMenuItem.Name = "ViewToolStripMenuItem"
+        Me.ViewToolStripMenuItem.Size = New System.Drawing.Size(44, 20)
+        Me.ViewToolStripMenuItem.Text = "View"
         '
         'WindowsToolStripMenuItem
         '
@@ -760,12 +745,12 @@ Partial Class frmMain
         Me.ConfigurationToolStripMenuItem.Size = New System.Drawing.Size(216, 22)
         Me.ConfigurationToolStripMenuItem.Text = "Configuration"
         '
-        'ViewToolStripMenuItem
+        'FormatToolStripMenuItem
         '
-        Me.ViewToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FontToolStripMenuItem, Me.TextColorToolStripMenuItem, Me.WordWrapToolStripMenuItem})
-        Me.ViewToolStripMenuItem.Name = "ViewToolStripMenuItem"
-        Me.ViewToolStripMenuItem.Size = New System.Drawing.Size(57, 20)
-        Me.ViewToolStripMenuItem.Text = "Format"
+        Me.FormatToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FontToolStripMenuItem, Me.TextColorToolStripMenuItem, Me.WordWrapToolStripMenuItem})
+        Me.FormatToolStripMenuItem.Name = "FormatToolStripMenuItem"
+        Me.FormatToolStripMenuItem.Size = New System.Drawing.Size(57, 20)
+        Me.FormatToolStripMenuItem.Text = "Format"
         '
         'FontToolStripMenuItem
         '
@@ -929,11 +914,11 @@ Partial Class frmMain
         'msMain
         '
         Me.msMain.BackColor = System.Drawing.SystemColors.Control
-        Me.msMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.EditToolStripMenuItem, Me.InsertToolStripMenuItem, Me.ViewToolStripMenuItem1, Me.ViewToolStripMenuItem, Me.MacroToolStripMenuItem, Me.RunToolStripMenuItem, Me.EncodingToolStripMenuItem, Me.SyntaxHighlightingToolStripMenuItem, Me.AddonsToolStripMenuItem, Me.HelpToolStripMenuItem, Me.XToolStripMenuItem, Me.ZoomToolStripMenuItem})
+        Me.msMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.EditToolStripMenuItem, Me.InsertToolStripMenuItem, Me.ViewToolStripMenuItem, Me.FormatToolStripMenuItem, Me.MacroToolStripMenuItem, Me.RunToolStripMenuItem, Me.EncodingToolStripMenuItem, Me.SyntaxHighlightingToolStripMenuItem, Me.AddonsToolStripMenuItem, Me.HelpToolStripMenuItem, Me.XToolStripMenuItem, Me.ZoomToolStripMenuItem})
         Me.msMain.Location = New System.Drawing.Point(0, 0)
         Me.msMain.Name = "msMain"
         Me.msMain.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional
-        Me.msMain.Size = New System.Drawing.Size(759, 24)
+        Me.msMain.Size = New System.Drawing.Size(839, 24)
         Me.msMain.TabIndex = 1
         Me.msMain.Text = "MenuStrip1"
         '
@@ -977,21 +962,15 @@ Partial Class frmMain
         '
         'AddonsToolStripMenuItem
         '
-        Me.AddonsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.InitializeAddonsToolStripMenuItem, Me.GetAddonsToolStripMenuItem})
+        Me.AddonsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.GetAddonsToolStripMenuItem})
         Me.AddonsToolStripMenuItem.Name = "AddonsToolStripMenuItem"
         Me.AddonsToolStripMenuItem.Size = New System.Drawing.Size(60, 20)
         Me.AddonsToolStripMenuItem.Text = "Addons"
         '
-        'InitializeAddonsToolStripMenuItem
-        '
-        Me.InitializeAddonsToolStripMenuItem.Name = "InitializeAddonsToolStripMenuItem"
-        Me.InitializeAddonsToolStripMenuItem.Size = New System.Drawing.Size(161, 22)
-        Me.InitializeAddonsToolStripMenuItem.Text = "Initialize Addons"
-        '
         'GetAddonsToolStripMenuItem
         '
         Me.GetAddonsToolStripMenuItem.Name = "GetAddonsToolStripMenuItem"
-        Me.GetAddonsToolStripMenuItem.Size = New System.Drawing.Size(161, 22)
+        Me.GetAddonsToolStripMenuItem.Size = New System.Drawing.Size(160, 22)
         Me.GetAddonsToolStripMenuItem.Text = "Addon Manager"
         '
         'ilTabControlImages
@@ -1005,10 +984,10 @@ Partial Class frmMain
         Me.tsFind.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.tsFind.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden
         Me.tsFind.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.txtFind, Me.btnCloseFindBar, Me.btnFindNext, Me.btnFindPrevious, Me.btnFindHighlightAll})
-        Me.tsFind.Location = New System.Drawing.Point(0, 345)
+        Me.tsFind.Location = New System.Drawing.Point(0, 452)
         Me.tsFind.Name = "tsFind"
         Me.tsFind.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional
-        Me.tsFind.Size = New System.Drawing.Size(759, 25)
+        Me.tsFind.Size = New System.Drawing.Size(839, 25)
         Me.tsFind.TabIndex = 5
         Me.tsFind.Text = "ToolStrip1"
         '
@@ -1060,9 +1039,10 @@ Partial Class frmMain
         Me.tsCompiler.Location = New System.Drawing.Point(0, 49)
         Me.tsCompiler.Name = "tsCompiler"
         Me.tsCompiler.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional
-        Me.tsCompiler.Size = New System.Drawing.Size(759, 25)
+        Me.tsCompiler.Size = New System.Drawing.Size(839, 25)
         Me.tsCompiler.TabIndex = 6
         Me.tsCompiler.Text = "ToolStrip1"
+        Me.tsCompiler.Visible = False
         '
         'btnRunCode
         '
@@ -1186,11 +1166,12 @@ Partial Class frmMain
         '
         Me.tcMain.Alignment = CustomTabControl.TabControl.TabAlignment.Top
         Me.tcMain.BackgroundHatch = System.Drawing.Drawing2D.HatchStyle.LargeGrid
+        Me.tcMain.ControlButtonBackLowColor = System.Drawing.Color.Empty
         Me.tcMain.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.tcMain.Location = New System.Drawing.Point(0, 74)
+        Me.tcMain.Location = New System.Drawing.Point(0, 49)
         Me.tcMain.MenuRenderer = Nothing
         Me.tcMain.Name = "tcMain"
-        Me.tcMain.Size = New System.Drawing.Size(759, 271)
+        Me.tcMain.Size = New System.Drawing.Size(839, 403)
         Me.tcMain.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None
         Me.tcMain.TabBorderEnhanceWeight = CustomTabControl.TabControl.Weight.Medium
         Me.tcMain.TabCloseButtonImage = Nothing
@@ -1229,7 +1210,7 @@ Partial Class frmMain
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.SystemColors.Control
-        Me.ClientSize = New System.Drawing.Size(759, 392)
+        Me.ClientSize = New System.Drawing.Size(839, 499)
         Me.Controls.Add(Me.tcMain)
         Me.Controls.Add(Me.tsCompiler)
         Me.Controls.Add(Me.tsFind)
@@ -1305,7 +1286,7 @@ Partial Class frmMain
     Friend WithEvents SymbolToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CodeBlocksToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CodeBlockEditorToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ViewToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ViewToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents TopMostToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents FullScreenToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ShowEolToolstripmenuitem As System.Windows.Forms.ToolStripMenuItem
@@ -1322,7 +1303,7 @@ Partial Class frmMain
     Friend WithEvents CopyBookmarkedLinesToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents RemoveAllBookmarksToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ConfigurationToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ViewToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents FormatToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents FontToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents TextColorToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents WordWrapToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -1351,14 +1332,11 @@ Partial Class frmMain
     Friend WithEvents ilTabControlImages As System.Windows.Forms.ImageList
     Friend WithEvents ShareToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ThisDocumentToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ProgrammersCloudToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents FacebookToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents LocalhostrToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents FTPServerToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents MultipleDocumentsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ProgrammersCloudToolStripMenuItemMultiple As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents FacebookToolStripMenuItemMultiple As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents localhostrToolStripMenuItemMultiple As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents FTPServerToolStripMenuItemMultiple As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents CheckForUpdatesToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents RecentToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
@@ -1404,9 +1382,9 @@ Partial Class frmMain
     Friend WithEvents HTMLSidebarToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ProjectSidebarToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents AddonsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents InitializeAddonsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents cmuScintilla As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents RemoveHighlighterToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents GetAddonsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents localhostrToolStripMenuItemMultiple As System.Windows.Forms.ToolStripMenuItem
 
 End Class

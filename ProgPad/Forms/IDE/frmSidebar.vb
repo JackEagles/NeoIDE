@@ -22,8 +22,8 @@ Public Class frmSidebar
         Ambiguous
     End Enum
 
-    Public ProjectBuildPath As String
-    Public ProjectIconPath As String
+    Public ProjectPath, ProjectBuildPath, ProjectIconPath As String
+
     Public ProjectCPUType As ProjectCPU
     Public ProjectLang As ProjectLanguage
 

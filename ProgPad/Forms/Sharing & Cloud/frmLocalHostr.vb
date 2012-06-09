@@ -32,6 +32,8 @@ Public Class frmLocalHostrUploader
                     uploadedlink = .UrlDecode(.ParseBetween(Html, "url"":""", """", "url"":""".Length))
                 Else
                     uploadedlink = "Could not upload file. An error occured."
+                    MsgBox(Html)
+
                 End If
             End With
         Catch
