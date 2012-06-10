@@ -28,8 +28,6 @@ Public Class frmGetExtensions
         tcMain.Controls.Remove(tbDownloadingAddon)
         txtAddonDescription.SelectionAlignment = ExtendedRichTextBox.RichTextAlign.Justify
         bwInitial.RunWorkerAsync()
-
-
     End Sub
 
     Dim buttonCollection, themeCollection As New Collection
@@ -77,7 +75,7 @@ Public Class frmGetExtensions
             Next
             ThemeButton.Tag = itm.OuterXml
             themeCollection.Add(ThemeButton)
-            AddHandler ThemeButton.Click, AddressOf ShowAddonInfo
+            AddHandler ThemeButton.Click, AddressOf ShowThemeInfo
             AddHandler ThemeButton.Title.Click, AddressOf ShowThemeInfo
             AddHandler ThemeButton.Description.Click, AddressOf ShowThemeInfo
             AddHandler ThemeButton.ImageBox.Click, AddressOf ShowThemeInfo

@@ -6,7 +6,6 @@ Public Class ScintillaEx
     Public WasTextChanged As Boolean
     Public SavePath As String
     Public DocumentSize As Integer
-    Public PromptOnExternal As Boolean = True
     Public IsBackupDocument As Boolean
 
 
@@ -29,6 +28,61 @@ Public Class ScintillaEx
                 End If
             End If
         End If
+    End Sub
+    Public AskOnDeletedOrRenamedorModified As Boolean = True
+    Private Sub ScintillaEx_GotFocus(sender As Object, e As System.EventArgs) Handles Me.GotFocus
+        CheckForFileMods()
+        frmMain.tmrWordCount.Start()
+
+    End Sub
+
+    Public Sub CheckForFileMods()
+        If AskOnDeletedOrRenamedorModified = True Then
+            If Me.SavePath <> "" Then
+                If My.Computer.FileSystem.FileExists(Me.SavePath) = False Then
+                    Dim ac As New AlertControl("The file associated with this document has been deleted! Do you want to keep this document?", New Font("Arial", 10.25!), Color.Red, 28, 12)
+                    If Me.Controls.Count = 1 Then
+                        Me.Controls.Add(ac)
+                    End If
+                    ac.BringToFront()
+                    AddHandler ac.Command1.Click, AddressOf Discard
+                    AddHandler ac.Command2.Click, AddressOf DontAsk
+                End If
+
+                Dim finfo As New IO.FileInfo(Me.SavePath)
+                If finfo.Length.ToString <> Me.DocumentSize.ToString Then
+                    Dim ac As New AlertControl("The file associated with this document has been modified! Do you want to reload this document?", New Font("Arial", 10.25!), Color.Red, 28, 12)
+                    If Me.Controls.Count = 1 Then
+                        Me.Controls.Add(ac)
+                    End If
+                    ac.BringToFront()
+                    AddHandler ac.Command2.Click, AddressOf ReLoad
+                    AddHandler ac.Command1.Click, AddressOf DontAsk
+                End If
+            End If
+        End If
+    End Sub
+
+    Private Sub Discard(sender As Object, e As System.EventArgs)
+        Me.WasTextChanged = False
+        frmMain.CloseToolStripMenuItem.PerformClick()
+    End Sub
+
+    Private Sub DontAsk(sender As Object, e As System.EventArgs)
+        AskOnDeletedOrRenamedorModified = False
+        For Each ctrl In Me.Controls
+            If TypeOf ctrl Is AlertControl Then
+                Me.Controls.Remove(ctrl)
+            End If
+        Next
+    End Sub
+
+    Private Sub ReLoad(sender As Object, e As System.EventArgs)
+        Dim sp As String = Me.SavePath
+        Me.WasTextChanged = False
+        frmMain.CloseToolStripMenuItem.PerformClick()
+        frmMain.CreateNewDoc(sp)
+
     End Sub
 
     Private Sub ScintillaEx_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles Me.KeyDown
@@ -69,15 +123,15 @@ Public Class ScintillaEx
 
     Private Sub ScintillaEx_SelectionChanged(sender As Object, e As System.EventArgs) Handles Me.SelectionChanged
 
-        Try
-            Dim x As String = Me.GetCurrentLine.Substring(0, Me.Lines.Current.SelectionStartPosition - Me.Lines.Current.StartPosition)
-            Dim flam As String = Me.GetCurrentLine.Substring(Me.Lines.Current.SelectionStartPosition - Me.Lines.Current.StartPosition, Me.Lines.Current.Length - 1 - Me.Lines.Current.SelectionStartPosition - Me.Lines.Current.StartPosition)
+        'Try
+        '    Dim x As String = Me.GetCurrentLine.Substring(0, Me.Lines.Current.SelectionStartPosition - Me.Lines.Current.StartPosition)
+        '    Dim flam As String = Me.GetCurrentLine.Substring(Me.Lines.Current.SelectionStartPosition - Me.Lines.Current.StartPosition, Me.Lines.Current.Length - 1 - Me.Lines.Current.SelectionStartPosition - Me.Lines.Current.StartPosition)
 
-            Dim firstOccurance As String = x.Substring(x.LastIndexOf("<"))
-            flam = flam.Substring(0, flam.IndexOf(">"))
-            frmMain.Text = firstOccurance & flam
-        Catch
-        End Try
+        '    Dim firstOccurance As String = x.Substring(x.LastIndexOf("<"))
+        '    flam = flam.Substring(0, flam.IndexOf(">"))
+        '    frmMain.Text = firstOccurance & flam
+        'Catch
+        'End Try
     End Sub
 
     Private Sub ScintillaEx_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.TextChanged

@@ -70,14 +70,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NeoIDE.exe" size="630272">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NeoIDE.exe" size="633856">
       <assemblyIdentity name="NeoIDE" version="0.5.5.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>nhl1r1U4YsJu/90q6q4h9dCkCVk=</dsig:DigestValue>
+        <dsig:DigestValue>BmiyHR6IUObcjln5nrDoKxRo1vA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

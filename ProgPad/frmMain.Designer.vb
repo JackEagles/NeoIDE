@@ -172,7 +172,13 @@ Partial Class frmMain
         Me.cmuTab = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.ShowFileInExplorerToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.cmuScintilla = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.RemoveHighlighterToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CutToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CopyToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.PasteToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.InsertToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ThisLineToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.BookmarkToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.CommentToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.msInfo.SuspendLayout()
         Me.msToolbar.SuspendLayout()
         Me.msMain.SuspendLayout()
@@ -1195,15 +1201,53 @@ Partial Class frmMain
         '
         'cmuScintilla
         '
-        Me.cmuScintilla.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.RemoveHighlighterToolStripMenuItem})
+        Me.cmuScintilla.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CutToolStripMenuItem1, Me.CopyToolStripMenuItem1, Me.PasteToolStripMenuItem1, Me.InsertToolStripMenuItem1, Me.ThisLineToolStripMenuItem})
         Me.cmuScintilla.Name = "ContextMenuStrip1"
-        Me.cmuScintilla.Size = New System.Drawing.Size(181, 26)
+        Me.cmuScintilla.Size = New System.Drawing.Size(153, 136)
         '
-        'RemoveHighlighterToolStripMenuItem
+        'CutToolStripMenuItem1
         '
-        Me.RemoveHighlighterToolStripMenuItem.Name = "RemoveHighlighterToolStripMenuItem"
-        Me.RemoveHighlighterToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.RemoveHighlighterToolStripMenuItem.Text = "Remove Highlighter"
+        Me.CutToolStripMenuItem1.Name = "CutToolStripMenuItem1"
+        Me.CutToolStripMenuItem1.Size = New System.Drawing.Size(152, 22)
+        Me.CutToolStripMenuItem1.Text = "Cut"
+        '
+        'CopyToolStripMenuItem1
+        '
+        Me.CopyToolStripMenuItem1.Name = "CopyToolStripMenuItem1"
+        Me.CopyToolStripMenuItem1.Size = New System.Drawing.Size(152, 22)
+        Me.CopyToolStripMenuItem1.Text = "Copy"
+        '
+        'PasteToolStripMenuItem1
+        '
+        Me.PasteToolStripMenuItem1.Name = "PasteToolStripMenuItem1"
+        Me.PasteToolStripMenuItem1.Size = New System.Drawing.Size(152, 22)
+        Me.PasteToolStripMenuItem1.Text = "Paste"
+        '
+        'InsertToolStripMenuItem1
+        '
+        Me.InsertToolStripMenuItem1.Enabled = False
+        Me.InsertToolStripMenuItem1.Name = "InsertToolStripMenuItem1"
+        Me.InsertToolStripMenuItem1.Size = New System.Drawing.Size(152, 22)
+        Me.InsertToolStripMenuItem1.Text = "Insert"
+        '
+        'ThisLineToolStripMenuItem
+        '
+        Me.ThisLineToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.BookmarkToolStripMenuItem, Me.CommentToolStripMenuItem})
+        Me.ThisLineToolStripMenuItem.Name = "ThisLineToolStripMenuItem"
+        Me.ThisLineToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.ThisLineToolStripMenuItem.Text = "This Line"
+        '
+        'BookmarkToolStripMenuItem
+        '
+        Me.BookmarkToolStripMenuItem.Name = "BookmarkToolStripMenuItem"
+        Me.BookmarkToolStripMenuItem.Size = New System.Drawing.Size(168, 22)
+        Me.BookmarkToolStripMenuItem.Text = "Toggle Bookmark"
+        '
+        'CommentToolStripMenuItem
+        '
+        Me.CommentToolStripMenuItem.Name = "CommentToolStripMenuItem"
+        Me.CommentToolStripMenuItem.Size = New System.Drawing.Size(168, 22)
+        Me.CommentToolStripMenuItem.Text = "Comment"
         '
         'frmMain
         '
@@ -1383,8 +1427,14 @@ Partial Class frmMain
     Friend WithEvents ProjectSidebarToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents AddonsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents cmuScintilla As System.Windows.Forms.ContextMenuStrip
-    Friend WithEvents RemoveHighlighterToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents GetAddonsToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents localhostrToolStripMenuItemMultiple As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CutToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CopyToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents PasteToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents InsertToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ThisLineToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents BookmarkToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents CommentToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 
 End Class

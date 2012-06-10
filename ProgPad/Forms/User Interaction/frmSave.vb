@@ -13,10 +13,10 @@
             If CType(itm, ScintillaEx).SavePath <> "" Then
                 clbToSave.Items.Add(CType(itm, ScintillaEx).SavePath & " - " & itm.Handle.ToInt32)
             Else
-                If itm.Text.Length > 40 Then
-                    clbToSave.Items.Add("New Document: " & itm.Text.Substring(0, 40).Replace(Environment.NewLine, "") & "..." & " - " & itm.Handle.ToInt32)
+                If itm.parent.Text.Length > 40 Then
+                    clbToSave.Items.Add("New Document: " & itm.parent.Text.Substring(0, 40).Replace(Environment.NewLine, "") & "..." & " - " & itm.Handle.ToInt32)
                 Else
-                    clbToSave.Items.Add("New Document: " & itm.Text.Replace(Environment.NewLine, "") & " - " & itm.Handle.ToInt32)
+                    clbToSave.Items.Add("New Document: " & itm.parent.Text.Replace(Environment.NewLine, "") & " - " & itm.Handle.ToInt32)
                 End If
             End If
         Next
@@ -41,11 +41,6 @@
     '         e.Cancel = True
     '        Exit Sub
     '   End If
-
-    Private Sub clbToSave_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles clbToSave.SelectedIndexChanged
-
-    End Sub
-
     Private Sub btnCancel_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnCancel.Click
         mClose = True
         Me.Close()

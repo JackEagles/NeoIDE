@@ -63,13 +63,14 @@ Partial Class frmStartPage
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.rtbChangelog.Location = New System.Drawing.Point(470, 12)
         Me.rtbChangelog.Name = "rtbChangelog"
+        Me.rtbChangelog.ReadOnly = True
         CharStyle1.Bold = False
         CharStyle1.Italic = False
         CharStyle1.Link = False
         CharStyle1.Strikeout = False
         CharStyle1.Underline = False
         Me.rtbChangelog.SelectionCharStyle = CharStyle1
-        Me.rtbChangelog.SelectionFont2 = New System.Drawing.Font("Microsoft Sans Serif", 5.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Inch)
+        Me.rtbChangelog.SelectionFont2 = New System.Drawing.Font("Microsoft Sans Serif", 3.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Inch)
         ParaLineSpacing1.ExactSpacing = 0
         ParaLineSpacing1.SpacingStyle = NeoIDE.ExtendedRichTextBox.ParaLineSpacing.LineSpacingStyle.Unknown
         Me.rtbChangelog.SelectionLineSpacing = ParaLineSpacing1

@@ -9,9 +9,9 @@
     <DocumentTitleBar>False</DocumentTitleBar>
     <ShowEOL>False</ShowEOL>
     <ShowWhiteSpace>False</ShowWhiteSpace>
-    <LineHighlighting>True</LineHighlighting>
-    <LineHighlightingColor>-16711936</LineHighlightingColor>
-    <WordWrap>False</WordWrap>
+    <LineHighlighting>False</LineHighlighting>
+    <LineHighlightingColor>-14869978</LineHighlightingColor>
+    <WordWrap>True</WordWrap>
     <FontName>Arial</FontName>
     <FontSize>0</FontSize>
     <ThemeInfoBar>True</ThemeInfoBar>

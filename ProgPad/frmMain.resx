@@ -130,7 +130,7 @@
     <value>504, 17</value>
   </metadata>
   <metadata name="tmrExpireAutoSave.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>504, 44</value>
+    <value>479, 27</value>
   </metadata>
   <metadata name="bwAutoSave.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>513, 0</value>
@@ -194,7 +194,7 @@
 </value>
   </data>
   <metadata name="tsCompiler.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>743, 44</value>
+    <value>659, 59</value>
   </metadata>
   <data name="btnRunCode.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
